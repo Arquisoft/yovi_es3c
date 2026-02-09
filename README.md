@@ -13,7 +13,7 @@ It is an academic project that provides basic functionality and serves as a foun
 - **Juan Losada** – uo302850@uniovi.es  
 - **Pablo Pérez** – uo288816@uniovi.es  
 - **Daniel López** – uo289510@uniovi.es  
-
+- **Mateo Rubio** – uo300069@uniovi.es
 
 ## Project Structure
 
