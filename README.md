@@ -4,7 +4,16 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
 
-This project is a template with some basic functionality for the ASW labs.
+This project has been developed as part of the Software Architecture course (2026) at the University of Oviedo.  
+It is an academic project that provides basic functionality and serves as a foundation for the ASW labs.
+
+## Participants
+
+- **Juan Fernández** – uo296143@uniovi.es  
+- **Juan Losada** – uo302850@uniovi.es  
+- **Pablo Pérez** – uo288816@uniovi.es  
+- **Daniel López** – uo289510@uniovi.es  
+
 
 ## Project Structure
 
