@@ -8,22 +8,17 @@ ifdef::arc42help[]
 [role="arc42help"]
 ****
 .Contents
-A short summary and explanation of the fundamental decisions and solution strategies, that shape system architecture. It includes
 
-* technology decisions
-* decisions about the top-level decomposition of the system, e.g. usage of an architectural pattern or design pattern
-* decisions on how to achieve key quality goals
-* relevant organizational decisions, e.g. selecting a development process or delegating certain tasks to third parties.
+The main technologies used for the development of the project will be those already provided by the skeleton, such as, Rust and Cargo for the game engine, Node.js and Express for the User Service, and Vite and React for the Webapp implementation. The team also agreed on the use of MongoDB as a database to store user's login information and scores.
 
-.Motivation
-These decisions form the cornerstones for your architecture. They are the foundation for many other detailed decisions or implementation rules.
+To achieve our quality goals, each member of the team is commited to ensure that every code delivered is of correct implementation, ensuring that it won't break other member's code. Every member is responsible for the entirety of the code implemented within the project, regardless of the authorship of said code.
+
 
 .Form
-Keep the explanations of such key decisions short.
 
-Motivate what was decided and why it was decided that way,
-based upon problem statement, quality goals and key constraints.
-Refer to details in the following sections.
+Our main decision made was to use MongoDB as our prefered database, this is because, it is of easy use and implementation, and a standard with the rest of our peers.
+
+Our main constraints are those imposed by the default programming languages and the skeleton already provided.
 
 
 .Further Information
