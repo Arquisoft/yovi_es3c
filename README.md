@@ -7,6 +7,9 @@
 This project has been developed as part of the Software Architecture course (2026) at the University of Oviedo.  
 It is an academic project that provides basic functionality and serves as a foundation for the ASW labs.
 
+## GitHub Pages
+https://arquisoft.github.io/yovi_es3c/
+
 ## Participants
 
 - **Juan Fernández** – uo296143@uniovi.es  
