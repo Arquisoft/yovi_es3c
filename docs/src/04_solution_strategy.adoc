@@ -9,16 +9,7 @@ ifdef::arc42help[]
 ****
 .Contents
 
-The main technologies used for the development of the project will be those already provided by the skeleton, such as, Rust and Cargo for the game engine, Node.js and Express for the User Service, and Vite and React for the Webapp implementation. The team also agreed on the use of MongoDB as a database to store user's login information and scores.
-
-To achieve our quality goals, each member of the team is commited to ensure that every code delivered is of correct implementation, ensuring that it won't break other member's code. Every member is responsible for the entirety of the code implemented within the project, regardless of the authorship of said code.
-
-
 .Form
-
-Our main decision made was to use MongoDB as our prefered database, this is because, it is of easy use and implementation, and a standard with the rest of our peers.
-
-Our main constraints are those imposed by the default programming languages and the skeleton already provided.
 
 
 .Further Information
@@ -27,3 +18,17 @@ See https://docs.arc42.org/section-4/[Solution Strategy] in the arc42 documentat
 
 ****
 endif::arc42help[]
+
+
+=== Contents
+
+The main technologies used for the development of the project will be those already provided by the skeleton, such as, Rust and Cargo for the game engine, Node.js and Express for the User Service, and Vite and React for the Webapp implementation. The team also agreed on the use of MongoDB as a database to store user's login information and scores.
+
+To achieve our quality goals, each member of the team is commited to ensure that every code delivered is of correct implementation, ensuring that it won't break other member's code. Every member is responsible for the entirety of the code implemented within the project, regardless of the authorship of said code.
+
+=== Form
+
+
+Our main decision made was to use MongoDB as our prefered database, this is because, it is of easy use and implementation, and a standard with the rest of our peers.
+
+Our main constraints are those imposed by the default programming languages and the skeleton already provided.
