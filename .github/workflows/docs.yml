@@ -3,6 +3,8 @@ name: Deploy Docs to Pages
 on:
   push:
     branches: ["master"] # Se ejecuta cada vez que subes algo a master
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
