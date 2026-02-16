@@ -1,0 +1,50 @@
+name: Deploy Docs to Pages
+
+on:
+  push:
+    branches: ["master"] # Se ejecuta cada vez que subes algo a master
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          # Si el package.json está en la raíz, deja esto. 
+          # Si está en webapp, pon: cache-dependency-path: webapp/package-lock.json
+
+      - name: Install dependencies
+        # Ajusta el prefijo según dónde esté tu documentación (ej: webapp)
+        run: npm install 
+
+      - name: Build documentation
+        # Este comando debe generar la carpeta 'build' o 'dist'
+        run: npm run build 
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # MUY IMPORTANTE: Aquí va la carpeta que genera tu comando build
+          path: './docs' 
+
+  deploy:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
