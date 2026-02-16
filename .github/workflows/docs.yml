@@ -2,7 +2,8 @@ name: Deploy Docs to Pages
 
 on:
   push:
-    branches: ["master"] # Se ejecuta cada vez que subes algo a master
+    branches: 
+      - master
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -23,22 +24,29 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
-          # Si el package.json está en la raíz, deja esto. 
-          # Si está en webapp, pon: cache-dependency-path: webapp/package-lock.json
+          cache-dependency-path: docs/package-lock.json
 
-      - name: Install dependencies
-        # Ajusta el prefijo según dónde esté tu documentación (ej: webapp)
-        run: npm install 
+      - name: Install Ruby and Asciidoctor
+        # El build usa asciidoctor y asciidoctor-diagram, hay que instalarlos en el runner
+        run: |
+          sudo apt-get install -y graphviz
+          sudo gem install asciidoctor asciidoctor-diagram
+
+      - name: Install JS dependencies
+        # Esto instala shx y gh-pages dentro de la carpeta docs
+        run: npm install
+        working-directory: ./docs
 
       - name: Build documentation
-        # Este comando debe generar la carpeta 'build' o 'dist'
-        run: npm run build 
+        # Ejecuta tu script: shx rm -rf build && asciidoctor...
+        run: npm run build
+        working-directory: ./docs
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # MUY IMPORTANTE: Aquí va la carpeta que genera tu comando build
-          path: './docs' 
+          # Subimos la carpeta 'build' que generó el comando anterior
+          path: './docs/build'
 
   deploy:
     needs: build-docs
