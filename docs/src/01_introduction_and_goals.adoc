@@ -3,99 +3,89 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-introduction-and-goals]]
 == Introduction and Goals
 
+The **Yovi Project** is a software development initiative carried out within the **Software Architecture** course (3rd year) of the Software Computer Engineering degree at the **University of Oviedo**. The primary objective is to develop a web-based gaming solution for the company **Micrati** within a single academic semester (4 months). 
+
+The game, named **YOVI**, is based on the classic board game **Y**. It features a triangular board where two players compete to connect all three sides of the triangle. The first player to successfully establish this connection wins the match.
+
+The development team consists of the following members:
+
+* **Juan Fernández López** (uo296143)
+* **Daniel López Fernández** (uo289510)
+* **Juan Losada Pérez** (uo302850)
+* **Pablo Pérez Saavedra** (uo288816)
+* **Mateo Rubio Zamarreño** (uo300069)
+
 ifdef::arc42help[]
 [role="arc42help"]
 ****
 Describes the relevant requirements and the driving forces that software architects and development team must consider. 
-These include
-
-* underlying business goals, 
-* essential features, 
-* essential functional requirements, 
-* quality goals for the architecture and
-* relevant stakeholders and their expectations
+These include underlying business goals, essential features, quality goals, and relevant stakeholders.
 ****
 endif::arc42help[]
 
 === Requirements Overview
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-Short description of the functional requirements, driving forces, extract (or abstract)
-of requirements. Link to (hopefully existing) requirements documents
-(with version number and information where to find it).
-
-.Motivation
-From the point of view of the end users a system is created or modified to
-improve support of a business activity and/or improve the quality.
-
-.Form
-Short textual description, probably in tabular use-case format.
-If requirements documents exist this overview should refer to these documents.
-
-Keep these excerpts as short as possible. Balance readability of this document with potential redundancy w.r.t to requirements documents.
+* **System Architecture**: The application is divided into two independent sub-systems:
+** **Web Application**: Built with **TypeScript**, providing the user interface to play different Y game variants and an external API for bots.
+** **Logic Module**: Built with **Rust**, responsible for win-condition checking and move suggestions via a web service interface.
+** **Communication**: Data exchange between modules is handled through JSON messages using the **YEN notation**.
+* **Core Functionality**: Implementation of the classic Y game (Human vs. CPU) with variable board sizes.
+* **Deployment**: The system must be fully deployed and publicly accessible via the web.
+* **AI & Strategies**: The computer opponent must support multiple AI strategies and difficulty levels selectable by the user.
+* **User Management**: Support for user registration and persistent match history (statistics, games played, win/loss ratio).
+* **Bot Interaction**: A documented API allowing bots to manage user data and play matches using the `play` method.
 
 
-.Further Information
-
-See https://docs.arc42.org/section-1/[Introduction and Goals] in the arc42 documentation.
-
-****
-endif::arc42help[]
 
 === Quality Goals
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-The top three (max five) quality goals for the architecture whose fulfillment is of highest importance to the major stakeholders. 
-We really mean quality goals for the architecture. Don't confuse them with project goals.
-They are not necessarily identical.
-
-Consider this overview of potential topics (based upon the ISO 25010 standard):
-
-image::01_2_iso-25010-topics-EN.drawio.png["Categories of Quality Requirements"]
-
-.Motivation
-You should know the quality goals of your most important stakeholders, since they will influence fundamental architectural decisions. 
-Make sure to be very concrete about these qualities, avoid buzzwords.
-If you as an architect do not know how the quality of your work will be judged...
-
-.Form
-A table with quality goals and concrete scenarios, ordered by priorities
-****
-endif::arc42help[]
+[options="header",cols="1,3"]
+|===
+|Quality Goal| Description
+| **Performance** | Ensure low latency and fast response times, particularly for AI move generation, to provide a fluid user experience.
+| **Testability** | The system must support high test coverage (unit, integration, e2e, and load tests) to guarantee reliability and facilitate maintenance.
+| **Usability** | The interface should be intuitive, aesthetic, and easy to navigate for any type of user.
+| **Maintainability** | The architecture must promote clean code and modularity, allowing for easy future updates, bug fixes, and documentation consistency.
+|===
 
 === Stakeholders
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-Explicit overview of stakeholders of the system, i.e. all person, roles or organizations that
-
-* should know the architecture
-* have to be convinced of the architecture
-* have to work with the architecture or with code
-* need the documentation of the architecture for their work
-* have to come up with decisions about the system or its development
-
-.Motivation
-You should know all parties involved in development of the system or affected by the system.
-Otherwise, you may get nasty surprises later in the development process.
-These stakeholders determine the extent and the level of detail of your work and its results.
-
-.Form
-Table with role names, person names, and their expectations with respect to the architecture and its documentation.
-****
-endif::arc42help[]
-
-[options="header",cols="1,2,2"]
+[options="header",cols="1,4,4"]
 |===
 |Role/Name|Contact|Expectations
-| _<Role-1>_ | _<Contact-1>_ | _<Expectation-1>_
-| _<Role-2>_ | _<Contact-2>_ | _<Expectation-2>_
+| **Micrati** (Client) | info@micrati.games 
+| 
+- A robust, integrated solution (Rust + TypeScript). + 
+- Strict adherence to the **YEN notation** standard. + 
+- A functional product that upholds the company's quality standards.
+| **Professors** | 
+Celia Melendi: melendicelia@uniovi.es +
+Jose Labra: labra@uniovi.es 
+| 
+- Transparency in technical decisions through **ADRs**. + 
+- High software quality standards (Testing & Observability). + 
+- Full traceability between requirements and implementation.
+| **Development Team** |  
+Juan Fernández López - uo296143@uniovi.es +
+
+Daniel López Fernández - uo289510@uniovi.es +
+
+Juan Losada Pérez - uo302850@uniovi.es +
+
+Pablo Pérez Saavedra - uo288816@uniovi.es +
+
+Mateo Rubio Zamarreño - uo300069@uniovi.es
+| 
+- A modular architecture that enables parallel development. + 
+- Clearly defined API contracts to avoid integration conflicts. + 
+- A stable CI/CD pipeline for automated deployment.
+| **End Users** (Players) | usuarios-yovi@micrati.es 
+| 
+- An attractive and fast web interface. + 
+- Reliable persistence of game stats and user profiles. + 
+- Challenging and fair AI opponents.
+| **Bot Developers** | api-support@micrati.es 
+| 
+- Exhaustive and clear API documentation (Swagger). + 
+- Stability in JSON data formats and low API latency.
 |===
