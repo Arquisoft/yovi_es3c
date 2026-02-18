@@ -1,8 +1,6 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-deployment-view]]
-
-
 == Deployment View
 
 ifdef::arc42help[]
@@ -10,91 +8,74 @@ ifdef::arc42help[]
 ****
 .Content
 The deployment view describes:
-
  1. technical infrastructure used to execute your system, with infrastructure elements like geographical locations, environments, computers, processors, channels and net topologies as well as other infrastructure elements and
-
 2. mapping of (software) building blocks to that infrastructure elements.
 
-Often systems are executed in different environments, e.g. development environment, test environment, production environment. In such cases you should document all relevant environments.
-
-Especially document a deployment view if your software is executed as distributed system with more than one computer, processor, server or container or when you design and construct your own hardware processors and chips.
-
-From a software perspective it is sufficient to capture only those elements of an infrastructure that are needed to show a deployment of your building blocks. Hardware architects can go beyond that and describe an infrastructure to any level of detail they need to capture.
-
 .Motivation
-Software does not run without hardware.
-This underlying infrastructure can and will influence a system and/or some
-cross-cutting concepts. Therefore, there is a need to know the infrastructure.
-
-.Form
-
-Maybe a highest level deployment diagram is already contained in section 3.2. as
-technical context with your own infrastructure as ONE black box. In this section one can
-zoom into this black box using additional deployment diagrams:
-
-* UML offers deployment diagrams to express that view. Use it, probably with nested diagrams,
-when your infrastructure is more complex.
-* When your (hardware) stakeholders prefer other kinds of diagrams rather than a deployment diagram, let them use any kind that is able to show nodes and channels of the infrastructure.
-
-
-.Further Information
-
-See https://docs.arc42.org/section-7/[Deployment View] in the arc42 documentation.
-
+Software does not run without hardware. This underlying infrastructure can and will influence a system and/or some cross-cutting concepts.
 ****
 endif::arc42help[]
 
-=== Infrastructure Level 1
+=== Infrastructure Level 1: Production Environment
 
 ifdef::arc42help[]
 [role="arc42help"]
 ****
-Describe (usually in a combination of diagrams, tables, and text):
-
-* distribution of a system to multiple locations, environments, computers, processors, .., as well as physical connections between them
-* important justifications or motivations for this deployment structure
-* quality and/or performance features of this infrastructure
-* mapping of software artifacts to elements of this infrastructure
-
-For multiple environments or alternative deployments please copy and adapt this section of arc42 for all relevant environments.
+Describe distribution of a system to multiple locations, environments, computers, processors, physical connections, justifications, and mapping of software artifacts.
 ****
 endif::arc42help[]
 
-_**<Overview Diagram>**_
+image::07_deployment.png[Infrastructure Level 1 Overview]
 
 Motivation::
-
-_<explanation in text form>_
+The system is deployed using a hybrid cloud strategy. The application logic is hosted on a **Virtual Machine in Microsoft Azure** running **Ubuntu Linux**, providing a scalable and reliable environment for Docker containerization. Persistence is decoupled via **MongoDB Atlas** to ensure data durability. This setup allows us to manage the technological heterogeneity (Node.js and Rust) while maintaining high availability.
 
 Quality and/or Performance Features::
-
-_<explanation in text form>_
+* **Scalability:** Azure allows for vertical scaling of the VM if the Rust engine or monitoring stack requires more resources.
+* **Reliability:** MongoDB Atlas provides a managed, replicated cluster that guarantees data persistence regardless of the VM state.
+* **Portability:** Using Docker on Ubuntu ensures that the entire stack can be replicated in any other cloud provider with minimal changes.
 
 Mapping of Building Blocks to Infrastructure::
-_<description of the mapping>_
+[cols="1,2,2", options="header"]
+|===
+| Building Block | Infrastructure Element | Description
+| **WebApp** | Azure VM (Docker Container) | Nginx server delivering the React bundle.
+| **Users Service** | Azure VM (Docker Container) | Node.js API for user management and business logic.
+| **GameY Engine** | Azure VM (Docker Container) | High-performance Rust engine for game logic.
+| **Monitoring** | Azure VM (Docker Container) | Prometheus and Grafana for system observability.
+| **Database** | MongoDB Atlas (Cloud) | Managed NoSQL storage for persistent data.
+|===
 
+---
 
-=== Infrastructure Level 2
+=== Infrastructure Level 2: Azure VM & Docker Network
 
 ifdef::arc42help[]
 [role="arc42help"]
 ****
-Here you can include the internal structure of (some) infrastructure elements from level 1.
-
-Please copy the structure from level 1 for each selected element.
+Here you can include the internal structure of infrastructure elements from level 1.
 ****
 endif::arc42help[]
 
-==== _<Infrastructure Element 1>_
+==== Application Host (Ubuntu Linux on Azure)
 
-_<diagram + explanation>_
+Inside the **Azure Virtual Machine**, all services are orchestrated via Docker Compose within a shared bridge network called `monitor-net`. This allows internal communication and metrics scraping using container names as DNS.
 
-==== _<Infrastructure Element 2>_
+**Execution Environments & Artifacts:**
 
-_<diagram + explanation>_
+* **Web Server Container:** An execution environment hosting the `WebApp` static files (HTML/JS/CSS) served by Nginx.
+* **Users Service Container:** An execution environment running the `Node.js` runtime for the Users API.
+* **GameY Engine Container:** A high-performance environment running the compiled `Rust` binary.
+* **Monitoring Engine (Prometheus):** A containerized artifact that scrapes metrics from the other services via `monitor-net`.
+* **Visualization Tool (Grafana):** A containerized artifact that queries Prometheus to display real-time dashboards, exposed on port `9091`.
 
-...
+==== Client Side (User Environment)
 
-==== _<Infrastructure Element n>_
+The user's browser acts as the primary execution environment for the React application. 
+1. **Bootstrap:** The browser requests the static bundle from the Azure VM (Port 80).
+2. **Execution:** Once downloaded, the logic runs on the client's device.
+3. **Communication:** The client makes direct asynchronous REST calls to the `Users` (Port 3000) and `GameY` (Port 4000) containers hosted in Azure.
 
-_<diagram + explanation>_
+==== Persistence (MongoDB Atlas)
+
+The `Users Service` connects to the **MongoDB Atlas** cluster via the MongoDB Wire Protocol. Access is secured through IP whitelisting (restricted to the Azure VM's public IP) and TLS encryption, ensuring that sensitive user data is handled securely outside the main application host.
