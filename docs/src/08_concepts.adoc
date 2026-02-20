@@ -7,7 +7,7 @@ To better understand how the application works as a whole, it is useful to highl
 
 * Domain Concepts
 * User Experience (UX)
-* Operation Concepts
+* Safety and security concepts
 * Architecture and Design Patterns
 * Development Concepts
 
@@ -35,7 +35,11 @@ The domain of the YOVI platform is centered around the representation and manage
 
 Together, these domain concepts define the core structure of the YOVI ecosystem. 
 
+=== User Experience (UX)
 
+The user experience design for the YOVI Web application is still in progress.
+
+=== Safety and security concepts
 
 ifdef::arc42help[]
 [role="arc42help"]
@@ -90,18 +94,3 @@ See https://docs.arc42.org/section-8/[Concepts] in the arc42 documentation.
 ****
 endif::arc42help[]
 
-=== _<Concept 1>_
-
-_<explanation>_
-
-
-
-=== _<Concept 2>_
-
-_<explanation>_
-
-...
-
-=== _<Concept n>_
-
-_<explanation>_
