@@ -3,6 +3,39 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-concepts]]
 == Cross-cutting Concepts
 
+To better understand how the application works as a whole, it is useful to highlight a set of transversal concepts that influence different parts of the system. These ideas can be grouped into the following categories:
+
+* Domain Concepts
+* User Experience (UX)
+* Operation Concepts
+* Architecture and Design Patterns
+* Development Concepts
+
+The following sections describe each of these categories in detail.
+
+
+=== Domain Concepts
+
+The domain of the YOVI platform is centered around the representation and management of games based on the Y game family. To support both human players and automated agents, the system defines several core concepts that structure how matches are created, played, validated, and interpreted.
+
+* **User**  
+  Represents a human player interacting with the Web application. A user can start new games, make moves, and access game-related information. 
+
+* **Game**  
+  A game models an active or completed match of a Y‑based game. It includes the current board state, the sequence of moves, and the rules that determine valid actions. The Web application manages game creation, updates, and persistence, while delegating rule validation to the Rust module.
+
+* **YEN Notation**  
+  The platform uses the YEN notation to encode game states and moves in JSON format. This notation provides a standardized way to represent a match, ensuring that both the Web application and the Rust module interpret the game consistently. 
+
+* **Bot Interaction Entities**  
+  The Web application exposes an external API that allows bots to participate in games. Bots receive the current game state and respond with their chosen move.
+
+* **Rule Evaluation and Move Suggestion (Rust Module)**  
+  The Rust subsystem encapsulates the logic for determining whether a game has been won and for suggesting the next optimal move. 
+
+Together, these domain concepts define the core structure of the YOVI ecosystem. 
+
+
 
 ifdef::arc42help[]
 [role="arc42help"]
