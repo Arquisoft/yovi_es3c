@@ -52,6 +52,7 @@ This level illustrates the structural decomposition of the system into its three
 
 ==== White Box 
 
+[plantuml, level1-overview, png]
 ----
 
 @startuml
