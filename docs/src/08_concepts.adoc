@@ -9,7 +9,7 @@ To better understand how the application works as a whole, it is useful to highl
 * User Experience (UX)
 * Safety and security concepts
 * Architecture and design patterns
-* development concepts
+* Development concepts
 
 The following sections describe each of these categories in detail.
 
@@ -71,8 +71,17 @@ All game information is encoded using YEN notation, which provides a standardize
 These architectural principles provide a solid foundation for the YOVI platform, ensuring that the system remains flexible, scalable, and easily evolves as new game variants or features are introduced.
 
 
-=== 
+=== Development concepts
 
+=== Development Concepts
+
+The development process of the YOVI platform follows a set of practices intended to ensure code quality and smooth collaboration among team members.
+
+* **Testing Strategy**  
+  The project includes automated tests at different levels.
+
+* **Continuous Integration and Continuous Deployment (CI/CD)**  
+  The codebase is maintained under a continuous integration workflow. Team members commit changes frequently, allowing automated pipelines to run tests and detect issues early.
 
 
 ifdef::arc42help[]
