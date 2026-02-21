@@ -1,4 +1,5 @@
 import './App.css'
+import GameyBotTest from './GameyBotTest';
 import RegisterForm from './RegisterForm';
 import reactLogo from './assets/react.svg'
 
@@ -16,6 +17,7 @@ function App() {
 
       <h2>Welcome to the Software Arquitecture 2025-2026 course</h2>
       <RegisterForm />
+      <GameyBotTest />
     </div>
   );
 }

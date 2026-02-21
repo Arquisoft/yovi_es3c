@@ -25,6 +25,7 @@ pub mod state;
 pub mod version;
 use axum::response::IntoResponse;
 use std::sync::Arc;
+use tower_http::cors::CorsLayer;
 pub use choose::MoveResponse;
 pub use error::ErrorResponse;
 pub use version::*;
@@ -65,7 +66,10 @@ pub fn create_default_state() -> AppState {
 /// - The server encounters an error while running
 pub async fn run_bot_server(port: u16) -> Result<(), GameYError> {
     let state = create_default_state();
-    let app = create_router(state);
+    let app = create_router(state)
+        // CORS habilitado de forma que el navegador no bloquea 
+        // las peticiones cross-origin por seguridad
+        .layer(CorsLayer::permissive());
 
     let addr = format!("0.0.0.0:{}", port);
     let listener = tokio::net::TcpListener::bind(&addr)
