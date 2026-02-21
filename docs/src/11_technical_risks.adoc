@@ -1,27 +1,48 @@
-ifndef::imagesdir[:imagesdir: ../images]
-
 [[section-technical-risks]]
-== Risks and Technical Debts
+== Risks and Technical Debt
 
+This section describes the technical risks and the intentional (or unintentional) technical debt identified during the development of the YOVI system.
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-A list of identified technical risks or technical debts, ordered by priority
+=== 11.1. Risks
 
-.Motivation
-“Risk management is project management for grown-ups” (Tim Lister, Atlantic Systems Guild.) 
+[cols="1,2,1"]
+|===
+| Risk | Description | Priority
 
-This should be your motto for systematic detection and evaluation of risks and technical debts in the architecture, which will be needed by management stakeholders (e.g. project managers, product owners) as part of the overall risk analysis and measurement planning.
+| **Rust/TS Integration**
+| Potential communication failures or performance bottlenecks in the YEN notation exchange between the TypeScript Backend and the Rust Module.
+| High
 
-.Form
-List of risks and/or technical debts, probably including suggested measures to minimize, mitigate or avoid risks or reduce technical debts.
+| **Security and API Protection**
+| Risks of unauthorized access to the game history or the bot-exclusive API if API keys and authentication mechanisms are not properly secured.
+| High
 
+| **Performance and Scalability**
+| The system's ability to handle multiple simultaneous games could be compromised if the Rust calculation engine is not optimized or if the API bridge blocks threads.
+| High
 
-.Further Information
+| **Infrastructure Dependency (Azure)**
+| Total reliance on Microsoft Azure for the production environment. Any service outage directly impacts the availability of the game for both users and bots.
+| Medium
 
-See https://docs.arc42.org/section-11/[Risks and Technical Debt] in the arc42 documentation.
+| **Lack of prior collaboration within the team**
+| Since the team has not worked together before, there is a risk of inefficiencies in coordination. Establishing clear communication channels and regularly updating each other on progress will mitigate this issue.
+| Medium
 
-****
-endif::arc42help[]
+| **Lack of Integration Testing**
+| Insufficient testing of the full cycle (Frontend -> Backend -> Rust -> DB) could lead to undetected bugs in the game state transitions.
+| Medium
+|===
+
+=== 11.2. Technical Debt
+
+[cols="1,2"]
+|===
+| Technical Debt | Description
+
+| **Learning Curve: Rust Expertise**
+| The development team has limited prior experience with Rust. This may result in suboptimal memory management or non-idiomatic code that will require future refactoring.
+| **Incomplete Documentation**
+| As the project is still in an active development phase, some sections of the arc42 documentation and code comments are not yet fully completed or updated.
+| **Code Refactoring**
+| Early architectural decisions focused on achieving a functional prototype (MVP) might need to be refactored to improve maintainability and legibility.
