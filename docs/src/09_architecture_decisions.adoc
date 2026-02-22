@@ -1,7 +1,7 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-design-decisions]]
-== Decisiones Arquitectónicas
+== Architecture Decisions
 
 
 ifdef::arc42help[]
@@ -35,3 +35,75 @@ There you will find links and examples about ADR.
 
 ****
 endif::arc42help[]
+
+The architectural decisions documented in this section complement the solution strategy described in Section 4. While the solution strategy outlines the main technologies and constraints inherited from the project skeleton, this section focuses on the reasoning behind the most relevant structural and organizational choices made during the early stages of the project.
+
+Since the system is still in an initial development phase, the decisions captured here may evolve as the project grows. Their purpose is to provide clarity, traceability, and a shared understanding of the architectural direction.
+
+=== Use of technologies provided with the project skeleton
+
+==== Context  
+The project is based on a predefined skeleton that includes Rust for the game engine, Node.js/Express for the user service, and Vite/React for the web application.
+
+==== Decision  
+Adopt the technologies already provided by the skeleton as the baseline for all components.
+
+==== Rationale
+
+Ensures consistency with the course requirements.
+
+Reduces setup time and avoids unnecessary re‑evaluation of the technology stack.
+
+Allows the team to focus on architectural design rather than tool selection.
+
+==== Consequences
+
+Limits the freedom to choose alternative frameworks or languages.
+
+Requires the team to adapt to the constraints imposed by the skeleton.
+
+
+=== Adoption of MongoDB as the project's database.
+
+==== Context  
+The project requires persistent storage for user login information and game scores.
+
+==== Decision  
+Use MongoDB as the primary database for the system.
+
+==== Rationale
+
+Easy to use and integrate with Node.js.
+
+Widely used among peers, facilitating knowledge sharing.
+
+Flexible schema suitable for early‑stage academic projects.
+
+==== Consequences
+
+Requires maintaining a separate database service in the deployment environment.
+
+May require schema validation mechanisms if the project grows in complexity.
+
+=== Service-oriented separation of responsibilities
+
+==== Context  
+The system consists of three components with distinct roles: frontend, user service, and game engine.
+
+==== Decision  
+Maintain a clear separation of concerns by treating each component as an independent service with its own responsibilities and lifecycle.
+
+==== Rationale
+
+Improves modularity and maintainability.
+
+Allows each component to evolve independently.
+
+Aligns with the educational goal of exposing students to distributed architectures.
+
+==== Consequences
+
+Introduces the need for well‑defined communication interfaces.
+
+Increases operational complexity compared to a monolithic approach.
+
