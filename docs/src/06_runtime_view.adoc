@@ -3,65 +3,27 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-runtime-view]]
 == Runtime View
 
+The runtime view describes the dynamic behavior and interactions of the YOVI system's building blocks. Interaction with YOVI is centered around game turns, external API access, rust computing, and data persistence.
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-The runtime view describes concrete behavior and interactions of the system’s building blocks in form of scenarios from the following areas:
+I have identified two primary use cases where the runtime view is architecturally significant to demonstrate the coordination between the TypeScript Web App and the Rust Module: human user interaction and automated bot interaction.
 
-* important use cases or features: how do building blocks execute them?
-* interactions at critical external interfaces: how do building blocks cooperate with users and neighboring systems?
-* operation and administration: launch, start-up, stop
-* error and exception scenarios
+=== 6.1. Human Player Game (Web UI)
 
-Remark: The main criterion for the choice of possible scenarios (sequences, workflows) is their *architectural relevance*. It is *not* important to describe a large number of scenarios. You should rather document a representative selection.
+This scenario shows how a valid user interacts with the application to play a match. The sequence includes authentication, game logic processing, and persistent storage of results.
 
-.Motivation
-You should understand how (instances of) building blocks of your system perform their job and communicate at runtime.
-You will mainly capture scenarios in your documentation to communicate your architecture to stakeholders that are less willing or able to read and understand the static models (building block view, deployment view).
+image::User_use_case.drawio.svg[User Interaction Sequence]
 
-.Form
-There are many notations for describing scenarios, e.g.
-
-* numbered list of steps (in natural language)
-* activity diagrams or flow charts
-* sequence diagrams
-* BPMN or EPCs (event process chains)
-* state machines
-* ...
+In essence the system supports three core user interactions: account registration and authentication, playing matches against an AI opponent (bot), and reviewing personal game history and statistics.
 
 
-.Further Information
+=== 6.2. Bot Interaction (External API)
 
-See https://docs.arc42.org/section-6/[Runtime View] in the arc42 documentation.
+The second use case focuses on how an external app or bot interacts with the system via the API "play" method, which is a core requirement for interoperability.
 
-****
-endif::arc42help[]
+image::Bot_use_case.drawio.svg[User Interaction Sequence]
 
-=== <Runtime Scenario 1>
-
-
-* _<insert runtime diagram or textual description of the scenario>_
-* _<insert description of the notable aspects of the interactions between the
-building block instances depicted in this diagram.>_
-
-It is possible to use a sequence diagram:
-
-[plantuml,"Sequence diagram",png]
-----
-actor Alice
-actor Bob
-database Pod as "Bob's Pod"
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
-Alice  --> Pod: Store route
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
-----
-
-=== <Runtime Scenario 2>
-
-=== ...
-
-=== <Runtime Scenario n>
+1. [cite_start]**API Request:** The bot sends a JSON message to the `/play` endpoint containing a board position in **YEN notation**.
+2. **Authorization:** The Web App validates if the API key is valid.
+3. **Stateless Computation:** The Web App forwards the YEN data to the Rust Module.
+4. **Logic Return:** The Rust Module suggests the next movement based on the requested strategy and say it to the WebApp.
+5. **API Response:** The Web App returns the calculated movement directly to the bot in YEN format.
