@@ -22,7 +22,7 @@ function App() {
         </a>
       </div>
 
-      <h2>Welcome to the Software Arquitecture 2025-2026 course</h2>
+      <h2>Yovi grupo 3c</h2>
 
       {currentScreen == "AUTHENTICATION" && (
         <AuthScreen 
