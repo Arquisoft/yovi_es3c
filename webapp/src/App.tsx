@@ -1,9 +1,15 @@
 import './App.css'
-import GameyBotTest from './GameyBotTest';
-import RegisterForm from './RegisterForm';
+import { useState } from 'react';
+import AuthScreen from './screens/authentication/AuthScreen';
 import reactLogo from './assets/react.svg'
 
 function App() {
+
+  // Estado de la aplicación (Ventana) -> Autenticación, Menú o Juego.
+  const [currentScreen, setCurrentScreen] = useState("Authentication"); // Pantalla inicial
+  // Usuario actual de la app.
+  const [user, setUser] = useState(null);
+
   return (
     <div className="App">
       <div>
@@ -16,8 +22,11 @@ function App() {
       </div>
 
       <h2>Welcome to the Software Arquitecture 2025-2026 course</h2>
-      <RegisterForm />
-      <GameyBotTest />
+
+      {currentScreen == "Authentication" && (
+        <AuthScreen setCurrentScreen={setCurrentScreen}></AuthScreen>
+      )}
+
     </div>
   );
 }
