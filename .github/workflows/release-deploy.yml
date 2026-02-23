@@ -10,6 +10,7 @@ permissions:
 
 env:
   IMAGE_TAG: ${{ github.event.release.tag_name }}
+  MONGO_URL: ${{ secrets.MONGO_URL }}
 
 jobs:
   test-node:
@@ -154,5 +155,6 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           command: |
             wget https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ github.event.repository.name }}/master/docker-compose.yml -O docker-compose.yml
+            echo "MONGO_URL=${{ secrets.MONGO_URL }}" > .env
             docker compose down
             docker compose up -d --pull always

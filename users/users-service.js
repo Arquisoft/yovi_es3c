@@ -6,7 +6,6 @@ const fs = require('node:fs');
 const YAML = require('js-yaml');
 const promBundle = require('express-prom-bundle');
 const mongoose = require('mongoose');
-require('dotenv').config();
 const bcrypt = require('bcryptjs');
 
 // Modelo de usuario
