@@ -1,0 +1,1 @@
+export type AppScreen = "AUTHENTICATION" | "MENU" | "GAME";

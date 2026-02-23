@@ -1,12 +1,13 @@
 import './App.css'
 import { useState } from 'react';
+import type { AppScreen } from './AppScreen';
 import AuthScreen from './screens/authentication/AuthScreen';
 import reactLogo from './assets/react.svg'
 
 function App() {
 
   // Estado de la aplicación (Ventana) -> Autenticación, Menú o Juego.
-  const [currentScreen, setCurrentScreen] = useState("Authentication"); // Pantalla inicial
+  const [currentScreen, setCurrentScreen] = useState<AppScreen>("AUTHENTICATION"); // Pantalla inicial
   // Usuario actual de la app.
   const [user, setUser] = useState(null);
 
@@ -23,8 +24,16 @@ function App() {
 
       <h2>Welcome to the Software Arquitecture 2025-2026 course</h2>
 
-      {currentScreen == "Authentication" && (
+      {currentScreen == "AUTHENTICATION" && (
         <AuthScreen setCurrentScreen={setCurrentScreen}></AuthScreen>
+      )}
+      
+      {currentScreen == "MENU" && (
+        <>
+          <h3>Menu de prueba</h3>
+          <p>{`Bienvenido ${user}`}</p>
+          <p>En desarrollo</p>
+        </>
       )}
 
     </div>
