@@ -7,7 +7,7 @@ The runtime view describes the dynamic behavior and interactions of the YOVI sys
 
 I have identified two primary use cases where the runtime view is architecturally significant to demonstrate the coordination between the TypeScript Web App and the Rust Module: human user interaction and automated bot interaction.
 
-=== 6.1. Human Player Game (Web UI)
+=== Human Player Game (Web UI)
 
 This scenario shows how a valid user interacts with the application to play a match. The sequence includes authentication, game logic processing, and persistent storage of results.
 
@@ -16,7 +16,7 @@ image::User_use_case.drawio.svg[User Interaction Sequence]
 In essence the system supports three core user interactions: account registration and authentication, playing matches against an AI opponent (bot), and reviewing personal game history and statistics.
 
 
-=== 6.2. Bot Interaction (External API)
+=== Bot Interaction (External API)
 
 The second use case focuses on how an external app or bot interacts with the system via the API "play" method, which is a core requirement for interoperability.
 
