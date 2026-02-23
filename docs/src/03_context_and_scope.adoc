@@ -84,4 +84,3 @@ image::03_TechnicalContext.png["Technical Context Diagram",width=600]
 * MongoDB: database used by the WebApp and internal services to store persistent information.
 
 
-**<Mapping Input/Output to Channels>**
