@@ -1,25 +1,55 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import RegisterForm from "./RegisterForm";
+import type { AppScreen } from '../../AppScreen';
 
-// Definimos qué props acepta el componente
 interface AuthScreenProps {
-  setCurrentScreen: (screen: string) => void;
+  setCurrentScreen: (screen: AppScreen) => void;
+  setUser: (user: string) => void;
 }
 
-const AuthScreen: React.FC<AuthScreenProps> = ({setCurrentScreen}) => {
+const AuthScreen: React.FC<AuthScreenProps> = ({setCurrentScreen, setUser}) => {
 
-    // Login o Registro
-    const [authMethod, setAuthMethod] = useState<string>('register'); // Ahora por defecto será registro, en un futuro login
+  const [authMethod, setAuthMethod] = useState<'register' | 'login'>('login');
 
-    return (
-        <div className="authentication">
+  const onSuccess = (user: string) => {
+      setUser(user);
+      setCurrentScreen("MENU");
+  }
 
-            {authMethod == 'register' && (
-              <RegisterForm></RegisterForm>
-            )}
-            
-        </div>
-    );
+  const toggleAuth = () => {
+    setAuthMethod(authMethod === 'register' ? 'login' : 'register');
+  }
+
+  return (
+      <div className="authentication">
+          {authMethod === 'login' && (
+            <>
+              <h3>Iniciar sesión</h3>
+                <p>En desarrollo</p>
+              <div>
+                <p>¿No tienes cuenta?</p>
+                <button onClick={toggleAuth} className="link-button">
+                  Crea una aquí
+                </button>
+              </div>
+            </>
+          )}
+
+          {authMethod === 'register' && (
+            <>
+              <h3>Registro</h3>
+              <RegisterForm onSuccess={onSuccess}></RegisterForm>
+              <div>
+                <p>¿Ya tienes una cuenta?</p>
+                <button onClick={toggleAuth} className="link-button">
+                  Inicia sesión aquí
+                </button>
+              </div>
+            </>
+          )}
+
+      </div>
+  );
 }
 
 export default AuthScreen;

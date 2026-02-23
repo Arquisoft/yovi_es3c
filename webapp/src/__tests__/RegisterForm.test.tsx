@@ -1,6 +1,6 @@
 import { render, screen,  waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import RegisterForm from '../RegisterForm'
+import RegisterForm from '../screens/authentication/RegisterForm'
 import { afterEach, describe, expect, test, vi } from 'vitest' 
 import '@testing-library/jest-dom'
 
@@ -11,7 +11,7 @@ describe('RegisterForm', () => {
   })
 
   test('shows validation error when username is empty', async () => {
-    render(<RegisterForm />)
+    render(<RegisterForm onSuccess={()=>{}} />)
     const user = userEvent.setup()
 
     await waitFor(async () => {
@@ -29,7 +29,7 @@ describe('RegisterForm', () => {
       json: async () => ({ message: 'Hello Pablo! Welcome to the course!' }),
     } as Response)
 
-    render(<RegisterForm />)
+    render(<RegisterForm onSuccess={()=>{}}/>)
 
     // Wrap interaction + assertion inside waitFor
     await waitFor(async () => {

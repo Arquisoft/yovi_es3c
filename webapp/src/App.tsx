@@ -9,7 +9,7 @@ function App() {
   // Estado de la aplicación (Ventana) -> Autenticación, Menú o Juego.
   const [currentScreen, setCurrentScreen] = useState<AppScreen>("AUTHENTICATION"); // Pantalla inicial
   // Usuario actual de la app.
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<string | null>(null);
 
   return (
     <div className="App">
@@ -25,7 +25,10 @@ function App() {
       <h2>Welcome to the Software Arquitecture 2025-2026 course</h2>
 
       {currentScreen == "AUTHENTICATION" && (
-        <AuthScreen setCurrentScreen={setCurrentScreen}></AuthScreen>
+        <AuthScreen 
+          setCurrentScreen={setCurrentScreen}
+          setUser={setUser}
+        ></AuthScreen>
       )}
       
       {currentScreen == "MENU" && (
