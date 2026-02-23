@@ -3,7 +3,7 @@
 
 This section describes the technical risks and the intentional (or unintentional) technical debt identified during the development of the YOVI system.
 
-=== 11.1. Risks
+=== Risks
 
 [cols="1,2,1"]
 |===
@@ -34,7 +34,7 @@ This section describes the technical risks and the intentional (or unintentional
 | Medium
 |===
 
-=== 11.2. Technical Debt
+=== Technical Debt
 
 [cols="1,2"]
 |===
