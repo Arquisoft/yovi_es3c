@@ -7,6 +7,7 @@ const YAML = require('js-yaml');
 const promBundle = require('express-prom-bundle');
 const mongoose = require('mongoose');
 require('dotenv').config();
+const bcrypt = require('bcryptjs');
 
 // Modelo de usuario
 const User = require('./models/User'); 
@@ -48,22 +49,31 @@ app.post('/createuser', async (req, res) => {
   const { username, password, confirmPassword } = req.body;
 
   try {
+    
+    // Comprobacion de los campos
     if (!username || !password || !confirmPassword) {
       return res.status(400).json({ error: "Todos los campos son obligatorios" });
     }
 
+    // Las contraseñas coinciden
     if (password !== confirmPassword) {
       return res.status(400).json({ error: "Las contraseñas no coinciden" });
     }
 
+    // Comprobamos si el usuario existe
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(409).json({ error: "El nombre de usuario ya está en uso" });
     }
 
+    // Hasheamos la contraseña
+    const salt = await bcrypt.genSalt(10);  // 10 rondas de sal para fortalecer el hash
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Creamos y guardamos el usuario
     const newUser = new User({
       username,
-      password: password //
+      password: hashedPassword 
     });
 
     await newUser.save();
