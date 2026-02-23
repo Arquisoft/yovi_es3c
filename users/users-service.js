@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3000;
+const port = 3000; 
 const swaggerUi = require('swagger-ui-express');
 const fs = require('node:fs');
 const YAML = require('js-yaml');
@@ -8,16 +8,31 @@ const promBundle = require('express-prom-bundle');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+// Modelo de usuario
+const User = require('./models/User'); 
+
+// CONEXIÓN A MONGODB ATLAS
+const mongoUri = process.env.MONGO_URL;
+if (!mongoUri) {
+  console.error("ERROR: No se encuentra la variable MONGO_URI en el archivo .env");
+} else {
+  mongoose.connect(mongoUri)
+    .then(() => console.log("Conectado con éxito a MongoDB Atlas"))
+    .catch(err => console.error("Error al conectar a MongoDB:", err));
+}
+
 const metricsMiddleware = promBundle({includeMethod: true});
 app.use(metricsMiddleware);
 
+// Configuración de Swagger
 try {
   const swaggerDocument = YAML.load(fs.readFileSync('./openapi.yaml', 'utf8'));
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 } catch (e) {
-  console.log(e);
+  console.log("Error cargando Swagger:", e);
 }
 
+// Middleware CORS
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
@@ -28,12 +43,11 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+// Endpoint de creación de usuario
 app.post('/createuser', async (req, res) => {
-  // Parámetros
   const { username, password, confirmPassword } = req.body;
 
   try {
-    // 1. Validaciones de Negocio (Capa de Integridad)
     if (!username || !password || !confirmPassword) {
       return res.status(400).json({ error: "Todos los campos son obligatorios" });
     }
@@ -42,28 +56,33 @@ app.post('/createuser', async (req, res) => {
       return res.status(400).json({ error: "Las contraseñas no coinciden" });
     }
 
-    // 2. Comprobar si el usuario ya existe 
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(409).json({ error: "El nombre de usuario ya está en uso" });
+    }
 
-    // 3. Seguridad: Hashear la contraseña
+    const newUser = new User({
+      username,
+      password: password //
+    });
 
-    // 4. Almacenamiento
+    await newUser.save();
 
-    // 5. Respuesta (Sin devolver la contraseña por seguridad)
     res.status(201).json({ 
       message: `Usuario ${username} creado con éxito`,
       username: username
     });
 
   } catch (err) {
+    console.error("Error en POST /createuser:", err);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
-
 if (require.main === module) {
   app.listen(port, () => {
-    console.log(`User Service listening at http://localhost:${port}`)
+    console.log(`User Service escuchando en http://localhost:${port}`)
   })
 }
 
-module.exports = app
+module.exports = app;
