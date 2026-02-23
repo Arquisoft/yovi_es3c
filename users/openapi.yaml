@@ -2,12 +2,12 @@ openapi: 3.0.0
 info:
   title: User Service API
   version: 1.0.0
-  description: API for managing users
+  description: API for managing users with MongoDB
 paths:
   /createuser:
     post:
       summary: Creates a new user
-      description: Creates a new user with the given username.
+      description: Stores a new user in MongoDB Atlas.
       requestBody:
         required: true
         content:
@@ -16,12 +16,20 @@ paths:
               type: object
               required:
                 - username
+                - password
+                - confirmPassword
               properties:
                 username:
                   type: string
                   example: "testuser"
+                password:
+                  type: string
+                  example: "mysecurepass"
+                confirmPassword:
+                  type: string
+                  example: "mysecurepass"
       responses:
-        '200':
+        '201':
           description: User created successfully
           content:
             application/json:
@@ -30,6 +38,9 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Hello testuser! welcome to the course!"
+                  username:
+                    type: string
         '400':
-          description: Error creating user
+          description: Validation error (missing fields or password mismatch)
+        '409':
+          description: Conflict (Username already exists)

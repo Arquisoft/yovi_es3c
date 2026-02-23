@@ -5,6 +5,8 @@ const swaggerUi = require('swagger-ui-express');
 const fs = require('node:fs');
 const YAML = require('js-yaml');
 const promBundle = require('express-prom-bundle');
+const mongoose = require('mongoose');
+require('dotenv').config();
 
 const metricsMiddleware = promBundle({includeMethod: true});
 app.use(metricsMiddleware);
@@ -27,15 +29,33 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 app.post('/createuser', async (req, res) => {
-  const username = req.body && req.body.username;
-  try {
-    // Simulate a 1 second delay to mimic processing/network latency
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  // Parámetros
+  const { username, password, confirmPassword } = req.body;
 
-    const message = `Hello ${username}! welcome to the course!`;
-    res.json({ message });
+  try {
+    // 1. Validaciones de Negocio (Capa de Integridad)
+    if (!username || !password || !confirmPassword) {
+      return res.status(400).json({ error: "Todos los campos son obligatorios" });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ error: "Las contraseñas no coinciden" });
+    }
+
+    // 2. Comprobar si el usuario ya existe 
+
+    // 3. Seguridad: Hashear la contraseña
+
+    // 4. Almacenamiento
+
+    // 5. Respuesta (Sin devolver la contraseña por seguridad)
+    res.status(201).json({ 
+      message: `Usuario ${username} creado con éxito`,
+      username: username
+    });
+
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 

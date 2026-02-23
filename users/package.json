@@ -1,8 +1,8 @@
 {
   "name": "users",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "User microservice for the course",
+  "main": "users-service.js",
   "scripts": {
     "start": "node users-service.js",
     "test": "vitest",
@@ -11,9 +11,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.4.1",
     "express": "^5.2.1",
     "express-prom-bundle": "^8.0.0",
     "js-yaml": "^4.1.0",
+    "mongoose": "^8.2.0",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
