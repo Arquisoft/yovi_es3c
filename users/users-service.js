@@ -56,13 +56,18 @@ app.post('/createuser', async (req, res) => {
       return res.status(400).json({ error: "Todos los campos son obligatorios" });
     }
 
+    // Comprobación para asegurarnos que los datos son strings
+    if (typeof username !== 'string' || typeof password !== 'string' || typeof confirmPassword !=='string') {
+     return res.status(400).json({ error: "Datos de entrada inválidos" });
+   }
+
     // Las contraseñas coinciden
     if (password !== confirmPassword) {
       return res.status(400).json({ error: "Las contraseñas no coinciden" });
     }
 
     // Comprobamos si el usuario existe
-    const existingUser = await User.findOne({ username });
+    const existingUser = await User.findOne({ username: { $eq: username } });
     if (existingUser) {
       return res.status(409).json({ error: "El nombre de usuario ya está en uso" });
     }
