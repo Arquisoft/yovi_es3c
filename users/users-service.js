@@ -15,13 +15,9 @@ const User = require('./models/User');
 
 // CONEXIÓN A MONGODB ATLAS
 const mongoUri = process.env.MONGO_URL;
-if (!mongoUri) {
-  console.error("ERROR: No se encuentra la variable MONGO_URL en el archivo .env");
-} else {
-  mongoose.connect(mongoUri)
-    .then(() => console.log("Conectado con éxito a MongoDB Atlas"))
-    .catch(err => console.error("Error al conectar a MongoDB:", err));
-}
+mongoose.connect(mongoUri)
+  .then(() => console.log("Conectado con éxito a MongoDB Atlas"))
+  .catch(err => console.error("Error al conectar a MongoDB:", err));
 
 const metricsMiddleware = promBundle({includeMethod: true});
 app.use(metricsMiddleware);
@@ -50,7 +46,7 @@ app.post('/createuser', async (req, res) => {
   const { username, password, confirmPassword } = req.body;
 
   try {
-    
+
     // Comprobacion de los campos
     if (!username || !password || !confirmPassword) {
       return res.status(400).json({ error: "Todos los campos son obligatorios" });
@@ -58,16 +54,20 @@ app.post('/createuser', async (req, res) => {
 
     // Comprobación para asegurarnos que los datos son strings
     if (typeof username !== 'string' || typeof password !== 'string' || typeof confirmPassword !=='string') {
-     return res.status(400).json({ error: "Datos de entrada inválidos" });
-   }
+      return res.status(400).json({ error: "Datos de entrada inválidos" });
+    }
 
     // Las contraseñas coinciden
     if (password !== confirmPassword) {
       return res.status(400).json({ error: "Las contraseñas no coinciden" });
     }
 
+    // Antes de empezar introducir el username a la bbdd, los sanitizamos
+    const sanitazedUsername = String(username).trim();
+    
+
     // Comprobamos si el usuario existe
-    const existingUser = await User.findOne({ username: { $eq: username } });
+    const existingUser = await User.findOne({ username: { $eq: sanitazedUsername } });
     if (existingUser) {
       return res.status(409).json({ error: "El nombre de usuario ya está en uso" });
     }
@@ -78,7 +78,7 @@ app.post('/createuser', async (req, res) => {
 
     // Creamos y guardamos el usuario
     const newUser = new User({
-      username,
+      username: sanitazedUsername,
       password: hashedPassword 
     });
 
@@ -86,12 +86,12 @@ app.post('/createuser', async (req, res) => {
 
     res.status(201).json({ 
       message: `Usuario creado con éxito`,
-      username: username
+      username
     });
 
   } catch (err) {
-    console.error("Error en POST /createuser:", err);
-    res.status(500).json({ error: "Error interno del servidor" });
+      console.error("Error en POST /createuser:", err);
+      res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 

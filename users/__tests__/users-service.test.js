@@ -79,4 +79,42 @@ describe('POST /createuser', () => {
             expect(res.body.error).toBe('Todos los campos son obligatorios');
         });
     });
+
+    // --- CASO 5: INTENTO DE INYECCIÓN NOSQL ---
+    it('debería rechazar un intento de inyección NoSQL (400)', async () => {
+        // Un atacante intenta enviar un objeto con un operador de MongoDB ($ne: "not equal")
+        // para intentar saltarse la validación o descubrir usuarios.
+        const res = await request(app)
+            .post('/createuser')
+            .send({ 
+                username: { $ne: null }, 
+                password: '123', 
+                confirmPassword: '123' 
+            });
+
+        // Gracias a tu validación 'typeof !== string', esto debería devolver 400
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe('Datos de entrada inválidos');
+        
+        // Verificamos que NI SIQUIERA se llamó a la base de datos
+        const findOneSpy = vi.spyOn(User, 'findOne');
+        expect(findOneSpy).not.toHaveBeenCalled();
+    });
+
+    // --- CASO 6: ERROR INTERNO  ---
+    it('debería devolver 500 si la base de datos falla inesperadamente', async () => {
+        // Forzamos un error real que caiga en el bloque 'catch'
+        vi.spyOn(User, 'findOne').mockRejectedValue(new Error('Fallo crítico de conexión'));
+
+        const res = await request(app)
+            .post('/createuser')
+            .send({ 
+                username: 'Pablo', 
+                password: '123', 
+                confirmPassword: '123' 
+            });
+
+        expect(res.status).toBe(500);
+        expect(res.body.error).toBe('Error interno del servidor');
+    });
 });
