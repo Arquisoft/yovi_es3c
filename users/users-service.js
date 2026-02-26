@@ -7,7 +7,7 @@ const YAML = require('js-yaml');
 const promBundle = require('express-prom-bundle');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
 dotenv.config();
 
 // Modelo de usuario
