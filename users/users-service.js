@@ -63,11 +63,12 @@ app.post('/createuser', async (req, res) => {
     }
 
     // Antes de empezar introducir el username a la bbdd, los sanitizamos
-    const sanitazedUsername = String(username).trim();
-    
+    const sanitizedUsername = String(username || '')
+        .trim()
+        .replace(/[^\w\s@.-]/gi, ''); // Solo permite letras, números, @, puntos y guiones    
 
     // Comprobamos si el usuario existe
-    const existingUser = await User.findOne({ username: { $eq: sanitazedUsername } });
+    const existingUser = await User.findOne({ username: { $eq: sanitizedUsername } });
     if (existingUser) {
       return res.status(409).json({ error: "El nombre de usuario ya está en uso" });
     }
@@ -78,7 +79,7 @@ app.post('/createuser', async (req, res) => {
 
     // Creamos y guardamos el usuario
     const newUser = new User({
-      username: sanitazedUsername,
+      username: sanitizedUsername,
       password: hashedPassword 
     });
 
