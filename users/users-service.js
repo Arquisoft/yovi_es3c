@@ -7,6 +7,8 @@ const YAML = require('js-yaml');
 const promBundle = require('express-prom-bundle');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Modelo de usuario
 const User = require('./models/User'); 
@@ -14,7 +16,7 @@ const User = require('./models/User');
 // CONEXIÓN A MONGODB ATLAS
 const mongoUri = process.env.MONGO_URL;
 if (!mongoUri) {
-  console.error("ERROR: No se encuentra la variable MONGO_URI en el archivo .env");
+  console.error("ERROR: No se encuentra la variable MONGO_URL en el archivo .env");
 } else {
   mongoose.connect(mongoUri)
     .then(() => console.log("Conectado con éxito a MongoDB Atlas"))
@@ -78,7 +80,7 @@ app.post('/createuser', async (req, res) => {
     await newUser.save();
 
     res.status(201).json({ 
-      message: `Usuario ${username} creado con éxito`,
+      message: `Usuario creado con éxito`,
       username: username
     });
 
