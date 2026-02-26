@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type { AppScreen } from './AppScreen';
 import AuthScreen from './screens/authentication/AuthScreen';
 import reactLogo from './assets/react.svg'
+import GameyBotTest from './GameyBotTest';
 
 function App() {
 
@@ -38,6 +39,8 @@ function App() {
           <p>En desarrollo</p>
         </>
       )}
+
+      <GameyBotTest></GameyBotTest>
 
     </div>
   );
