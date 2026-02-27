@@ -1,48 +1,37 @@
-import './App.css'
-import { useState } from 'react';
-import type { AppScreen } from './AppScreen';
-import AuthScreen from './screens/authentication/AuthScreen';
-import reactLogo from './assets/react.svg'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
+
+import './App.css';
+
 import GameyBotTest from './GameyBotTest';
 
+// Importar los componentes
+import RegisterForm from './pages/Register';
+import Login from './pages/Login';
+import Menu from './pages/Menu';
+
 function App() {
-
-  // Estado de la aplicación (Ventana) -> Autenticación, Menú o Juego.
-  const [currentScreen, setCurrentScreen] = useState<AppScreen>("AUTHENTICATION"); // Pantalla inicial
-  // Usuario actual de la app.
-  const [user, setUser] = useState<string | null>(null);
-
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <h2>Yovi grupo es3c</h2>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<RegisterForm />} />
+         
+          <Route element={<ProtectedRoute/>}>
+            <Route path="/menu" element={<Menu />} />
+          </Route>
 
-      <h2>Yovi grupo 3c</h2>
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
 
-      {currentScreen == "AUTHENTICATION" && (
-        <AuthScreen 
-          setCurrentScreen={setCurrentScreen}
-          setUser={setUser}
-        ></AuthScreen>
-      )}
-      
-      {currentScreen == "MENU" && (
-        <>
-          <h3>Menu de prueba</h3>
-          <p>{`Bienvenido ${user}`}</p>
-          <p>En desarrollo</p>
-        </>
-      )}
+        {/* Temporalmente para poder seguir probando la conexión a GameY */}
+        <GameyBotTest />
 
-      <GameyBotTest></GameyBotTest>
-
-    </div>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
