@@ -37,10 +37,7 @@ This level illustrates the structural decomposition of the system into its three
 
 ==== White Box 
 
-[plantuml, level1-overview, png]
-----
 image::05_diagram2.svg[System behaviour]
-----
 
 Motivation:: 
 The system uses a modular architecture for separating the user interface and services with the game logic service.

@@ -5,10 +5,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 === Quality Tree
 
-[plantuml, level1-overview, png]
-----
 image::10_diagram1.svg[Quality Requirements]
-----
 
 === Quality Scenarios
 
