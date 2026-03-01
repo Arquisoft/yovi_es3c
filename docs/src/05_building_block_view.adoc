@@ -11,10 +11,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 This diagram shows how the user interacts with the system.
 
-[plantuml, level1-overview, png]
-----
 image::05_diagram1.svg[User Interaction Sequence]
-----
 
 Motivation::
 
