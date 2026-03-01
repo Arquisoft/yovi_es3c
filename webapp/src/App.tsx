@@ -1,24 +1,37 @@
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
+
+import './App.css';
+
 import GameyBotTest from './GameyBotTest';
-import RegisterForm from './RegisterForm';
-import reactLogo from './assets/react.svg'
+
+// Importar los componentes
+import RegisterForm from './pages/Register';
+import Login from './pages/Login';
+import Menu from './pages/Menu';
 
 function App() {
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <h2>Yovi grupo es3c</h2>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<RegisterForm />} />
+         
+          <Route element={<ProtectedRoute/>}>
+            <Route path="/menu" element={<Menu />} />
+          </Route>
 
-      <h2>Welcome to the Software Arquitecture 2025-2026 course</h2>
-      <RegisterForm />
-      <GameyBotTest />
-    </div>
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+
+        {/* Temporalmente para poder seguir probando la conexión a GameY */}
+        <GameyBotTest />
+
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

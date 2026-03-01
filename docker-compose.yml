@@ -5,6 +5,7 @@ services:
     image: ghcr.io/arquisoft/yovi_es3c-users:latest
     ports:
       - "3000:3000"
+    env_file: .env
     networks:
       - monitor-net
 
