@@ -5,30 +5,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 === Quality Tree
 
-[plantuml, level1-overview, png]
-----
-@startmindmap
-* Quality Requirements
-** Performance (Medium)
-*** Fast page load and refresh
-*** Shortest possible response time
-*** Efficient state reconstruction
-** Security (High)
-*** Server-side validation
-*** Anti-cheat mechanisms
-*** Denial of fraudulent requests
-** Usability (Medium)
-*** Clear onboarding instructions
-*** Intuitive controls
-*** Visual feedback for actions
-** Maintainability (Medium)
-*** Modular architecture
-*** Easy bug localization
-*** Minimal impact changes
-*** Clean and documented codebase
-@endmindmap
-
-----
+image::10_diagram1.svg[Quality Requirements]
 
 === Quality Scenarios
 
