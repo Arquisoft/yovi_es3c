@@ -13,22 +13,7 @@ This diagram shows how the user interacts with the system.
 
 [plantuml, level1-overview, png]
 ----
-@startuml
-actor "User" as user
-package "Yovi" {
-  component "Frontend\n(React, Vite, TypeScript)" as frontend <<application>>
-  component "Web app server\n(Node.js, Express)" as web_server <<service>>
-  database "MongoDB database" as db <<database>>
-  component "Game server\n(Rust)" as game <<logic>>
-}
-
-user -right-> frontend
-frontend -down-> web_server
-web_server -down-> game
-web_server -right-> db
-
-@enduml
-
+image::05_diagram1.svg[User Interaction Sequence]
 ----
 
 Motivation::
@@ -54,24 +39,7 @@ This level illustrates the structural decomposition of the system into its three
 
 [plantuml, level1-overview, png]
 ----
-
-@startuml
-package "Frontend" {
-    component "WebApp" as webapp
-}
-
-package "Backend Services" {
-    component "Users Service" as users
-    component "Game Engine" as gamey
-}
-
-database "MongoDB" as db
-
-webapp --> users: Create, modify users
-webapp --> gamey: Manage user moves and decisions
-users ..> db : Read, Write and save data
-@enduml
-
+image::05_diagram2.svg[System behaviour]
 ----
 
 Motivation:: 
