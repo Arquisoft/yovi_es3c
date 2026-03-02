@@ -41,6 +41,14 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+// Endpoint inicio de sesion
+app.post('/login', async (req, res) => {
+  //por hacer aun aaaaaaaaaa
+  
+  });
+
+
+
 // Endpoint de creación de usuario
 app.post('/createuser', async (req, res) => {
   const { username, password, confirmPassword } = req.body;
