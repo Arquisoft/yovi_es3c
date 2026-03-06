@@ -10,19 +10,22 @@ import GameyBotTest from './GameyBotTest';
 import RegisterForm from './pages/Register';
 import Login from './pages/Login';
 import Menu from './pages/Menu';
+import { Dashboard } from './pages/Dashboard';
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <h2>Yovi grupo es3c</h2>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<RegisterForm />} />
-         
-          <Route element={<ProtectedRoute/>}>
+
+          <Route element={<ProtectedRoute />}>
             <Route path="/menu" element={<Menu />} />
           </Route>
+
+          { /* Temporalmente sin ProtectedRoute ya que el login no está implementado */}
+          <Route path="/dashboard" element={<Dashboard />} />
 
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>

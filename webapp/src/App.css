@@ -3,8 +3,8 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
 
 form {
   display: flex;
@@ -55,4 +55,189 @@ form {
 
 .submit-button:hover {
   background-color: #0056b3;
+}
+
+/* Dashboard styles - Pantalla intermedia */
+.dashboard {
+  max-width: 750px;
+  margin: 2.5rem auto;
+  padding: 2.8rem;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 2.8rem;
+}
+
+.dashboard h2 {
+  color: #2d3e50;
+  font-size: 1.8rem;
+  margin: 0 0 1.5rem 0;
+}
+
+/* Tarjetas de estadísticas */
+.user-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  grid-auto-rows: auto;
+}
+
+.user-stats .stat-card {
+  border-radius: 14px;
+  padding: 1.8rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  font-size: 1.1rem;
+}
+
+.user-stats .stat-card.win {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  color: #155724;
+}
+
+.user-stats .stat-card.loss {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  color: #721c24;
+}
+
+.user-stats .stat-card.neutral {
+  background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+  color: #0c5460;
+}
+
+.user-stats .stat-icon {
+  font-size: 2.8rem;
+  margin-bottom: 0.3rem;
+}
+
+.user-stats .stat-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.user-stats .stat-value {
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+.game-setup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2.2rem;
+  font-size: 1.15rem;
+}
+
+.game-setup-form label {
+  font-weight: 600;
+  margin-bottom: 0.9rem;
+  font-size: 1.15rem;
+  color: #2d3e50;
+}
+
+.game-setup-form h2 {
+  color: #2d3e50;
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+/* Grupo de botones de opciones - Centrados */
+.options-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+  justify-content: center;
+}
+
+.board-size-options {
+  display: flex;
+  gap: 1.5rem;
+  margin: 1rem 0;
+  justify-content: center;
+}
+
+.strategies-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+/* Botones de selección para dificultad y tamaño */
+.select-btn {
+  padding: 1rem 1.8rem;
+  border-radius: 10px;
+  border: 2px solid #7c3aed;
+  background: #ede9fe;
+  color: #7c3aed;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Hover para botones NO seleccionados */
+.select-btn:hover:not(.selected) {
+  background: #ddd6fe;
+  color: #6d28d9;
+  border-color: #6d28d9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(124,58,237,0.15);
+}
+
+/* Botón seleccionado - anula el hover */
+.select-btn.selected {
+  background: #7c3aed !important;
+  color: #fff !important;
+  border-color: #7c3aed !important;
+  box-shadow: 0 4px 12px rgba(124,58,237,0.25) !important;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Evita que el hover afecte al botón seleccionado */
+.select-btn.selected:hover {
+  background: #7c3aed !important;
+  color: #fff !important;
+  border-color: #7c3aed !important;
+  box-shadow: 0 4px 12px rgba(124,58,237,0.25) !important;
+  transform: none !important;
+}
+
+.board-size-options .select-btn {
+  padding: 1.3rem 2.5rem;
+  font-size: 1.12rem;
+}
+
+.strategies-grid .select-btn {
+  padding: 0.8rem 1.2rem;
+  font-size: 0.95rem;
+  border-radius: 8px;
+}
+.game-setup-form button[type="submit"] {
+  margin-top: 0.5rem;
+  padding: 1.2rem 2.8rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.15rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(16,185,129,0.25);
+  transition: all 0.25s ease;
+}
+
+.game-setup-form button[type="submit"]:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16,185,129,0.35);
 }
