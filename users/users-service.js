@@ -43,9 +43,43 @@ app.use(express.json());
 
 // Endpoint inicio de sesion
 app.post('/login', async (req, res) => {
-  //por hacer aun aaaaaaaaaa
-  
-  });
+  const { username, password } = req.body;
+
+  try {
+    // Validación básica
+    if (!username || !password) {
+      return res.status(400).json({ error: "Todos los campos son obligatorios" });
+    }
+
+    // Sanitizar username igual que en createuser para solo permitir letras numeros arroba puntos y guiones
+    const sanitizedUsername = String(username || '')
+      .trim()
+      .replace(/[^\w\s@.-]/gi, '');
+
+    // Buscar usuario
+    const user = await User.findOne({ username: sanitizedUsername });
+    if (!user) {
+      return res.status(401).json({ error: "Usuario o contraseña incorrectos" });
+    }
+
+    // Comparar contraseñas
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: "Usuario o contraseña incorrectos" });
+    }
+
+    // Login correcto
+    return res.json({
+      message: "Login exitoso",
+      username: user.username
+    });
+
+  } catch (err) {
+    console.error("Error en POST /login:", err);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
 
 
 

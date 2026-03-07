@@ -6,21 +6,32 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
+
     if (!username || !password) {
-      alert("Todos los campos son obligatorios"); 
+      alert("Todos los campos son obligatorios");
       return;
-    } 
+    }
     const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
-    const response = await fetch(`${API_URL}/login`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    }); 
-    const data = await response.json(); 
-    //aun por hacer
-    //aaaaaaaaaaaaaaaaaa
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || "Error al iniciar sesión");
+        return;
+      }
+
+      alert("Login correcto");
+    } catch (err) {
+      console.error("Error en login:", err);
+      alert("Error de conexión con el servidor");
+    }
   };
 
   return (
