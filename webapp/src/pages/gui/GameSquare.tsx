@@ -14,7 +14,7 @@ export default function GameSquare(size:number){
 
 function SelectedSquare(size:number){
     
-    const sin60 = 0.8660254;
+    const sin60 = 0.866;
     const cos60 = 0.5;
     const border = 3;
 
@@ -22,7 +22,7 @@ function SelectedSquare(size:number){
         <div
             style={{
                 height: size,
-                aspectRatio: "0.8660254",
+                aspectRatio: "0.866",
                 background: "#ff0000",
                 clipPath: `
                 polygon(

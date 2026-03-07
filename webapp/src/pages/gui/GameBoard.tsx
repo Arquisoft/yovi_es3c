@@ -14,7 +14,7 @@ function GameBoard(){
   for (let row = 0; row < board.size; row++) {
     const elements = [];
 
-    for (let col = 0; col < board.size - row; col++) {
+    for (let col = 0; col < row + 1; col++) {
       elements.push(
         GameSquare(board.squareSize)
       );
@@ -26,7 +26,7 @@ function GameBoard(){
         style={{
           display: "flex",
           gap: "4px",
-          marginLeft: `${((row+1) * board.squareSize/2)-(row+2)}px`,
+          marginLeft: `${(board.size - (row + 1)) * (board.squareSize / 2) + row}px`,
           marginTop:"-11px"
         }}
       >
