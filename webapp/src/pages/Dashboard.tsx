@@ -1,6 +1,7 @@
 import React from "react";
 import { UserStats } from "../components/UserStats";
 import { GameSetupForm } from "../components/GameSetupForm";
+import "../pages-styles/Dashboard.css";
 
 /**
  * Componente Dashboard - Pantalla intermedia entre el login/registro y la pantalla del juego 
@@ -25,8 +26,10 @@ export const Dashboard: React.FC = () => {
 
     return (
         <div className="dashboard">
-            <UserStats />
             <GameSetupForm onStart={handleStartGame} />
+            <div className="dashboard-card">
+                <UserStats />
+            </div>
         </div>
     );
 };
