@@ -17,11 +17,11 @@ export const Dashboard: React.FC = () => {
     /**
      * Manejador cuando se inicia una partida
      * Recibe la configuración (dificultad, estrategia, tamaño)
-     * y muestra un alert (temporalmente). Posteriomente, aquí podrías navegar a la pantalla de juego.
+     * y muestra un alert (temporalmente). Posteriomente, aquí podrías navegar a la pantalla principal del juego.
      */
     const handleStartGame = (config: { dificultad: string; estrategia: string; tamano: number }) => {
         alert(`Partida iniciada con:\nDificultad: ${config.dificultad}\nEstrategia: ${config.estrategia}\nTablero: ${config.tamano}x${config.tamano}`);
-        // Aquí podrías navegar a la pantalla de juego.
+        // Aquí podrías navegar a la pantalla principal del juego.
     };
 
     return (

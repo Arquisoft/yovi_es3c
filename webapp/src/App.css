@@ -55,3 +55,8 @@ form {
 .submit-button:hover {
   background-color: #0056b3;
 }
+
+.shared-form {
+  max-width: 350px;
+  margin: 0 auto;
+}

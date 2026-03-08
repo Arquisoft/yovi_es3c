@@ -9,14 +9,14 @@ interface StatCardProps {
 
 function getIcon(type: StatType): JSX.Element {
     switch (type) {
-        case "neutral": // Usuario
+        case "neutral":
             return (
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
                     <circle cx="12" cy="8" r="4" fill="#A7F3D0" />
                     <path d="M4 20c0-4 8-4 8-4s8 0 8 4" stroke="#4B5563" strokeWidth="2" fill="#F3F4F6" />
                 </svg>
             );
-        case "partidas": // Clock icon for temporality
+        case "partidas":
             return (
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
                     <circle cx="12" cy="12" r="9" fill="#FBBF24" stroke="#4F46E5" strokeWidth="2" />
@@ -24,7 +24,7 @@ function getIcon(type: StatType): JSX.Element {
                     <line x1="12" y1="12" x2="16" y2="12" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round" />
                 </svg>
             );
-        case "win": // Trofeo
+        case "win":
             return (
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
                     <rect x="8" y="18" width="8" height="2" rx="1" fill="#FBBF24" />
@@ -33,7 +33,7 @@ function getIcon(type: StatType): JSX.Element {
                     <path d="M6 8c0 4 12 4 12 0" stroke="#FBBF24" strokeWidth="2" />
                 </svg>
             );
-        case "loss": // Cara triste
+        case "loss":
             return (
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
                     <circle cx="12" cy="12" r="10" fill="#FEE2E2" stroke="#EF4444" strokeWidth="2" />

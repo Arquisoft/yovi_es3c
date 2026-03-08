@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-// 4 Estrategias académicas potentes
 const estrategias = ["aleatoria", "heuristica", "minimax", "mcts"];
 const dificultades = ["facil", "media", "dificil"];
 
