@@ -4,12 +4,13 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 
 import './App.css';
 
-import GameyBotTest from './GameyBotTest';
+//import GameyBotTest from './GameyBotTest';
 
 // Importar los componentes
 import RegisterForm from './pages/Register';
 import Login from './pages/Login';
 import Menu from './pages/Menu';
+import GameBoard from './pages/gui/GameBoard';
 import { Dashboard } from './pages/Dashboard';
 
 function App() {
@@ -19,6 +20,9 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<RegisterForm />} />
+          <Route path="/gameboard" element={<GameBoard />} />
+
+          <Route element={<ProtectedRoute/>}>
 
           <Route element={<ProtectedRoute />}>
             <Route path="/menu" element={<Menu />} />
@@ -31,7 +35,7 @@ function App() {
         </Routes>
 
         {/* Temporalmente para poder seguir probando la conexión a GameY */}
-        <GameyBotTest />
+        { /*<GameyBotTest />*/ }
 
       </BrowserRouter>
     </AuthProvider>

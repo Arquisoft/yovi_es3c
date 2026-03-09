@@ -59,6 +59,11 @@ const Login: React.FC = () => {
       <p>
         ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
       </p>
+
+      <p>
+        Accede al tablero del juego: <Link to="/gameboard">Click aquí</Link>
+      </p>
+
     </div>
   );
 };
