@@ -1,22 +1,32 @@
 
 import GameSquare from './GameSquare';
 
-const board = {
-    size: 12,
-    squareSize:60
-};
+interface GameBoardProps {
+  size?: number;
+  squareSize?: number;
+  onPlay: (x: number, y: number, z: number) => void;
+}
 
+function GameBoard({ size = 15, squareSize = 50, onPlay }: GameBoardProps) {
+  const rows = [];
 
-function GameBoard(){
-
-    const rows = [];
-
-  for (let row = 0; row < board.size; row++) {
+  for (let row = 0; row < size; row++) {
     const elements = [];
 
     for (let col = 0; col < row + 1; col++) {
+      const x = size - 1 - row;
+      const y = col;
+      const z = row - col;
+      
       elements.push(
-        GameSquare(board.squareSize)
+        <GameSquare
+          key={`${x}-${y}-${z}`}
+          size={squareSize}
+          x={x}
+          y={y}
+          z={z}
+          onClick={onPlay}
+        />
       );
     }
 
@@ -26,8 +36,8 @@ function GameBoard(){
         style={{
           display: "flex",
           gap: "4px",
-          marginLeft: `${(board.size - (row + 1)) * (board.squareSize / 2) + row}px`,
-          marginTop:"-11px"
+          marginLeft: `${(size - (row + 1)) * (squareSize / 2) + row}px`,
+          marginTop: "-11px"
         }}
       >
         {elements}
