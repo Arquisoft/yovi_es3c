@@ -7,7 +7,7 @@ const Register: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -19,7 +19,8 @@ const Register: React.FC = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/createuser', {
+      const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
+      const response = await fetch(`${API_URL}/createuser`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password, confirmPassword }),
@@ -28,7 +29,7 @@ const Register: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setIsSuccess(true); 
+        setIsSuccess(true);
       } else {
         setError(data.error || 'Error al registrarse');
       }
@@ -55,35 +56,35 @@ const Register: React.FC = () => {
       <form onSubmit={handleSubmit} className='shared-form'>
         <div className='form-group'>
           <label htmlFor="username">Usuario:</label>
-          <input 
+          <input
             id="username"
-            type="text" 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="form-input"
           />
         </div>
         <div className='form-group'>
           <label htmlFor="password">Contraseña:</label>
-          <input 
+          <input
             id="password"
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="form-input"
           />
         </div>
         <div className='form-group'>
           <label htmlFor="confirmPassword">Confirmar Contraseña:</label>
-          <input 
+          <input
             id="confirmPassword"
-            type="password" 
-            value={confirmPassword} 
-            onChange={(e) => setConfirmPassword(e.target.value)} 
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             className="form-input"
           />
         </div>
-        {error && <p style={{color:'red'}}>{error}</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit" className='submit-button'>Registrarse</button>
       </form>
       <p>
