@@ -10,9 +10,12 @@
 
 pub mod random;
 pub mod heuristic;
+pub mod difficulty;
 pub mod ybot;
 pub mod ybot_registry;
+
 pub use random::*;
 pub use heuristic::*;
+pub use difficulty::*;
 pub use ybot::*;
 pub use ybot_registry::*;
