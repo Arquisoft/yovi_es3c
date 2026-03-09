@@ -22,8 +22,6 @@ function App() {
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/gameboard" element={<GameBoard />} />
 
-          <Route element={<ProtectedRoute/>}>
-
           <Route element={<ProtectedRoute />}>
             <Route path="/menu" element={<Menu />} />
           </Route>
