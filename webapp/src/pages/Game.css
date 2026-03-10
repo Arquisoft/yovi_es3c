@@ -13,10 +13,11 @@
 .game-header p {
     font-size: 1.5em;
     border-color: black;
+    margin: .5em;
 }
 
 .game-header {
-    display: flex;
-    flex-direction: column;
-    align-content: flex-start;
+    display: grid;
+    align-content: space-around;
 }
+
