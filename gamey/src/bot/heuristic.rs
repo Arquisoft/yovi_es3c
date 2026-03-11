@@ -2,17 +2,15 @@
 //!
 //! This module provides [`HeuristicBot`], a bot that makes coherent valid moves.
 
-use crate::{Coordinates, GameY, YBot, Difficulty};
+use crate::{Coordinates, GameY, YBot};
+use rand::prelude::IndexedRandom;
 
 /// A bot that chooses moves using a simple heuristic.
 ///
 /// Unlike `RandomBot`, this bot tries to pick a move that "makes sense"
 /// according to a scoring function (e.g., preferring central positions).
-/// 
-/// The bot uses 2 types of difficulty:
-/// - Easy: it only prefers the center.
-/// - Hard: it prefers the center and penalizes edges more heavily.
-/// 
+/// Ties are broken randomly to avoid directional bias.
+///
 /// # Example
 ///
 /// ```
@@ -25,18 +23,11 @@ use crate::{Coordinates, GameY, YBot, Difficulty};
 /// let chosen_move = bot.choose_move(&game);
 /// assert!(chosen_move.is_some());
 /// ```
-pub struct HeuristicBot {
-    pub difficulty: Difficulty,
-}
+pub struct HeuristicBot;
 
 impl HeuristicBot {
-    pub fn new(difficulty: Difficulty) -> Self {
-        Self { difficulty }
-    }
-
-    fn score_move(&self, board: &GameY, coords: Coordinates) -> i32 {
+    fn score_move(board: &GameY, coords: Coordinates) -> i32 {
         let size = board.board_size() as i32;
-
         let cx = (size - 1) / 2;
         let cy = (size - 1) / 2;
 
@@ -44,84 +35,68 @@ impl HeuristicBot {
         let dy = (coords.y() as i32 - cy).abs();
         let dist_center = dx + dy;
 
-        let mut score = 0;
-        score += 100 - dist_center;
-
-        // Hard penalizes edges more than easy.
-        let border_penalty = match self.difficulty {
-            Difficulty::Easy => 5,
-            Difficulty::Hard => 20,
-        };
+        let mut score = 100 - dist_center;
 
         if coords.x() == 0
             || coords.y() == 0
             || coords.x() as i32 == size - 1
             || coords.y() as i32 == size - 1
         {
-            score -= border_penalty;
+            score -= 10;
         }
 
-        score 
+        score
     }
 }
 
 impl YBot for HeuristicBot {
     fn name(&self) -> &str {
-        match self.difficulty {
-            Difficulty::Easy => "heuristicbot-easy",
-            Difficulty::Hard => "heuristicbot-hard",
-        }
+        "heuristicbot"
     }
 
     fn choose_move(&self, board: &GameY) -> Option<Coordinates> {
         let available = board.available_cells();
-
-        let mut best: Option<Coordinates> = None;
         let mut best_score = i32::MIN;
+        let mut best_candidates: Vec<Coordinates> = Vec::new();
 
         for idx in available {
             let coords = Coordinates::from_index(*idx, board.board_size());
-
-            let sc = self.score_move(board, coords);
+            let sc = Self::score_move(board, coords);
             if sc > best_score {
                 best_score = sc;
-                best = Some(coords);
+                best_candidates.clear();
+                best_candidates.push(coords);
+            } else if sc == best_score {
+                best_candidates.push(coords); // empate: guarda todos
             }
         }
 
-        best  
+        // Elige aleatoriamente entre los empatados para evitar sesgo
+        best_candidates.choose(&mut rand::rng()).copied()
     }
 }
-
-/// Test
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{GameY, Movement, PlayerId, Coordinates};
+    use crate::{Coordinates, GameY, Movement, PlayerId};
 
     #[test]
-    fn test_heuristicbot_name_easy() {
-        let bot = HeuristicBot::new(Difficulty::Easy);
-        assert_eq!(bot.name(), "heuristicbot-easy");
-    }
-
-    #[test]
-    fn test_heuristicbot_name_hard() {
-        let bot = HeuristicBot::new(Difficulty::Hard);
-        assert_eq!(bot.name(), "heuristicbot-hard");
+    fn test_heuristicbot_name() {
+        let bot = HeuristicBot;
+        assert_eq!(bot.name(), "heuristicbot");
     }
 
     #[test]
     fn test_heuristicbot_returns_move_on_empty_board() {
-        let bot = HeuristicBot::new(Difficulty::Hard);
+        let bot = HeuristicBot;
         let game = GameY::new(5);
         assert!(bot.choose_move(&game).is_some());
     }
 
     #[test]
     fn test_heuristicbot_returns_none_on_full_board() {
-        let bot = HeuristicBot::new(Difficulty::Easy);
+        let bot = HeuristicBot;
         let mut game = GameY::new(1);
         game.add_move(Movement::Placement {
             player: PlayerId::new(0),
@@ -132,20 +107,18 @@ mod tests {
 
     #[test]
     fn test_heuristicbot_prefers_center() {
-        let bot = HeuristicBot::new(Difficulty::Hard);
+        let bot = HeuristicBot;
         let game = GameY::new(5);
         let coords = bot.choose_move(&game).unwrap();
         assert!(coords.x() > 0 && coords.y() > 0);
     }
 
     #[test]
-    fn test_hard_differs_from_easy_behavior() {
-        // Hard penaliza bordes más fuerte, ambos deben dar un resultado válido
-        let easy = HeuristicBot::new(Difficulty::Easy);
-        let hard = HeuristicBot::new(Difficulty::Hard);
+    fn test_heuristicbot_returns_valid_cell() {
+        let bot = HeuristicBot;
         let game = GameY::new(5);
-        assert!(easy.choose_move(&game).is_some());
-        assert!(hard.choose_move(&game).is_some());
+        let coords = bot.choose_move(&game).unwrap();
+        let idx = coords.to_index(game.board_size());
+        assert!(game.available_cells().contains(&idx));
     }
 }
-

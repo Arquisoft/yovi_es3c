@@ -319,17 +319,16 @@ async fn test_get_on_choose_endpoint_returns_method_not_allowed() {
     assert_eq!(response.status(), StatusCode::METHOD_NOT_ALLOWED);
 }
 
-// Comprueba que el servidor responde correctamente al pedir una jugada
-// al bot heuristicbot-easy con un tablero vacío de tamaño 3, verificando que la respuesta contiene el identificador del bot correcto.
+// Tests de integración para heuristicbot
 #[tokio::test]
-async fn test_choose_heuristicbot_easy() {
+async fn test_choose_heuristicbot() {
     let app = test_app();
-    let yen = YEN::new(3, 0, vec!['B', 'R'], ".......".to_string());
+    let yen = YEN::new(3, 0, vec!['B', 'R'], "./../...".to_string());
     let response = app
         .oneshot(
             Request::builder()
                 .method("POST")
-                .uri("/v1/ybot/choose/heuristicbot-easy")
+                .uri("/v1/ybot/choose/heuristicbot")
                 .header("content-type", "application/json")
                 .body(Body::from(serde_json::to_string(&yen).unwrap()))
                 .unwrap(),
@@ -339,20 +338,19 @@ async fn test_choose_heuristicbot_easy() {
     assert_eq!(response.status(), StatusCode::OK);
     let body = response.into_body().collect().await.unwrap().to_bytes();
     let body_str = String::from_utf8(body.to_vec()).unwrap();
-    assert!(body_str.contains("heuristicbot-easy"));
+    assert!(body_str.contains("heuristicbot"));
 }
 
-// Comprueba que el servidor responde correctamente al pedir una jugada al bot heuristicbot-hard con un tablero vacío de tamaño 3,
-// verificando que la respuesta contiene el identificador del bot correcto.
+// Test de integración para defensivebot
 #[tokio::test]
-async fn test_choose_heuristicbot_hard() {
+async fn test_choose_defensivebot() {
     let app = test_app();
-    let yen = YEN::new(3, 0, vec!['B', 'R'], ".......".to_string());
+    let yen = YEN::new(3, 0, vec!['B', 'R'], "./../...".to_string());
     let response = app
         .oneshot(
             Request::builder()
                 .method("POST")
-                .uri("/v1/ybot/choose/heuristicbot-hard")
+                .uri("/v1/ybot/choose/defensivebot")
                 .header("content-type", "application/json")
                 .body(Body::from(serde_json::to_string(&yen).unwrap()))
                 .unwrap(),
@@ -362,65 +360,18 @@ async fn test_choose_heuristicbot_hard() {
     assert_eq!(response.status(), StatusCode::OK);
     let body = response.into_body().collect().await.unwrap().to_bytes();
     let body_str = String::from_utf8(body.to_vec()).unwrap();
-    assert!(body_str.contains("heuristicbot-hard"));
+    assert!(body_str.contains("defensivebot"));
 }
 
-// Comprueba que el servidor responde correctamente al pedir una jugada al bot defensivebot-easy con un tablero vacío de tamaño 3,
-// verificando que la respuesta contiene el identificador del bot correcto.
-#[tokio::test]
-async fn test_choose_defensivebot_easy() {
-    let app = test_app();
-    let yen = YEN::new(3, 0, vec!['B', 'R'], ".......".to_string());
-    let response = app
-        .oneshot(
-            Request::builder()
-                .method("POST")
-                .uri("/v1/ybot/choose/defensivebot-easy")
-                .header("content-type", "application/json")
-                .body(Body::from(serde_json::to_string(&yen).unwrap()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(response.status(), StatusCode::OK);
-    let body = response.into_body().collect().await.unwrap().to_bytes();
-    let body_str = String::from_utf8(body.to_vec()).unwrap();
-    assert!(body_str.contains("defensivebot-easy"));
-}
-
-// Comprueba que el servidor responde correctamente al pedir una jugada al bot defensivebot-hard con un tablero vacío de tamaño 3,
-// verificando que la respuesta contiene el identificador del bot correcto.
-#[tokio::test]
-async fn test_choose_defensivebot_hard() {
-    let app = test_app();
-    let yen = YEN::new(3, 0, vec!['B', 'R'], ".......".to_string());
-    let response = app
-        .oneshot(
-            Request::builder()
-                .method("POST")
-                .uri("/v1/ybot/choose/defensivebot-hard")
-                .header("content-type", "application/json")
-                .body(Body::from(serde_json::to_string(&yen).unwrap()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(response.status(), StatusCode::OK);
-    let body = response.into_body().collect().await.unwrap().to_bytes();
-    let body_str = String::from_utf8(body.to_vec()).unwrap();
-    assert!(body_str.contains("defensivebot-hard"));
-}
-
-// Comprueba que el estado por defecto del servidor tiene registrados todos los bots esperados.
+// Comprueba que el estado por defecto tiene todos los bots registrados
 #[tokio::test]
 async fn test_default_state_has_all_bots() {
     let state = create_default_state();
     let bots = state.bots();
     let names = bots.names();
-    assert!(names.iter().any(|n| n == "random_bot"));           // ← guión bajo
-    assert!(names.iter().any(|n| n == "heuristicbot-easy"));
-    assert!(names.iter().any(|n| n == "heuristicbot-hard"));
-    assert!(names.iter().any(|n| n == "defensivebot-easy"));
-    assert!(names.iter().any(|n| n == "defensivebot-hard"));
+    assert!(names.iter().any(|n| n == "random_bot"));
+    assert!(names.iter().any(|n| n == "heuristicbot"));
+    assert!(names.iter().any(|n| n == "defensivebot"));
 }
+
 
