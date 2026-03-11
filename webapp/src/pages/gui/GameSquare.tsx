@@ -1,11 +1,8 @@
-
-
 export default function GameSquare(size:number){
     
    return NormalSquare(size);
 
 }
-
 
 function NormalSquare(size:number){
 
