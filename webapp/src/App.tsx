@@ -11,14 +11,14 @@ import RegisterForm from './pages/Register';
 import Login from './pages/Login';
 import Menu from './pages/Menu';
 import GameBoard from './pages/gui/GameBoard';
-import logo from './assets/YoviLogo500.png';
+import logo from './assets/YoviLogo300.png';
 import { Dashboard } from './pages/Dashboard';
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <img src={logo} alt="YoviLogo500"/>
+        <img src={logo} alt="YoviLogo300"/>
         <h2>Grupo ES3C</h2>
         <Routes>
           <Route path="/login" element={<Login />} />
