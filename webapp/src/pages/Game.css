@@ -11,6 +11,11 @@
     padding: 5%;
 }
 
+.game-header h1 {
+    font-size: 1.9em;
+    border-color: black;
+}
+
 .game-header p {
     font-size: 1.5em;
     border-color: black;

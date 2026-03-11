@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import GameSquare from './GameSquare';
 import { coordToRowCol, createInitialLayout, updateLayoutPosition, getLayoutState } from './boardUtils';
+import './GameBoard.css';
 
 interface GameBoardProps {
   size?: number;
-  squareSize?: number;
   layout?: string;
   botId?: string;
   setTextoTurno: (text: string) => void;
@@ -15,7 +15,6 @@ interface GameBoardProps {
 function GameBoard(
   { 
     size = 15, 
-    squareSize = 50, 
     layout, 
     botId = 'random_bot', 
     setTextoTurno,
@@ -122,7 +121,6 @@ function GameBoard(
       elements.push(
         <GameSquare
           key={`${row}-${col}`}
-          size={squareSize}
           row={row}
           col={col}
           state={state}
@@ -135,12 +133,7 @@ function GameBoard(
     rows.push(
       <div
         key={row}
-        style={{
-          display: "flex",
-          gap: "4px",
-          marginLeft: `${(size - (row + 1)) * (squareSize / 2) + row}px`,
-          marginTop: "-11px"
-        }}
+        className="game-board-row"
       >
         {elements}
       </div>
@@ -148,7 +141,7 @@ function GameBoard(
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
+    <div className="game-board">
       {rows}
     </div>
   );

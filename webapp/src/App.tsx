@@ -9,6 +9,8 @@ import './App.css';
 // Importar los componentes
 import RegisterForm from './pages/Register';
 import Login from './pages/Login';
+
+import logo from './assets/YoviLogo300.png';
 import Game from './pages/Game';
 import { Dashboard } from './pages/Dashboard';
 
@@ -16,6 +18,8 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <img src={logo} alt="YoviLogo300"/>
+        <h2>Grupo ES3C</h2>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<RegisterForm />} />
