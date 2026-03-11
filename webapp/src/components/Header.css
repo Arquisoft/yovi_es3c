@@ -41,7 +41,7 @@
 .nav-link {
   color: white;
   text-decoration: none;
-  font-size: 1.3em;
+  font-size: 1.5em;
   font-weight: 500;
   transition: color 0.3s ease;
   padding: 8px 12px;
@@ -53,4 +53,7 @@
   background-color: rgba(33, 150, 243, 0.1);
 }
 
-
+.nav-link.logout:hover {
+  color: #ff1111;
+  background-color: rgba(244, 67, 54, 0.2);
+}

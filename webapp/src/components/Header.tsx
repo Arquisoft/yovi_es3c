@@ -1,8 +1,12 @@
-import { Link, useNavigation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import logo from '../assets/YoviLogo300.png';
+import { useAuth } from '../context/AuthContext';
 import './Header.css';
 
 export function Header() {
+
+  const authentication = useAuth();
+  
   return (
     <header className="header">
       <div className="header-container">
@@ -10,10 +14,24 @@ export function Header() {
         
         <nav className="header-nav">
           <Link to="/dashboard" className="nav-link">Jugar</Link>
-          <div className='nav-account'>
-            <Link to="/login" className="nav-link">Iniciar Sesión</Link>
-            <Link to="/register" className="nav-link">Registrarme</Link>
-          </div>
+
+          {!authentication.getUser() && 
+            (
+              <div className='nav-account'>
+                <Link to="/login" className="nav-link">Iniciar Sesión</Link>
+                <Link to="/register" className="nav-link">Registrarme</Link>
+              </div>
+            )
+          }
+
+          {authentication.getUser() && 
+            (
+              <div className='nav-account'>
+                <Link to="/login" className="nav-link" onClick={authentication.logout}>Logout</Link>
+              </div>
+            )
+          }
+          
         </nav>
       </div>
     </header>
