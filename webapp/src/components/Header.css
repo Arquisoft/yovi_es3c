@@ -24,3 +24,33 @@
     max-height: 100%;
     width: auto;
 }
+
+.header-nav {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.nav-account {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 1.3em;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.nav-link:hover {
+  color: #2196F3;
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+

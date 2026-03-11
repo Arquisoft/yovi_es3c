@@ -5,10 +5,8 @@ import { Header } from './components/Header';
 
 import './App.css';
 
-//import GameyBotTest from './GameyBotTest';
-
 // Importar los componentes
-import RegisterForm from './pages/Register';
+import Register from './pages/Register';
 import Login from './pages/Login';
 
 import Game from './pages/Game';
@@ -24,7 +22,7 @@ function App() {
         <main className="main-content">
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<RegisterForm />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/game" element={<Game />} />
 
           <Route element={<ProtectedRoute />}>
