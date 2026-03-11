@@ -1,5 +1,7 @@
+
+import './GameSquare.css';
+
 interface GameSquareProps {
-  size: number;
   row: number;
   col: number;
   state: string;
@@ -7,7 +9,7 @@ interface GameSquareProps {
   disabled: boolean;
 }
 
-export default function GameSquare({ size, row, col, state, onClick, disabled }: GameSquareProps) {
+export default function GameSquare({ row, col, state, onClick, disabled }: GameSquareProps) {
    
   const getColor = () => {
     if (state === 'B') return 'blue';
@@ -19,13 +21,9 @@ export default function GameSquare({ size, row, col, state, onClick, disabled }:
     <div
       className="hexagon"
       style={{
-        height: size,
-        aspectRatio: "0.866",
-        clipPath: "polygon(-50% 50%, 50% 100%, 150% 50%, 50% 0)",
-        background: getColor(),
-        border: "1px solid grey",
-        cursor: disabled ? "not-allowed" : "pointer",
-      }}
+        '--color': getColor(),
+        '--cursor': disabled ? 'not-allowed' : 'pointer',
+      } as React.CSSProperties}
       onClick={() => !disabled && onClick(row, col)}
     />
   );
