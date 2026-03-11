@@ -27,7 +27,8 @@ export function Header() {
           {authentication.getUser() && 
             (
               <div className='nav-account'>
-                <Link to="/login" className="nav-link" onClick={authentication.logout}>Logout</Link>
+                <p className='nav-link'>{authentication.getUser()?.username}</p>
+                <Link to="/login" className="nav-link logout" onClick={authentication.logout}>Cerrar sesión</Link>
               </div>
             )
           }
