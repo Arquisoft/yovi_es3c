@@ -1,0 +1,25 @@
+.game-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: stretch;
+    gap: 20px;
+    order: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    padding: 5%;
+}
+
+.game-header p {
+    font-size: 1.5em;
+    border-color: black;
+    margin: .5em;
+    min-width: 200px;
+}
+
+.game-header {
+    display: grid;
+    align-content: space-around;
+}
+
