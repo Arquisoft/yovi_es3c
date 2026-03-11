@@ -23,6 +23,7 @@ pub mod choose;
 pub mod error;
 pub mod state;
 pub mod version;
+pub mod validate;
 use axum::response::IntoResponse;
 use std::sync::Arc;
 use tower_http::cors::CorsLayer;
@@ -41,6 +42,10 @@ pub fn create_router(state: AppState) -> axum::Router {
         .route(
             "/{api_version}/ybot/choose/{bot_id}",
             axum::routing::post(choose::choose),
+        )
+        .route(
+            "/{api_version}/ybot/check",
+            axum::routing::post(validate::validate_game),
         )
         .with_state(state)
 }

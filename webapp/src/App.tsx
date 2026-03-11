@@ -9,9 +9,9 @@ import './App.css';
 // Importar los componentes
 import RegisterForm from './pages/Register';
 import Login from './pages/Login';
-import Menu from './pages/Menu';
-import GameBoard from './pages/gui/GameBoard';
+
 import logo from './assets/YoviLogo300.png';
+import Game from './pages/Game';
 import { Dashboard } from './pages/Dashboard';
 
 function App() {
@@ -23,10 +23,10 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<RegisterForm />} />
-          <Route path="/gameboard" element={<GameBoard />} />
+          <Route path="/game" element={<Game />} />
 
           <Route element={<ProtectedRoute />}>
-            <Route path="/menu" element={<Menu />} />
+            {/* Aqui iran luego las rutas protegidas.*/}
           </Route>
 
           { /* Temporalmente sin ProtectedRoute ya que el login no está implementado */}

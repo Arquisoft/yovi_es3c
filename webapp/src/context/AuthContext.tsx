@@ -14,6 +14,7 @@ interface AuthContextType {
   login: (userData: User) => void;
   logout: () => void;
   loading: boolean;
+  getUser: () => User | null;
 }
 
 // 3. Creamos el contexto con un valor inicial undefined
@@ -49,8 +50,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('user');
   };
 
+  const getUser = (): User | null => user;
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, getUser }}>
       {!loading && children}
     </AuthContext.Provider>
   );
