@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const navigate = useNavigate();
+
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +30,7 @@ const Register: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setIsSuccess(true); 
+        navigate('/dashboard');
       } else {
         setError(data.error || 'Error al registrarse');
       }
@@ -36,18 +38,6 @@ const Register: React.FC = () => {
       setError('Error de conexión con el servidor');
     }
   };
-
-  if (isSuccess) {
-    return (
-      <div className="auth-container">
-        <h2 className="success-title">¡Usuario creado con éxito!</h2>
-        <p>Bienvenido, {username}. Ya puedes acceder a tu cuenta.</p>
-        <Link to="/login" className="submit-button">
-          Ir al inicio de sesión
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <div className='auth-container'>
