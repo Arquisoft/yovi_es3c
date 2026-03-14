@@ -5,12 +5,12 @@
   gap: 0;
   padding: 2%;
   position: relative;
-  line-height: 0.6;
+  line-height: 0.5;
 }
 
 .game-board-row {
   display: flex;
   justify-content: center;
   gap: 0.16em;
-  margin: -0.25em 0;
+  margin: -0.35em 0;
 }

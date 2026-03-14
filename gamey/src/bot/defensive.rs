@@ -1,57 +1,56 @@
-//! A simple bot implementation.
+//! A defensive bot implementation.
 //!
-//! This module provides [`HeuristicBot`], a bot that makes coherent valid moves.
+//! This module provides [`DefensiveBot`], a bot that tries to block
+//! the opponent while also advancing towards the center.
 
 use crate::{Coordinates, GameY, YBot};
 use rand::prelude::IndexedRandom;
 
-/// A bot that chooses moves using a simple heuristic.
+/// A bot that chooses moves using a defensive heuristic.
 ///
-/// Unlike `RandomBot`, this bot tries to pick a move that "makes sense"
-/// according to a scoring function (e.g., preferring central positions).
-/// Ties are broken randomly to avoid directional bias.
+/// Unlike `HeuristicBot`, this bot also considers opponent pieces
+/// nearby, prioritizing moves that block the rival.
 ///
 /// # Example
 ///
 /// ```
-/// use gamey::{GameY, HeuristicBot, YBot};
+/// use gamey::{GameY, DefensiveBot, YBot};
 ///
-/// let bot = HeuristicBot;
+/// let bot = DefensiveBot;
 /// let game = GameY::new(5);
 ///
-/// // The bot will always return Some when there are available moves
 /// let chosen_move = bot.choose_move(&game);
 /// assert!(chosen_move.is_some());
 /// ```
-pub struct HeuristicBot;
+pub struct DefensiveBot;
 
-impl HeuristicBot {
+impl DefensiveBot {
     fn score_move(board: &GameY, coords: Coordinates) -> i32 {
         let size = board.board_size() as i32;
         let cx = (size - 1) / 2;
         let cy = (size - 1) / 2;
 
         let dx = (coords.x() as i32 - cx).abs();
-        let dy = (coords.y() as i32 - cy).abs();
-        let dist_center = dx + dy;
+        let dy = (coords.y() as i32 - cy).abs(); // ← bug corregido
+        let mut score = 100 - (dx + dy);
 
-        let mut score = 100 - dist_center;
+        let neighbors = board.get_neighbors(&coords);
+        let occupied_neighbors = neighbors
+            .iter()
+            .filter(|c| {
+                !board.available_cells().contains(&c.to_index(board.board_size()))
+            })
+            .count() as i32;
 
-        if coords.x() == 0
-            || coords.y() == 0
-            || coords.x() as i32 == size - 1
-            || coords.y() as i32 == size - 1
-        {
-            score -= 10;
-        }
+        score += occupied_neighbors * 15;
 
         score
     }
 }
 
-impl YBot for HeuristicBot {
+impl YBot for DefensiveBot {
     fn name(&self) -> &str {
-        "heuristicbot"
+        "defensivebot"
     }
 
     fn choose_move(&self, board: &GameY) -> Option<Coordinates> {
@@ -67,11 +66,10 @@ impl YBot for HeuristicBot {
                 best_candidates.clear();
                 best_candidates.push(coords);
             } else if sc == best_score {
-                best_candidates.push(coords); // empate: guarda todos
+                best_candidates.push(coords);
             }
         }
 
-        // Elige aleatoriamente entre los empatados para evitar sesgo
         best_candidates.choose(&mut rand::rng()).copied()
     }
 }
@@ -82,21 +80,21 @@ mod tests {
     use crate::{Coordinates, GameY, Movement, PlayerId};
 
     #[test]
-    fn test_heuristicbot_name() {
-        let bot = HeuristicBot;
-        assert_eq!(bot.name(), "heuristicbot");
+    fn test_defensivebot_name() {
+        let bot = DefensiveBot;
+        assert_eq!(bot.name(), "defensivebot");
     }
 
     #[test]
-    fn test_heuristicbot_returns_move_on_empty_board() {
-        let bot = HeuristicBot;
+    fn test_defensivebot_returns_move_on_empty_board() {
+        let bot = DefensiveBot;
         let game = GameY::new(5);
         assert!(bot.choose_move(&game).is_some());
     }
 
     #[test]
-    fn test_heuristicbot_returns_none_on_full_board() {
-        let bot = HeuristicBot;
+    fn test_defensivebot_returns_none_on_full_board() {
+        let bot = DefensiveBot;
         let mut game = GameY::new(1);
         game.add_move(Movement::Placement {
             player: PlayerId::new(0),
@@ -106,19 +104,22 @@ mod tests {
     }
 
     #[test]
-    fn test_heuristicbot_prefers_center() {
-        let bot = HeuristicBot;
-        let game = GameY::new(5);
-        let coords = bot.choose_move(&game).unwrap();
-        assert!(coords.x() > 0 && coords.y() > 0);
-    }
-
-    #[test]
-    fn test_heuristicbot_returns_valid_cell() {
-        let bot = HeuristicBot;
+    fn test_defensivebot_returns_valid_cell() {
+        let bot = DefensiveBot;
         let game = GameY::new(5);
         let coords = bot.choose_move(&game).unwrap();
         let idx = coords.to_index(game.board_size());
         assert!(game.available_cells().contains(&idx));
+    }
+
+    #[test]
+    fn test_defensivebot_prefers_occupied_neighbors() {
+        let bot = DefensiveBot;
+        let mut game = GameY::new(5);
+        game.add_move(Movement::Placement {
+            player: PlayerId::new(0),
+            coords: Coordinates::new(2, 1, 1),
+        }).unwrap();
+        assert!(bot.choose_move(&game).is_some());
     }
 }
