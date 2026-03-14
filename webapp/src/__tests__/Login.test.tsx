@@ -6,17 +6,20 @@ import { describe, expect, test, vi, afterEach } from 'vitest'
 import '@testing-library/jest-dom'
 
 // Mock de useNavigate
+const mockNavigate = vi.fn()
+
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<any>('react-router-dom')
   return {
     ...actual,
-    useNavigate: () => vi.fn(),
+    useNavigate: () => mockNavigate,
   }
 })
 
 describe('Login Component', () => {
   afterEach(() => {
     vi.restoreAllMocks()
+    mockNavigate.mockReset()
   })
 
   const renderComponent = () =>
@@ -26,14 +29,8 @@ describe('Login Component', () => {
       </MemoryRouter>
     )
 
-  // ---------------------------------------------------------
-  // 1. LOGIN CORRECTO (redirige a /dashboard)
-  // ---------------------------------------------------------
   test('login correcto redirige al dashboard', async () => {
     const user = userEvent.setup()
-    const mockNavigate = vi.fn()
-
-    vi.mocked(require('react-router-dom').useNavigate).mockReturnValue(mockNavigate)
 
     global.fetch = vi.fn().mockResolvedValueOnce({
       ok: true,
@@ -52,9 +49,6 @@ describe('Login Component', () => {
     })
   })
 
-  // ---------------------------------------------------------
-  // 2. ERROR DEL SERVIDOR (credenciales incorrectas)
-  // ---------------------------------------------------------
   test('muestra error si el servidor devuelve error', async () => {
     const user = userEvent.setup()
 
@@ -75,9 +69,6 @@ describe('Login Component', () => {
     })
   })
 
-  // ---------------------------------------------------------
-  // 3. CAMPOS VACÍOS
-  // ---------------------------------------------------------
   test('muestra error si faltan campos', async () => {
     const user = userEvent.setup()
 
