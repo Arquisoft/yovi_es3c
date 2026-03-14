@@ -318,3 +318,60 @@ async fn test_get_on_choose_endpoint_returns_method_not_allowed() {
 
     assert_eq!(response.status(), StatusCode::METHOD_NOT_ALLOWED);
 }
+
+// Tests de integración para heuristicbot
+#[tokio::test]
+async fn test_choose_heuristicbot() {
+    let app = test_app();
+    let yen = YEN::new(3, 0, vec!['B', 'R'], "./../...".to_string());
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/v1/ybot/choose/heuristicbot")
+                .header("content-type", "application/json")
+                .body(Body::from(serde_json::to_string(&yen).unwrap()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let body_str = String::from_utf8(body.to_vec()).unwrap();
+    assert!(body_str.contains("heuristicbot"));
+}
+
+// Test de integración para defensivebot
+#[tokio::test]
+async fn test_choose_defensivebot() {
+    let app = test_app();
+    let yen = YEN::new(3, 0, vec!['B', 'R'], "./../...".to_string());
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/v1/ybot/choose/defensivebot")
+                .header("content-type", "application/json")
+                .body(Body::from(serde_json::to_string(&yen).unwrap()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let body_str = String::from_utf8(body.to_vec()).unwrap();
+    assert!(body_str.contains("defensivebot"));
+}
+
+// Comprueba que el estado por defecto tiene todos los bots registrados
+#[tokio::test]
+async fn test_default_state_has_all_bots() {
+    let state = create_default_state();
+    let bots = state.bots();
+    let names = bots.names();
+    assert!(names.iter().any(|n| n == "random_bot"));
+    assert!(names.iter().any(|n| n == "heuristicbot"));
+    assert!(names.iter().any(|n| n == "defensivebot"));
+}
+
+
