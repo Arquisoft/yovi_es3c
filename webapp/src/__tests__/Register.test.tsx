@@ -5,6 +5,17 @@ import { afterEach, describe, expect, test, vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import '@testing-library/jest-dom'
 
+// Mock de useNavigate
+const mockNavigate = vi.fn()
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<any>('react-router-dom')
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  }
+})
+
+
 describe('Register Component', () => {
   afterEach(() => {
     vi.restoreAllMocks()
@@ -39,13 +50,9 @@ describe('Register Component', () => {
 
     // 1. Verificamos el mensaje de éxito
     await waitFor(() => {
-      expect(screen.getByText(/¡usuario creado con éxito!/i)).toBeInTheDocument()
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard')
     })
 
-    // 2. Verificamos que existe el link para ir al login manualmente
-    const loginLink = screen.getByRole('link', { name: /ir al inicio de sesión/i })
-    expect(loginLink).toBeInTheDocument()
-    expect(loginLink).toHaveAttribute('href', '/login')
   })
 
   test('muestra error si las contraseñas no coinciden', async () => {
@@ -60,17 +67,13 @@ describe('Register Component', () => {
     await user.type(passInput, '123456')
     await user.type(confirmInput, '654321') // Diferente
 
+   global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: 'Las contraseñas no coinciden' }),
+    } as Response)
+
     await user.click(screen.getByRole('button', { name: /registrarse/i }))
 
-    // Aquí el error puede venir de tu lógica de frontend o del mock de fetch
-    // Si es del fetch (basado en tu código actual), asegúrate de que el mock devuelva error
-    global.fetch = vi.fn().mockResolvedValueOnce({
-        ok: false,
-        json: async () => ({ error: 'Las contraseñas no coinciden' }),
-    } as Response)
-    
-    // Re-click para disparar el fetch con error
-    await user.click(screen.getByRole('button', { name: /registrarse/i }))
 
     await waitFor(() => {
       expect(screen.getByText(/las contraseñas no coinciden/i)).toBeInTheDocument()

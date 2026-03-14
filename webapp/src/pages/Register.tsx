@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const authentication = useAuth();
   const [error, setError] = useState<string>('');
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const navigate = useNavigate();
 
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -19,8 +22,7 @@ const Register: React.FC = () => {
     }
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
-      const response = await fetch(`${API_URL}/createuser`, {
+      const response = await fetch('http://localhost:3000/createuser', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password, confirmPassword }),
@@ -29,7 +31,8 @@ const Register: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setIsSuccess(true);
+        authentication.login(data.username);
+        navigate('/dashboard');
       } else {
         setError(data.error || 'Error al registrarse');
       }
@@ -38,53 +41,41 @@ const Register: React.FC = () => {
     }
   };
 
-  if (isSuccess) {
-    return (
-      <div className="auth-container">
-        <h2 className="success-title">¡Usuario creado con éxito!</h2>
-        <p>Bienvenido, {username}. Ya puedes acceder a tu cuenta.</p>
-        <Link to="/login" className="submit-button">
-          Ir al inicio de sesión
-        </Link>
-      </div>
-    );
-  }
-
   return (
     <div className='auth-container'>
       <h2>Registro de Usuarios</h2>
       <form onSubmit={handleSubmit} className='shared-form'>
         <div className='form-group'>
           <label htmlFor="username">Usuario:</label>
-          <input
+          <input 
             id="username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            type="text" 
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)} 
             className="form-input"
           />
         </div>
         <div className='form-group'>
           <label htmlFor="password">Contraseña:</label>
-          <input
+          <input 
             id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type="password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
             className="form-input"
           />
         </div>
         <div className='form-group'>
           <label htmlFor="confirmPassword">Confirmar Contraseña:</label>
-          <input
+          <input 
             id="confirmPassword"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            type="password" 
+            value={confirmPassword} 
+            onChange={(e) => setConfirmPassword(e.target.value)} 
             className="form-input"
           />
         </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p style={{color:'red'}}>{error}</p>}
         <button type="submit" className='submit-button'>Registrarse</button>
       </form>
       <p>
