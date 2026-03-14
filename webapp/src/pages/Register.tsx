@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
+import { useAuth } from '../context/AuthContext';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const authentication = useAuth();
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
 
@@ -30,6 +31,7 @@ const Register: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
+        authentication.login(data.username);
         navigate('/dashboard');
       } else {
         setError(data.error || 'Error al registrarse');
