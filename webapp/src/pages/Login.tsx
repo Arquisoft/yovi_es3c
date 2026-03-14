@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
 
     if (!username || !password) {
-      alert("Todos los campos son obligatorios");
+      setError("Todos los campos son obligatorios");
       return;
     }
-    const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
+
+    const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+
     try {
       const response = await fetch(`${API_URL}/login`, {
         method: "POST",
@@ -23,47 +28,54 @@ const Login: React.FC = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.error || "Error al iniciar sesión");
+        setError(data.error || "Error al iniciar sesión");
         return;
       }
 
-      alert("Login correcto");
+      navigate('/dashboard');
     } catch (err) {
       console.error("Error en login:", err);
-      alert("Error de conexión con el servidor");
+      setError("Error de conexión con el servidor");
     }
   };
 
   return (
     <div className="login-container">
       <h2>Iniciar Sesión</h2>
+
       <form className="shared-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="username">Usuario:</label>
-          <input id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)}
+          <input
+            id="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="form-input"
           />
         </div>
 
         <div className="form-group">
           <label htmlFor="password">Contraseña:</label>
-          <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="form-input"
           />
         </div>
+
+        {error && <p style={{ color: 'red' }}>{error}</p>}
 
         <button type="submit" className="submit-button">
           Iniciar Sesión
         </button>
       </form>
+
       <p>
         ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
       </p>
-
-      <p>
-        Accede al tablero del juego: <Link to="/gameboard">Click aquí</Link>
-      </p>
-
     </div>
   );
 };
