@@ -13,7 +13,9 @@ export function Header() {
         <img src={logo} alt="YoviLogo" />
         
         <nav className="header-nav">
-          <Link to="/dashboard" className="nav-link">Jugar</Link>
+          {authentication.getUser() && 
+            <Link to="/dashboard" className="nav-link">Jugar</Link>
+          }
 
           {!authentication.getUser() && 
             (

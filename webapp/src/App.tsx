@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { PublicRoute } from './components/PublicRoute';
 import { Header } from './components/Header';
 
 import './App.css';
@@ -39,16 +40,16 @@ function AppContent() {
       <Header />
       <main className="main-content">
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/game" element={<Game />} />
 
-          <Route element={<ProtectedRoute />}>
-            {/* Aqui iran luego las rutas protegidas.*/}
+          <Route element={<PublicRoute />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </Route>
-
-          { /* Temporalmente sin ProtectedRoute ya que el login no está implementado */}
-          <Route path="/dashboard" element={<Dashboard />} />
+          
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/game" element={<Game />} />
+          </Route>
 
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
