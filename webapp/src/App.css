@@ -1,6 +1,11 @@
 #root {
+  margin: 0;
+  padding: 0;
+}
+
+.main-content {
   max-width: 1280px;
-  margin: 0 auto;
+  margin: 15vh auto 0;
   padding: 2rem;
   text-align: center;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -13,7 +18,6 @@ form {
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
@@ -55,6 +59,11 @@ form {
 
 .submit-button:hover {
   background-color: #0056b3;
+}
+
+.shared-form {
+  max-width: 350px;
+  margin: 0 auto;
 }
 
 /* Dashboard styles - Pantalla intermedia */
