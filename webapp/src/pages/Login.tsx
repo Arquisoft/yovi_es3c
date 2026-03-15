@@ -33,7 +33,7 @@ const Login: React.FC = () => {
         setError(data.error || "Error al iniciar sesión");
         return;
       }
-      authentication.login(data.username);
+      authentication.login({ id: data.id, username: data.username });
       navigate('/dashboard');
     } catch (err) {
       console.error("Error en login:", err);

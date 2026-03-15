@@ -5,13 +5,12 @@ import type { ReactNode } from 'react';
 interface User {
   id: string;
   username: string;
-  // Añade aquí otros campos que devuelva tu backend
 }
 
 // 2. Definimos qué valores expondrá el contexto
 interface AuthContextType {
   user: User | null;
-  login: (userData: User) => void;
+  login: (userData: { id: string; username: string }) => void;
   logout: () => void;
   loading: boolean;
   getUser: () => User | null;
@@ -40,7 +39,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = (userData: User) => {
+  const login = (userData: { id: string; username: string }) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
   };

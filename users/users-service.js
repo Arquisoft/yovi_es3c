@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3000; 
+const port = 3000;
 const swaggerUi = require('swagger-ui-express');
 const fs = require('node:fs');
 const YAML = require('js-yaml');
@@ -11,7 +11,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // Modelo de usuario
-const User = require('./models/User'); 
+const User = require('./models/User');
+
+// Rutas de estadísticas
+const statsRoutes = require('./routes/stats');
 
 // CONEXIÓN A MONGODB ATLAS
 const mongoUri = process.env.MONGO_URL;
@@ -19,7 +22,7 @@ mongoose.connect(mongoUri)
   .then(() => console.log("Conectado con éxito a MongoDB Atlas"))
   .catch(err => console.error("Error al conectar a MongoDB:", err));
 
-const metricsMiddleware = promBundle({includeMethod: true});
+const metricsMiddleware = promBundle({ includeMethod: true });
 app.use(metricsMiddleware);
 
 // Configuración de Swagger
@@ -40,6 +43,9 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
+
+// Registrar rutas de estadísticas
+app.use(statsRoutes);
 
 // Endpoint inicio de sesion
 app.post('/login', async (req, res) => {
@@ -71,6 +77,7 @@ app.post('/login', async (req, res) => {
     // Login correcto
     return res.json({
       message: "Login exitoso",
+      id: user._id.toString(),
       username: user.username
     });
 
@@ -95,7 +102,7 @@ app.post('/createuser', async (req, res) => {
     }
 
     // Comprobación para asegurarnos que los datos son strings
-    if (typeof username !== 'string' || typeof password !== 'string' || typeof confirmPassword !=='string') {
+    if (typeof username !== 'string' || typeof password !== 'string' || typeof confirmPassword !== 'string') {
       return res.status(400).json({ error: "Datos de entrada inválidos" });
     }
 
@@ -106,8 +113,8 @@ app.post('/createuser', async (req, res) => {
 
     // Antes de empezar introducir el username a la bbdd, los sanitizamos
     const sanitizedUsername = String(username || '')
-        .trim()
-        .replace(/[^\w\s@.-]/gi, ''); // Solo permite letras, números, @, puntos y guiones    
+      .trim()
+      .replace(/[^\w\s@.-]/gi, ''); // Solo permite letras, números, @, puntos y guiones    
 
     // Comprobamos si el usuario existe
     const existingUser = await User.findOne({ username: { $eq: sanitizedUsername } });
@@ -122,19 +129,19 @@ app.post('/createuser', async (req, res) => {
     // Creamos y guardamos el usuario
     const newUser = new User({
       username: sanitizedUsername,
-      password: hashedPassword 
+      password: hashedPassword
     });
 
     await newUser.save();
 
-    res.status(201).json({ 
+    res.status(201).json({
       message: `Usuario creado con éxito`,
       username
     });
 
   } catch (err) {
-      console.error("Error en POST /createuser:", err);
-      res.status(500).json({ error: "Error interno del servidor" });
+    console.error("Error en POST /createuser:", err);
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
