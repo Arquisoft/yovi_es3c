@@ -5,16 +5,20 @@
  * Funciones para actualizar y obtener estadísticas del usuario
  */
 
-const API_URL = 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+
 
 /**
  * Obtener estadísticas del usuario
  * @param username - Nombre del usuario
  * @returns Objeto con estadísticas (totalGames, gamesWon, gamesLost, winPercentage)
  */
+
+
 export const getUserStats = async (username: string) => {
     try {
         const response = await fetch(`${API_URL}/getuserstats/${username}`);
+
 
         if (!response.ok) {
             throw new Error(`Error ${response.status}: ${response.statusText}`);
