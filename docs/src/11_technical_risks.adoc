@@ -46,3 +46,4 @@ This section describes the technical risks and the intentional (or unintentional
 | As the project is still in an active development phase, some sections of the arc42 documentation and code comments are not yet fully completed or updated.
 | **Code Refactoring**
 | Early architectural decisions focused on achieving a functional prototype (MVP) might need to be refactored to improve maintainability and legibility.
+|===
