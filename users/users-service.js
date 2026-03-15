@@ -136,7 +136,8 @@ app.post('/createuser', async (req, res) => {
 
     res.status(201).json({
       message: `Usuario creado con éxito`,
-      username
+      id: newUser._id.toString(),
+      username: newUser.username
     });
 
   } catch (err) {
