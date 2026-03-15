@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { BOTS, DIFICULTAD_A_BOTS } from "../config/botsConfig";
 
-const dificultades = ["facil", "media", "dificil"];
-
-// Mapeo: dificultad → bots disponibles para esa dificultad
-const dificultadABots: Record<string, string[]> = {
-    facil: ["random_bot"],
-    media: ["heuristicbot"],
-    dificil: ["defensivebot"]
-};
-
+// Labels locales
 const labels: Record<string, string> = {
     facil: "Fácil",
     media: "Media",
     dificil: "Difícil",
-    random_bot: "Aleatorio",
-    heuristicbot: "Heurístico",
-    defensivebot: "Defensivo"
+    ...BOTS
 };
 
 interface GameSetupFormProps {
@@ -27,12 +18,12 @@ export const GameSetupForm: React.FC<GameSetupFormProps> = ({ onStart }) => {
     const [estrategia, setEstrategia] = useState(() => localStorage.getItem("setup-estrategia") || "heuristicbot");
     const [tamano, setTamano] = useState(() => {
         const t = localStorage.getItem("setup-tamano");
-        return t ? parseInt(t) : 15;
+        return t ? parseInt(t) : 12;
     });
 
     // Cuando cambia la dificultad, actualizar estrategia al primer bot disponible
     useEffect(() => {
-        const botsDisponibles = dificultadABots[dificultad];
+        const botsDisponibles = DIFICULTAD_A_BOTS[dificultad];
         if (botsDisponibles && !botsDisponibles.includes(estrategia)) {
             setEstrategia(botsDisponibles[0]);
         }
@@ -53,7 +44,7 @@ export const GameSetupForm: React.FC<GameSetupFormProps> = ({ onStart }) => {
         onStart({ dificultad, estrategia, tamano });
     };
 
-    const botsDisponibles = dificultadABots[dificultad] || [];
+    const botsDisponibles = DIFICULTAD_A_BOTS[dificultad] || [];
 
     return (
         <form className="game-setup-form game-setup-outer dashboard-card" onSubmit={handleSubmit}>
@@ -61,7 +52,7 @@ export const GameSetupForm: React.FC<GameSetupFormProps> = ({ onStart }) => {
             <div className="setup-section">
                 <label className="setup-label">Dificultad</label>
                 <div className="options-layout flex-row">
-                    {dificultades.map(d => (
+                    {Object.keys(DIFICULTAD_A_BOTS).map(d => (
                         <button
                             type="button"
                             key={d}
@@ -76,7 +67,7 @@ export const GameSetupForm: React.FC<GameSetupFormProps> = ({ onStart }) => {
             <div className="setup-section">
                 <label className="setup-label">Estrategia</label>
                 <div className="options-layout grid-2x2" key={`estrategia-${dificultad}`}>
-                    {botsDisponibles.map(e => (
+                    {botsDisponibles.map((e: string) => (
                         <button
                             type="button"
                             key={e}

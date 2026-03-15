@@ -3,6 +3,7 @@ import GameBoard from './gui/GameBoard';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateUserStats } from '../services/gameService';
+import { BOTS } from '../config/botsConfig';
 import './Game.css';
 
 function Game() {
@@ -31,12 +32,14 @@ function Game() {
     }
   };
 
+  const displayBotName = BOTS[botId] || botId;
+
   return (
     <div className="game-container">
       <div className="game-header">
         <p>{textoTurno}</p>
         <div className='game-info'>
-          <p>Bot: {botId}</p>
+          <p>Bot: {displayBotName}</p>
         </div>
       </div>
 
