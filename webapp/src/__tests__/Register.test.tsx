@@ -4,6 +4,7 @@ import Register from '../pages/Register'
 import { afterEach, describe, expect, test, vi } from 'vitest' 
 import { MemoryRouter } from 'react-router-dom'
 import '@testing-library/jest-dom'
+import { AuthProvider } from '../context/AuthContext'
 
 // Mock de useNavigate
 const mockNavigate = vi.fn()
@@ -22,9 +23,11 @@ describe('Register Component', () => {
   })
 
   const renderComponent = () => render(
-    <MemoryRouter>
-      <Register />
-    </MemoryRouter>
+    <AuthProvider>
+      <MemoryRouter>
+        <Register />
+      </MemoryRouter>
+    </AuthProvider>
   );
 
   test('sube los datos correctamente y muestra el link de inicio de sesión', async () => {

@@ -4,6 +4,7 @@ import Login from '../pages/Login'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, test, vi, afterEach } from 'vitest'
 import '@testing-library/jest-dom'
+import { AuthProvider } from '../context/AuthContext'
 
 // Mock de useNavigate
 const mockNavigate = vi.fn()
@@ -24,9 +25,11 @@ describe('Login Component', () => {
 
   const renderComponent = () =>
     render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
+      <AuthProvider>
+        <MemoryRouter>
+          <Login />
+        </MemoryRouter>
+      </AuthProvider>
     )
 
   test('login correcto redirige al dashboard', async () => {
