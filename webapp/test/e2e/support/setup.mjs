@@ -18,6 +18,13 @@ Before(async function () {
 
   this.browser = await chromium.launch({ headless, slowMo, devtools })
   this.page = await this.browser.newPage()
+  
+  // Limpiar localStorage y sessionStorage navegando primero a un dominio
+  await this.page.goto('http://localhost:5173')
+  await this.page.evaluate(() => {
+    localStorage.clear()
+    sessionStorage.clear()
+  })
 })
 
 After(async function () {

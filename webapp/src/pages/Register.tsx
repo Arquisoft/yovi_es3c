@@ -31,7 +31,7 @@ const Register: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        authentication.login(data.username);
+      authentication.login({ id: data.id, username: data.username });
         navigate('/dashboard');
       } else {
         setError(data.error || 'Error al registrarse');
