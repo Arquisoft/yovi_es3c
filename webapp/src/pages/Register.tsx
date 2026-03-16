@@ -21,8 +21,10 @@ const Register: React.FC = () => {
       return;
     }
 
+    const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+
     try {
-      const response = await fetch('http://localhost:3000/createuser', {
+      const response = await fetch(`${API_URL}/createuser`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password, confirmPassword }),

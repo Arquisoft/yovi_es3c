@@ -320,11 +320,7 @@
   justify-content: center;
   margin-bottom: 8px;
 }
-.grid-2x2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
+
 .flex-row {
   display: flex;
   flex-direction: row;
