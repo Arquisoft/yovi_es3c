@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import GameBoard from './gui/GameBoard';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateUserStats } from '../services/gameService';
 import { BOTS } from '../config/botsConfig';
 import './Game.css';
+import DialogVictoria from './DialogVictoria';
+import DialogDerrota from './DialogDerrota';
 
 function Game() {
 
@@ -14,9 +16,12 @@ function Game() {
 
   const [textoTurno, setTextoTurno] = useState<String>("Es tu turno");
   const [gameOver, setGameOver] = useState(false);
+  const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
+
 
   const handleGameOver = async (winnerId: number) => {
     setGameOver(true);
+    toggleDialog(winnerId);
     const winnerName = winnerId === 0 ? '¡Tú ganas!' : '¡El bot gana!';
     setTextoTurno(winnerName);
 
@@ -32,6 +37,25 @@ function Game() {
     }
   };
 
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  function toggleDialog(winnerId:number){
+    
+    if(winnerId === 0){
+      setDialogContent(<DialogVictoria />)
+    }else{
+      setDialogContent(<DialogDerrota />)
+    }
+    
+    if(!dialogRef.current){
+      return;
+    }
+
+    dialogRef.current.hasAttribute("open") 
+      ? dialogRef.current.close() 
+      : dialogRef.current.showModal();
+  }
+
   const displayBotName = BOTS[botId] || botId;
 
   return (
@@ -42,7 +66,7 @@ function Game() {
           <p>Bot: {displayBotName}</p>
         </div>
       </div>
-
+      <dialog ref={dialogRef}>{dialogContent}</dialog>
       <main className="game-main">
         <GameBoard
           size={size}
