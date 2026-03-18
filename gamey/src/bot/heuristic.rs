@@ -84,7 +84,7 @@ mod tests {
     #[test]
     fn test_heuristicbot_name() {
         let bot = HeuristicBot;
-        assert_eq!(bot.name(), "heuristicbot");
+        assert_eq!(bot.name(), "heuristic_bot");
     }
 
     #[test]

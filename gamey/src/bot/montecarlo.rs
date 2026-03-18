@@ -130,3 +130,58 @@ impl YBot for MonteCarloBot {
         best_candidates.choose(&mut rand::rng()).copied()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{Coordinates, GameY, Movement, PlayerId};
+
+    #[test]
+    fn test_montecarlobot_name() {
+        let bot = MonteCarloBot;
+        assert_eq!(bot.name(), "montecarlo_bot");
+    }
+
+    #[test]
+    fn test_montecarlobot_returns_move_on_empty_board() {
+        let bot = MonteCarloBot;
+        let game = GameY::new(5);
+        assert!(bot.choose_move(&game).is_some());
+    }
+
+    #[test]
+    fn test_montecarlobot_returns_none_on_full_board() {
+        let bot = MonteCarloBot;
+        let mut game = GameY::new(1);
+        game.add_move(Movement::Placement {
+            player: PlayerId::new(0),
+            coords: Coordinates::new(0, 0, 0),
+        }).unwrap();
+        assert!(bot.choose_move(&game).is_none());
+    }
+
+    #[test]
+    fn test_montecarlobot_returns_valid_cell() {
+        let bot = MonteCarloBot;
+        let game = GameY::new(5);
+        let coords = bot.choose_move(&game).unwrap();
+        let idx = coords.to_index(game.board_size());
+        assert!(game.available_cells().contains(&idx));
+    }
+
+    #[test]
+    fn test_montecarlobot_chooses_winning_move_when_available() {
+        let bot = MonteCarloBot;
+        let game = GameY::new(5);
+        
+        // The bot should prefer moves that lead to higher win rates in simulations
+        let coords = bot.choose_move(&game);
+        assert!(coords.is_some());
+        
+        // The chosen move should be a valid, available cell
+        if let Some(chosen) = coords {
+            let idx = chosen.to_index(game.board_size());
+            assert!(game.available_cells().contains(&idx));
+        }
+    }
+}

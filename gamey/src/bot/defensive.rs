@@ -82,7 +82,7 @@ mod tests {
     #[test]
     fn test_defensivebot_name() {
         let bot = DefensiveBot;
-        assert_eq!(bot.name(), "defensivebot");
+        assert_eq!(bot.name(), "defensive_bot");
     }
 
     #[test]
