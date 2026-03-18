@@ -10,7 +10,7 @@ function Game() {
 
   const location = useLocation();
   const { user } = useAuth();
-  const { size, botId } = location.state || { size: 12, botId: "heuristicbot" };
+  const { size, botId } = location.state || { size: 12, botId: "heuristic_bot" };
 
   const [textoTurno, setTextoTurno] = useState<String>("Es tu turno");
   const [gameOver, setGameOver] = useState(false);

@@ -77,6 +77,7 @@ function GameBoard(
     setIsWaiting(true);
     setTextoTurno("Es el turno del Bot");
     try {
+      const startTime = Date.now();
       const res = await fetch(`${apiUrl}/v1/ybot/choose/${botId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -91,9 +92,13 @@ function GameBoard(
       const botResponse = await res.json();
       
       if (botResponse.coords) {
-
-        // Simular que el bot tarda 1 segundo en decidir
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Simular que el bot tarda 1 segundo en decidir, pero solo si ya no tardó más
+        const elapsedTime = Date.now() - startTime;
+        const remainingDelay = Math.max(0, 1000 - elapsedTime);
+        
+        if (remainingDelay > 0) {
+          await new Promise(resolve => setTimeout(resolve, remainingDelay));
+        }
         
         // Actualizar con el movimiento del bot
         const { row: botRow, col: botCol } = coordToRowCol(botResponse.coords.x, botResponse.coords.y, size);
@@ -104,7 +109,7 @@ function GameBoard(
         if (await hasGameFinished(newLayout)) {
           return;
         }
-        
+
         setTextoTurno("Es tu turno");
       }
     } catch (error) {
