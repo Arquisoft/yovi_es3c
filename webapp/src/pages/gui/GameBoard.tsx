@@ -101,13 +101,16 @@ function GameBoard(
         setBoardLayout(finalLayout);
         
         // Validar si el bot ha ganado
-        await hasGameFinished(finalLayout);
+        if (await hasGameFinished(newLayout)) {
+          return;
+        }
+        
+        setTextoTurno("Es tu turno");
       }
     } catch (error) {
       console.error('Error calling bot:', error);
     } finally {
       setIsWaiting(false);
-      setTextoTurno("Es tu turno");
     }
   };
 
