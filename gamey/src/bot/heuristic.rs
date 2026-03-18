@@ -51,7 +51,7 @@ impl HeuristicBot {
 
 impl YBot for HeuristicBot {
     fn name(&self) -> &str {
-        "heuristicbot"
+        "heuristic_bot"
     }
 
     fn choose_move(&self, board: &GameY) -> Option<Coordinates> {

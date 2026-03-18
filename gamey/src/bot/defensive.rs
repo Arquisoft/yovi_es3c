@@ -50,7 +50,7 @@ impl DefensiveBot {
 
 impl YBot for DefensiveBot {
     fn name(&self) -> &str {
-        "defensivebot"
+        "defensive_bot"
     }
 
     fn choose_move(&self, board: &GameY) -> Option<Coordinates> {
