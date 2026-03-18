@@ -6,6 +6,12 @@
 use crate::{Coordinates, GameY, Movement, PlayerId, YBot};
 use rand::prelude::IndexedRandom;
 
+/// Number of simulations per move evaluation.
+///
+/// Each move is evaluated by running this many random games from the position
+/// after that move. More simulations lead to better move quality but slower evaluation.
+const DEFAULT_SIMULATIONS: u32 = 100;
+
 /// A bot that chooses moves using Monte Carlo simulations.
 ///
 /// This bot evaluates each possible move by simulating multiple random games
@@ -13,28 +19,16 @@ use rand::prelude::IndexedRandom;
 /// across simulations, providing a good balance between strategic play and
 /// computational efficiency.
 ///
-/// # Parameters
-///
-/// - `simulations`: Number of random games to simulate per move evaluation
-/// - `seed`: Optional random seed for reproducibility (None for true randomness)
-pub struct MonteCarloBot {
-    simulations: u32,
-}
+/// The bot uses a fixed number of simulations (100 per move) so that its behavior
+/// is consistent and predictable.
+pub struct MonteCarloBot;
 
 impl MonteCarloBot {
-    /// Creates a new Monte Carlo bot with the specified number of simulations.
-    ///
-    /// More simulations lead to better move quality but slower evaluation.
-    /// A reasonable default is 100-500 simulations depending on performance needs.
-    pub fn new(simulations: u32) -> Self {
-        Self { simulations }
-    }
-
     /// Simulates a random game from the current position.
     ///
     /// Continues playing with random moves until the game reaches an end state,
     /// then returns the winner.
-    fn simulate_game(&self, initial_game: &GameY, current_player: PlayerId) -> Option<PlayerId> {
+    fn simulate_game(initial_game: &GameY) -> Option<PlayerId> {
         let mut game = initial_game.clone();
 
         while !game.check_game_over() {
@@ -66,7 +60,6 @@ impl MonteCarloBot {
     ///
     /// Returns the win rate (wins / total_simulations) for the current player.
     fn evaluate_move(
-        &self,
         board: &GameY,
         coords: Coordinates,
         current_player: PlayerId,
@@ -92,21 +85,15 @@ impl MonteCarloBot {
         }
 
         let mut wins = 0;
-        for _ in 0..self.simulations {
-            if let Some(winner) = self.simulate_game(&game, current_player) {
+        for _ in 0..DEFAULT_SIMULATIONS {
+            if let Some(winner) = Self::simulate_game(&game) {
                 if winner == current_player {
                     wins += 1;
                 }
             }
         }
 
-        wins as f64 / self.simulations as f64
-    }
-}
-
-impl Default for MonteCarloBot {
-    fn default() -> Self {
-        Self::new(100)
+        wins as f64 / DEFAULT_SIMULATIONS as f64
     }
 }
 
@@ -127,7 +114,7 @@ impl YBot for MonteCarloBot {
 
         for idx in available {
             let coords = Coordinates::from_index(*idx, board.board_size());
-            let score = self.evaluate_move(board, coords, current_player);
+            let score = Self::evaluate_move(board, coords, current_player);
 
             if score > best_score {
                 best_score = score;
