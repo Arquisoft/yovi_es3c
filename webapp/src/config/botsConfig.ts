@@ -5,14 +5,15 @@
 // Mapeo: bot ID → nombre para mostrar
 export const BOTS: Record<string, string> = {
     random_bot: "Aleatorio",
-    heuristicbot: "Heurístico",
-    defensivebot: "Defensivo"
+    heuristic_bot: "Heurístico",
+    defensive_bot: "Defensivo",
+    montecarlo_bot: "Montecarlo"
 };
 
 // Dificultad de los bots
 export const DIFICULTAD_A_BOTS: Record<string, string[]> = {
     facil: ["random_bot"],
-    media: ["heuristicbot"],
-    dificil: ["defensivebot"]
+    media: ["heuristic_bot", "defensive_bot"],
+    dificil: ["montecarlo_bot"]
 };
 

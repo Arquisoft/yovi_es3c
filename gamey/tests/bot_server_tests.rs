@@ -319,16 +319,16 @@ async fn test_get_on_choose_endpoint_returns_method_not_allowed() {
     assert_eq!(response.status(), StatusCode::METHOD_NOT_ALLOWED);
 }
 
-// Tests de integración para heuristicbot
+// Tests de integración para heuristic_bot
 #[tokio::test]
-async fn test_choose_heuristicbot() {
+async fn test_choose_heuristic_bot() {
     let app = test_app();
     let yen = YEN::new(3, 0, vec!['B', 'R'], "./../...".to_string());
     let response = app
         .oneshot(
             Request::builder()
                 .method("POST")
-                .uri("/v1/ybot/choose/heuristicbot")
+                .uri("/v1/ybot/choose/heuristic_bot")
                 .header("content-type", "application/json")
                 .body(Body::from(serde_json::to_string(&yen).unwrap()))
                 .unwrap(),
@@ -338,19 +338,19 @@ async fn test_choose_heuristicbot() {
     assert_eq!(response.status(), StatusCode::OK);
     let body = response.into_body().collect().await.unwrap().to_bytes();
     let body_str = String::from_utf8(body.to_vec()).unwrap();
-    assert!(body_str.contains("heuristicbot"));
+    assert!(body_str.contains("heuristic_bot"));
 }
 
-// Test de integración para defensivebot
+// Test de integración para defensive_bot
 #[tokio::test]
-async fn test_choose_defensivebot() {
+async fn test_choose_defensive_bot() {
     let app = test_app();
     let yen = YEN::new(3, 0, vec!['B', 'R'], "./../...".to_string());
     let response = app
         .oneshot(
             Request::builder()
                 .method("POST")
-                .uri("/v1/ybot/choose/defensivebot")
+                .uri("/v1/ybot/choose/defensive_bot")
                 .header("content-type", "application/json")
                 .body(Body::from(serde_json::to_string(&yen).unwrap()))
                 .unwrap(),
@@ -360,7 +360,29 @@ async fn test_choose_defensivebot() {
     assert_eq!(response.status(), StatusCode::OK);
     let body = response.into_body().collect().await.unwrap().to_bytes();
     let body_str = String::from_utf8(body.to_vec()).unwrap();
-    assert!(body_str.contains("defensivebot"));
+    assert!(body_str.contains("defensive_bot"));
+}
+
+// Test de integración para montecarlo_bot
+#[tokio::test]
+async fn test_choose_montecarlo_bot() {
+    let app = test_app();
+    let yen = YEN::new(3, 0, vec!['B', 'R'], "./../...".to_string());
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/v1/ybot/choose/montecarlo_bot")
+                .header("content-type", "application/json")
+                .body(Body::from(serde_json::to_string(&yen).unwrap()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let body_str = String::from_utf8(body.to_vec()).unwrap();
+    assert!(body_str.contains("montecarlo_bot"));
 }
 
 // Comprueba que el estado por defecto tiene todos los bots registrados
@@ -370,8 +392,9 @@ async fn test_default_state_has_all_bots() {
     let bots = state.bots();
     let names = bots.names();
     assert!(names.iter().any(|n| n == "random_bot"));
-    assert!(names.iter().any(|n| n == "heuristicbot"));
-    assert!(names.iter().any(|n| n == "defensivebot"));
+    assert!(names.iter().any(|n| n == "heuristic_bot"));
+    assert!(names.iter().any(|n| n == "defensive_bot"));
+    assert!(names.iter().any(|n| n == "montecarlo_bot"));
 }
 
 
