@@ -112,6 +112,10 @@ describe('Dashboard Component - Usability & Logic', () => {
     expect(botMontecarloDificil).toBeInTheDocument();
   });
 
+  /**
+  * Comprueba que la información seleccionada en el formulario (dificultad, estrategia y tamaño) se guarda correctamente en localStorage
+  * para que pueda ser recuperada en la pantalla del juego.
+  */
   it('debería persistir la configuración completa en localStorage (dificultad, estrategia y tamaño)', async () => {
     const user = userEvent.setup();
     render(<MemoryRouter><Dashboard /></MemoryRouter>);
@@ -131,6 +135,10 @@ describe('Dashboard Component - Usability & Logic', () => {
   });
 
 
+  /**
+  * Verifica que al hacer clic en "Jugar", se navega a la pantalla del juego (/game) y que además se pasa la configuración seleccionada 
+  * con los parámetros correctos (dificultad, estrategia y tamaño).
+  */
   it('debería navegar a /game con la configuración seleccionada al dar a Jugar', async () => {
     const user = userEvent.setup();
     render(<MemoryRouter><Dashboard /></MemoryRouter>);
