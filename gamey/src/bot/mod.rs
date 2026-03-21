@@ -5,15 +5,18 @@
 //! - [`RandomBot`] - Bot aleatorio
 //! - [`HeuristicBot`] - Bot heurístico (prefiere el centro)
 //! - [`DefensiveBot`] - Bot defensivo (bloquea al rival)
+//! - [`MonteCarloBot`] - Bot con simulaciones de Monte Carlo
 
 pub mod random;
 pub mod heuristic;
 pub mod defensive;
+pub mod montecarlo;
 pub mod ybot;
 pub mod ybot_registry;
 
 pub use random::*;
 pub use heuristic::*;
 pub use defensive::*;
+pub use montecarlo::*;
 pub use ybot::*;
 pub use ybot_registry::*;

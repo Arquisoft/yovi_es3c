@@ -15,7 +15,7 @@ interface GameSetupFormProps {
 
 export const GameSetupForm: React.FC<GameSetupFormProps> = ({ onStart }) => {
     const [dificultad, setDificultad] = useState(() => localStorage.getItem("setup-dificultad") || "media");
-    const [estrategia, setEstrategia] = useState(() => localStorage.getItem("setup-estrategia") || "heuristicbot");
+    const [estrategia, setEstrategia] = useState(() => localStorage.getItem("setup-estrategia") || "heuristic_bot");
     const [tamano, setTamano] = useState(() => {
         const t = localStorage.getItem("setup-tamano");
         return t ? parseInt(t) : 12;
