@@ -69,6 +69,7 @@ function Game() {
       <dialog ref={dialogRef}>{dialogContent}</dialog>
       <main className="game-main">
         <GameBoard
+
           size={size}
           botId={botId}
           setTextoTurno={setTextoTurno}
