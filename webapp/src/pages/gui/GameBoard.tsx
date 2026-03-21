@@ -10,6 +10,7 @@ interface GameBoardProps {
   setTextoTurno: (text: string) => void;
   gameOver: boolean;
   onGameOver: (winner: number) => void;
+  onMoveMade: () => void;
 }
 
 function GameBoard(
@@ -19,7 +20,8 @@ function GameBoard(
     botId = 'random_bot', 
     setTextoTurno,
     gameOver, 
-    onGameOver 
+    onGameOver, 
+    onMoveMade
   }: GameBoardProps) 
 {
   const initialLayout = layout || createInitialLayout(size);
@@ -67,7 +69,8 @@ function GameBoard(
     // Actualizar con el movimiento del jugador
     const newLayout = updateLayoutPosition(boardLayout, row, col, 'B');
     setBoardLayout(newLayout);
-    
+    onMoveMade();
+
     // Validar si el jugador ha ganado
     if (await hasGameFinished(newLayout)) {
       return;

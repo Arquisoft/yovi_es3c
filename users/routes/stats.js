@@ -52,7 +52,7 @@ router.get('/getuserstats/:username', async (req, res) => {
  */
 router.post('/updateuserstats', async (req, res) => {
     try {
-        const { username, won } = req.body;
+        const { username, won, score } = req.body;
 
         // Validación básica
         if (!username || won === undefined) {
@@ -79,6 +79,10 @@ router.post('/updateuserstats', async (req, res) => {
             user.gamesLost += 1;
         }
 
+        if(score != undefined && (!user.score || score > user.score)){
+            user.score = score;
+        }
+
         await user.save();
 
         res.json({
@@ -86,7 +90,8 @@ router.post('/updateuserstats', async (req, res) => {
             username: user.username,
             totalGames: user.totalGames,
             gamesWon: user.gamesWon,
-            gamesLost: user.gamesLost
+            gamesLost: user.gamesLost,
+            score: user.score
         });
 
     } catch (err) {

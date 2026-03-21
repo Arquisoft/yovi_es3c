@@ -11,7 +11,7 @@ const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 /**
  * Obtener estadísticas del usuario
  * @param username - Nombre del usuario
- * @returns Objeto con estadísticas (totalGames, gamesWon, gamesLost, winPercentage)
+ * @returns Objeto con estadísticas (totalGames, gamesWon, gamesLost, winPercentage, score)
  */
 
 
@@ -35,16 +35,17 @@ export const getUserStats = async (username: string) => {
  * Actualizar estadísticas del usuario cuando termina una partida
  * @param username - Nombre del usuario
  * @param won - Si el usuario ganó (true) o perdió (false)
+ * @param score - La puntuación del usuario
  * @returns Objeto con estadísticas actualizadas
  */
-export const updateUserStats = async (username: string, won: boolean) => {
+export const updateUserStats = async (username: string, won: boolean, score: number) => {
     try {
         const response = await fetch(`${API_URL}/updateuserstats`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, won })
+            body: JSON.stringify({ username, won, score })
         });
 
         if (!response.ok) {
