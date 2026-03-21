@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Dashboard } from '../pages/Dashboard';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MemoryRouter } from 'react-router-dom'; // Enruta sin necesidad de un servidsor (solo para pruebas)
+import { MemoryRouter } from 'react-router-dom'; // Enruta sin necesidad de un servidor (solo para pruebas)
 import { useAuth } from '../context/AuthContext';
 import * as gameService from '../services/gameService';
 import '@testing-library/jest-dom';
