@@ -87,94 +87,69 @@ describe('Dashboard Component - Usability & Logic', () => {
     await screen.findByText('10');
 
     // ====== TEST DIFICULTAD: FÁCIL ======
-    // 2 - Seleccionar "Fácil"
     const botonFacil = screen.getByRole('button', { name: /fácil/i });
     await user.click(botonFacil);
     expect(botonFacil).toHaveClass('selected');
-    // 3 - Verificar que SOLO aparece "Aleatorio" en Fácil
-    const botAleatorioFacil = await screen.findByText(/aleatorio/i);
-    expect(botAleatorioFacil).toBeInTheDocument();
-    expect(screen.queryByText(/heurístico/i)).not.toBeInTheDocument();
+    const botAleatoriofacil = await screen.findByText(/aleatorio/i);
+    expect(botAleatoriofacil).toBeInTheDocument();
     expect(screen.queryByText(/defensivo/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/montecarlo/i)).not.toBeInTheDocument();
 
     // ====== TEST DIFICULTAD: MEDIO ======
-    // 4 - Seleccionar "Medio"
     const botonMedio = screen.getByRole('button', { name: /media/i });
     await user.click(botonMedio);
     expect(botonMedio).toHaveClass('selected');
-    // 5 - Verificar que SOLO aparece "Heurístico" en Medio
-    const botHeuristicoMedio = await screen.findByText(/heurístico/i);
-    expect(botHeuristicoMedio).toBeInTheDocument();
+    const botDefensivoMedio = await screen.findByText(/defensivo/i);
+    expect(botDefensivoMedio).toBeInTheDocument();
     expect(screen.queryByText(/aleatorio/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/defensivo/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/montecarlo/i)).not.toBeInTheDocument();
 
     // ====== TEST DIFICULTAD: DIFÍCIL ======
-    // 6 - Seleccionar "Difícil"
     const botonDificil = screen.getByRole('button', { name: /difícil/i });
     await user.click(botonDificil);
     expect(botonDificil).toHaveClass('selected');
-    // 7 - Verificar que en Difícil aparece "Defensivo"
-    const botDefensivoDificil = await screen.findByText(/defensivo/i);
-    expect(botDefensivoDificil).toBeInTheDocument();
+    const botMontecarloDificil = await screen.findByText(/montecarlo/i);
+    expect(botMontecarloDificil).toBeInTheDocument();
   });
 
-  /**
-   * Comprueba que la información seleccionada en el formulario (dificultad, estrategia y tamaño) se guarda correctamente en localStorage
-   * para que pueda ser recuperada en la pantalla del juego.
-   */
   it('debería persistir la configuración completa en localStorage (dificultad, estrategia y tamaño)', async () => {
     const user = userEvent.setup();
     render(<MemoryRouter><Dashboard /></MemoryRouter>);
     await screen.findByText('10');
 
-    // 1 - Seleccionar dificultad "Difícil"
-    const botonDificil = screen.getByRole('button', { name: /difícil/i });
-    await user.click(botonDificil);
-    // 2 - Esperar a que la dificultad se procese y aparezca estrategia
+    const botonMedio = screen.getByRole('button', { name: /media/i });
+    await user.click(botonMedio);
     await screen.findByText(/defensivo/i);
-    // 3 - Seleccionar estrategia
     const botDefensivo = screen.getByRole('button', { name: /defensivo/i });
     await user.click(botDefensivo);
-    // 4 - Cambiar tamaño del tablero (slider)
     const slider = screen.getByRole('slider');
     fireEvent.change(slider, { target: { value: '14' } });
 
-    // 5 - Verificar que todos los parámetros se persistieron
-    expect(localStorage.getItem('setup-dificultad')).toBe('dificil');
-    expect(localStorage.getItem('setup-estrategia')).toBe('defensivebot');
+    expect(localStorage.getItem('setup-dificultad')).toBe('media');
+    expect(localStorage.getItem('setup-estrategia')).toBe('defensive_bot');
     expect(localStorage.getItem('setup-tamano')).toBe('14');
   });
 
 
-  /**
-   * Verifica que al hacer clic en "Jugar", se navega a la pantalla del juego (/game) y que además se pasa la configuración seleccionada 
-   * con los parámetros correctos (dificultad, estrategia y tamaño).
-   */
   it('debería navegar a /game con la configuración seleccionada al dar a Jugar', async () => {
     const user = userEvent.setup();
     render(<MemoryRouter><Dashboard /></MemoryRouter>);
     await screen.findByText('10');
 
-    // 1 - Seleccionar "Difícil".
-    const botonDificil = screen.getByRole('button', { name: /difícil/i });
-    await user.click(botonDificil);
-    // 2 - Esperar a que aparezca la estrategia.
+    const botonMedio = screen.getByRole('button', { name: /media/i });
+    await user.click(botonMedio);
     await screen.findByText(/defensivo/i);
     const botDefensivo = screen.getByRole('button', { name: /defensivo/i });
     await user.click(botDefensivo);
-    // 3 - Cambiar tamaño del tablero a 15.
     const slider = screen.getByRole('slider');
     fireEvent.change(slider, { target: { value: '15' } });
-    // 4 - Pulsar Jugar
     const botonJugar = screen.getByRole('button', { name: /jugar/i });
     await user.click(botonJugar);
-    // 5 - Verificar que navigate fue llamado con todos los parámetros necesarios:
-    // difficulty, size (tamaño), botId (estrategia)
     expect(mockNavigate).toHaveBeenCalledWith('/game', expect.objectContaining({
       state: expect.objectContaining({
-        difficulty: 'dificil',
+        difficulty: 'media',
         size: 15,
-        botId: 'defensivebot'
+        botId: 'defensive_bot'
       })
     }));
   });
