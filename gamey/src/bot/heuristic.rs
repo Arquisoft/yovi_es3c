@@ -51,7 +51,7 @@ impl HeuristicBot {
 
 impl YBot for HeuristicBot {
     fn name(&self) -> &str {
-        "heuristicbot"
+        "heuristic_bot"
     }
 
     fn choose_move(&self, board: &GameY) -> Option<Coordinates> {
@@ -84,7 +84,7 @@ mod tests {
     #[test]
     fn test_heuristicbot_name() {
         let bot = HeuristicBot;
-        assert_eq!(bot.name(), "heuristicbot");
+        assert_eq!(bot.name(), "heuristic_bot");
     }
 
     #[test]

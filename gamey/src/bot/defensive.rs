@@ -50,7 +50,7 @@ impl DefensiveBot {
 
 impl YBot for DefensiveBot {
     fn name(&self) -> &str {
-        "defensivebot"
+        "defensive_bot"
     }
 
     fn choose_move(&self, board: &GameY) -> Option<Coordinates> {
@@ -82,7 +82,7 @@ mod tests {
     #[test]
     fn test_defensivebot_name() {
         let bot = DefensiveBot;
-        assert_eq!(bot.name(), "defensivebot");
+        assert_eq!(bot.name(), "defensive_bot");
     }
 
     #[test]
