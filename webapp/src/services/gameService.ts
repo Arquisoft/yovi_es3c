@@ -13,8 +13,6 @@ const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
  * @param username - Nombre del usuario
  * @returns Objeto con estadísticas (totalGames, gamesWon, gamesLost, winPercentage, score)
  */
-
-
 export const getUserStats = async (username: string) => {
     try {
         const response = await fetch(`${API_URL}/getuserstats/${username}`);
@@ -27,6 +25,23 @@ export const getUserStats = async (username: string) => {
         return await response.json();
     } catch (error) {
         console.error('Error obteniendo estadísticas del usuario:', error);
+        throw error;
+    }
+};
+
+
+export const getUserScore = async (username: string) => {
+    try{
+
+        const response = await fetch(`${API_URL}/getuserscore/${username}`);
+
+        if(!response.ok)
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
+
+        return await response.json();
+
+    }catch(error) {
+        console.error('Error obteniendo la puntuación del usuario:', error);
         throw error;
     }
 };

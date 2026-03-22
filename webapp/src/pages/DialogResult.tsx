@@ -9,6 +9,7 @@ interface RankingEntry {
 interface DialogResultProps {
     loggedIn: boolean;
     won: boolean;
+    newRecord: boolean;
     onPlayAgain: () => void;
     onGoHome: () => void;
 
@@ -36,6 +37,7 @@ const DEFAULT_RANKING: RankingEntry[] = [
 const DialogResult = ({
   loggedIn,
   won,
+  newRecord,
   onPlayAgain,
   onGoHome,
   gameInfo,
@@ -70,6 +72,8 @@ const DialogResult = ({
             <span className="game-dialog__info-label">Puntuación</span>
             <span className="game-dialog__info-value">{gameInfo.score ?? '—'}</span>
           </div>
+          {}
+          {newRecord && (<p className="game-dialog__info-label">¡NUEVO RECORD PERSONAL!</p>)}
           {!loggedIn && (<p className="game-dialog__info-label">Inicia sesión para guardar tu puntuación</p>)}
         </div>
 

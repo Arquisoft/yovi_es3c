@@ -3,6 +3,7 @@ import GameBoard from './gui/GameBoard';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateUserStats } from '../services/gameService';
+import { getUserScore } from '../services/gameService';
 import { BOTS } from '../config/botsConfig';
 import './Game.css';
 import DialogResult from './DialogResult';
@@ -30,15 +31,19 @@ function Game() {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
+  // Calcula la puntuación de la partida desde un máximo de 10000 puntos
   const calculateScore = (elapsedTime: number, moveCount:number): number => {
     const baseScore = 10000;
     const timePenalty = Math.floor(elapsedTime / 1000) * 10; // -10 puntos por cada segundo
     const movePenalty = moveCount * 50; // - 50 puntos por cada movimiento hecho
     
-    return Math.max(0, baseScore - timePenalty - movePenalty);
+    var points = baseScore - timePenalty - movePenalty;
+
+    return Math.max(0, points);
   };
 
   const handleGameOver = async (winnerId: number) => {
+
     setGameOver(true);
     var endTime = new Date().getTime();
 
@@ -47,8 +52,6 @@ function Game() {
     var score = calculateScore(elapsedTime, moveCount);
 
     toggleDialog(winnerId, score);
-    const winnerName = winnerId === 0 ? '¡Tú ganas!' : '¡El bot gana!';
-    setTextoTurno(winnerName);
 
     // Actualizar estadísticas si el usuario está autenticado
     if (user && user.username) {
@@ -64,16 +67,31 @@ function Game() {
 
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  function toggleDialog(winnerId:number, playerScore:number){
+  const toggleDialog = async (winnerId:number, playerScore:number) => {
     
-    if(user && user.username)
-      loggedIn = true;
+    var newRecord = false;
+    var userScore = null;
+
+    if (user && user.username) {
+      try{
+        loggedIn = true;
+        userScore = await getUserScore(user.username);
+      }catch(error){
+        console.error("Error al obtener la puntuación:", error);
+      }
+    }
+
+    console.log(userScore);
+
+    if(userScore.score < playerScore)
+      newRecord = true;
 
     setDialogContent(
 
       <DialogResult 
         loggedIn = {loggedIn}
         won={winnerId === 0}
+        newRecord = {newRecord}
         gameInfo = {{
           duration: timeFormat(elapsedTime),
           movesMade: moveCount,
