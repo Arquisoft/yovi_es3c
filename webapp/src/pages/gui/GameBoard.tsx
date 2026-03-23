@@ -21,7 +21,7 @@ function GameBoard(
     setTextoTurno,
     gameOver, 
     onGameOver, 
-    onMoveMade
+    onMoveMade,
   }: GameBoardProps) 
 {
   const initialLayout = layout || createInitialLayout(size);
@@ -107,7 +107,7 @@ function GameBoard(
         const { row: botRow, col: botCol } = coordToRowCol(botResponse.coords.x, botResponse.coords.y, size);
         const finalLayout = updateLayoutPosition(newLayout, botRow, botCol, 'R');
         setBoardLayout(finalLayout);
-        
+
         // Validar si el bot ha ganado
         if (await hasGameFinished(newLayout)) {
           return;

@@ -18,11 +18,13 @@ function Game() {
   const { user } = useAuth();
   const { size, botId } = location.state || { size: 12, botId: "heuristic_bot" };
 
+  const [playerScore, setPlayerScore] = useState(10000);
   const [textoTurno, setTextoTurno] = useState<String>("Es tu turno");
   const [gameOver, setGameOver] = useState(false);
   const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
   const [moveCount, setMoveCount] = useState(1);
-  
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
   // Devuelve el tiempo de la partida en un formato mm:ss
   const timeFormat = (ms: number): string => {
     let totalSeconds = Math.floor(ms / 1000);
@@ -31,15 +33,10 @@ function Game() {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
-  // Calcula la puntuación de la partida desde un máximo de 10000 puntos
-  const calculateScore = (elapsedTime: number, moveCount:number): number => {
-    const baseScore = 10000;
-    const timePenalty = Math.floor(elapsedTime / 1000) * 10; // -10 puntos por cada segundo
-    const movePenalty = moveCount * 50; // - 50 puntos por cada movimiento hecho
-    
-    let points = baseScore - timePenalty - movePenalty;
-
-    return Math.max(0, points);
+  // Calcula la puntuación de la partida con cada movimiento
+  const calculateScoreOnMove = (elapsedTime: number): void => {
+    const timePenalty = Math.floor(elapsedTime / 1000) * 5; // -5 puntos por cada segundo
+    setPlayerScore(playerScore - timePenalty);
   };
 
   const handleGameOver = async (winnerId: number) => {
@@ -49,25 +46,26 @@ function Game() {
 
     elapsedTime = endTime - startTime.current;
 
-    let score = calculateScore(elapsedTime, moveCount);
+    const finalScore = winnerId !== 0 ? moveCount * 10 : playerScore;
 
-    toggleDialog(winnerId, score);
+    setPlayerScore(finalScore);
+    // Habilitar el dialogo con el resumen de la partida
+    toggleDialog(winnerId, finalScore);
 
     // Actualizar estadísticas si el usuario está autenticado
     if (user && user.username) {
       try {
         const won = winnerId === 0; // true si el usuario ganó
-        await updateUserStats(user.username, won, score);
+        await updateUserStats(user.username, won, finalScore);
         console.log("Estadísticas actualizadas");
       } catch (error) {
         console.error("Error al actualizar estadísticas:", error);
       }
     }
   };
-
-  const dialogRef = useRef<HTMLDialogElement>(null);
-
-  const toggleDialog = async (winnerId:number, playerScore:number) => {
+  
+  // Crea el dialogo con la información de la partida
+  const toggleDialog = async (winnerId:number, finalScore:number) => {
     
     let newRecord = false;
     let userScore = null;
@@ -83,7 +81,7 @@ function Game() {
 
     console.log(userScore);
 
-    if(userScore.score < playerScore)
+    if(userScore.score < finalScore)
       newRecord = true;
 
     setDialogContent(
@@ -95,7 +93,7 @@ function Game() {
         gameInfo = {{
           duration: timeFormat(elapsedTime),
           movesMade: moveCount,
-          score: playerScore
+          score: finalScore
         }}
 
         ranking={[
@@ -140,7 +138,11 @@ function Game() {
           setTextoTurno={setTextoTurno}
           gameOver={gameOver}
           onGameOver={handleGameOver}
-          onMoveMade={() => setMoveCount(prev => prev + 1)}
+          onMoveMade={() => { 
+            let timeMoveMadeAt = new Date().getTime();
+            calculateScoreOnMove(timeMoveMadeAt-startTime.current);
+            setMoveCount(prev => prev + 1);
+          }}
         />
       </main>
 
