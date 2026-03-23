@@ -9,6 +9,7 @@ import './App.css';
 // Importar los componentes
 import Register from './pages/Register';
 import Login from './pages/Login';
+import Ranking from './pages/Ranking';
 
 import Game from './pages/Game';
 import { Dashboard } from './pages/Dashboard';
@@ -44,6 +45,7 @@ function AppContent() {
           <Route element={<PublicRoute />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/ranking" element={<Ranking />} />
           </Route>
           
           <Route element={<ProtectedRoute />}>
