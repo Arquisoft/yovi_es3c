@@ -10,9 +10,9 @@ import DialogResult from './DialogResult';
 import {useNavigate} from 'react-router-dom';
 
 function Game() {
-  var loggedIn = false;
+  let loggedIn = false;
   const startTime = useRef<number>(new Date().getTime());
-  var elapsedTime = 0;
+  let elapsedTime = 0;
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
@@ -25,9 +25,9 @@ function Game() {
   
   // Devuelve el tiempo de la partida en un formato mm:ss
   const timeFormat = (ms: number): string => {
-    var totalSeconds = Math.floor(ms / 1000);
-    var minutes = Math.floor(totalSeconds / 60);
-    var seconds = totalSeconds % 60;
+    let totalSeconds = Math.floor(ms / 1000);
+    let minutes = Math.floor(totalSeconds / 60);
+    let seconds = totalSeconds % 60;
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
@@ -37,7 +37,7 @@ function Game() {
     const timePenalty = Math.floor(elapsedTime / 1000) * 10; // -10 puntos por cada segundo
     const movePenalty = moveCount * 50; // - 50 puntos por cada movimiento hecho
     
-    var points = baseScore - timePenalty - movePenalty;
+    let points = baseScore - timePenalty - movePenalty;
 
     return Math.max(0, points);
   };
@@ -45,11 +45,11 @@ function Game() {
   const handleGameOver = async (winnerId: number) => {
 
     setGameOver(true);
-    var endTime = new Date().getTime();
+    let endTime = new Date().getTime();
 
     elapsedTime = endTime - startTime.current;
 
-    var score = calculateScore(elapsedTime, moveCount);
+    let score = calculateScore(elapsedTime, moveCount);
 
     toggleDialog(winnerId, score);
 
@@ -69,8 +69,8 @@ function Game() {
 
   const toggleDialog = async (winnerId:number, playerScore:number) => {
     
-    var newRecord = false;
-    var userScore = null;
+    let newRecord = false;
+    let userScore = null;
 
     if (user && user.username) {
       try{
