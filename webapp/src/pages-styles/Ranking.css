@@ -22,6 +22,10 @@
     color: #fff;
 }
 
+.ranking-table th:hover {
+    cursor: pointer;
+}
+
 .ranking-table tr:hover {
     background-color: #f0f0f0;
 }
