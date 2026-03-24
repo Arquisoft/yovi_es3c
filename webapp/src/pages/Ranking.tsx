@@ -33,11 +33,10 @@ export const Ranking: React.FC = () => {
 
     const sortedPlayers = [...players].sort((a, b) => {
         const {key, direction} = sortConfig;
-
         const dir = direction === 'asc' ? 1 : -1;
 
         if (key === 'username') {
-            return a.username.localeCompare(b.username) * dir;
+            return (a.username ?? '').localeCompare(b.username ?? '') * dir;
         }
 
         if (key === 'percentage') {
