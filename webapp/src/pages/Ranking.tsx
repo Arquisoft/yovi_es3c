@@ -3,10 +3,16 @@ import '../pages-styles/Ranking.css';
 import { getGlobalRanking } from '../services/rankingService';
 import type { PlayerStats } from '../services/rankingService';
 
+type SortKey = 'username' | 'totalGames' | 'gamesWon' | 'gamesLost' | 'percentage';
+
 export const Ranking: React.FC = () => {
     const [players, setPlayers] = useState<PlayerStats[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>('');
+    const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'asc' | 'desc' }>({
+        key: 'gamesWon',
+        direction: 'desc',
+    })
 
     useEffect(() => {
         getGlobalRanking()
@@ -15,6 +21,35 @@ export const Ranking: React.FC = () => {
             .finally(() => setLoading(false));
     }, []);
 
+    // Filtro para cada columna.
+
+    const handleSort = (key: SortKey) => {
+        setSortConfig(prev => 
+            prev.key === key 
+            ? { key, direction: prev.direction === 'asc' ? 'desc' : 'asc'}
+            : { key, direction: 'asc'}
+        );
+    };
+
+    const sortedPlayers = [...players].sort((a, b) => {
+        const {key, direction} = sortConfig;
+
+        const dir = direction === 'asc' ? 1 : -1;
+
+        if (key === 'username') {
+            return a.username.localeCompare(b.username) * dir;
+        }
+
+        if (key === 'percentage') {
+          const percA = a.totalGames > 0 ? a.gamesWon / a.totalGames : 0;
+          const percB = b.totalGames > 0 ? b.gamesWon / b.totalGames : 0;
+          return (percA - percB) * dir;
+        }
+
+        return ((a as any)[key] - (b as any)[key]) * dir;
+    });
+
+    
     if (loading) return <p className="ranking-status">Cargando ranking...</p>;
     if (error) return <p className="ranking-status error">{error}</p>;
     
@@ -25,15 +60,15 @@ export const Ranking: React.FC = () => {
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Jugador</th>
-                        <th>Partidas</th>
-                        <th>Victorias</th>
-                        <th>Derrotas</th>
-                        <th>% Victoria</th>
+                        <th onClick={() => handleSort('username')}>Jugador</th>
+                        <th onClick={() => handleSort('totalGames')}>Partidas</th>
+                        <th onClick={() => handleSort('gamesWon')}>Victorias</th>
+                        <th onClick={() => handleSort('gamesLost')}>Derrotas</th>
+                        <th onClick={() => handleSort('percentage')}>% Victoria</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {players.map((player,index) => (
+                    {sortedPlayers.map((player,index) => (
                         <tr key={player._id}>
                             <td>{index + 1}</td>
                             <td>{player.username}</td>
