@@ -1,0 +1,27 @@
+.ranking-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.ranking-table th,
+.ranking-table td {
+    padding: 0.75rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.ranking-table th {
+    background-color: #1a1a2e;
+    color: #fff;
+}
+
+.ranking-table tr:hover {
+    background-color: #f0f0f0;
+}

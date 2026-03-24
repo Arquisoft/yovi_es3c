@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import '../pages-styles/Ranking.css';
 import { getGlobalRanking } from '../services/rankingService';
 import type { PlayerStats } from '../services/rankingService';
 
@@ -20,36 +21,34 @@ export const Ranking: React.FC = () => {
     return (
         <div className="ranking-container">
             <h1>Ranking global</h1>
-            <h2>
-                <table className="ranking-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Jugador</th>
-                            <th>Partidas</th>
-                            <th>Victorias</th>
-                            <th>Derrotas</th>
-                            <th>% Victoria</th>
+            <table className="ranking-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Jugador</th>
+                        <th>Partidas</th>
+                        <th>Victorias</th>
+                        <th>Derrotas</th>
+                        <th>% Victoria</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {players.map((player,index) => (
+                        <tr key={player._id}>
+                            <td>{index + 1}</td>
+                            <td>{player.username}</td>
+                            <td>{player.totalGames}</td>
+                            <td>{player.gamesWon}</td>
+                            <td>{player.gamesLost}</td>
+                            <td>
+                                {player.totalGames > 0
+                                ? ((player.gamesWon / player.totalGames) * 100).toFixed(1) + '%'
+                                : '-'}
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {players.map((player,index) => (
-                            <tr key={player._id}>
-                                <td>{index + 1}</td>
-                                <td>{player.username}</td>
-                                <td>{player.totalGames}</td>
-                                <td>{player.gamesWon}</td>
-                                <td>{player.gamesLost}</td>
-                                <td>
-                                    {player.totalGames > 0
-                                    ? ((player.gamesWon / player.totalGames) * 100).toFixed(1) + '%'
-                                    : '-'}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </h2>
+                    ))}
+                </tbody>
+            </table>
         </div>
     )
 }
