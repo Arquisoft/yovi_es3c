@@ -31,6 +31,12 @@ export const Ranking: React.FC = () => {
         );
     };
 
+    // Flecha al lado de cada índice de columna para saber cómo está ordenada.
+    const renderSortArrow = (key: SortKey) => {
+        if (sortConfig.key !== key) return '↕';
+        return sortConfig.direction === 'asc' ? '↑' : '↓';
+    };
+
     const sortedPlayers = [...players].sort((a, b) => {
         const {key, direction} = sortConfig;
         const dir = direction === 'asc' ? 1 : -1;
@@ -47,7 +53,6 @@ export const Ranking: React.FC = () => {
 
         return ((a as any)[key] - (b as any)[key]) * dir;
     });
-
     
     if (loading) return <p className="ranking-status">Cargando ranking...</p>;
     if (error) return <p className="ranking-status error">{error}</p>;
@@ -58,12 +63,53 @@ export const Ranking: React.FC = () => {
             <table className="ranking-table">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th onClick={() => handleSort('username')}>Jugador</th>
-                        <th onClick={() => handleSort('totalGames')}>Partidas</th>
-                        <th onClick={() => handleSort('gamesWon')}>Victorias</th>
-                        <th onClick={() => handleSort('gamesLost')}>Derrotas</th>
-                        <th onClick={() => handleSort('percentage')}>% Victoria</th>
+                        <th className="th-static">#</th>
+
+                        <th onClick={() => handleSort('username')} className="th-sortable">
+                          <div className="th-content">
+                            <span>Jugador</span>
+                            <button type="button" className="sort-button">
+                              {renderSortArrow('username')}
+                            </button>
+                          </div>
+                        </th>
+
+                        <th onClick={() => handleSort('totalGames')} className="th-sortable">
+                          <div className="th-content">
+                            <span>Partidas</span>
+                            <button type="button" className="sort-button">
+                              {renderSortArrow('totalGames')}
+                            </button>
+                          </div>
+                        </th>
+
+                        <th onClick={() => handleSort('gamesWon')} className="th-sortable">
+                          <div className="th-content">
+                            <span>Victorias</span>
+                            <button type="button" className="sort-button">
+                              {renderSortArrow('gamesWon')}
+                            </button>
+                          </div>
+                        </th>
+
+                        <th onClick={() => handleSort('gamesLost')} className="th-sortable">
+                          <div className="th-content">
+                            <span>Derrotas</span>
+                            <button type="button" className="sort-button">
+                              {renderSortArrow('gamesLost')}
+                            </button>
+                          </div>
+                        </th>
+
+                        <th onClick={() => handleSort('percentage')} className="th-sortable">
+                          <div className="th-content">
+                            <span>% Victoria</span>
+                            <button type="button" className="sort-button">
+                              {renderSortArrow('percentage')}
+                            </button>
+                          </div>
+                        </th>
+
                     </tr>
                 </thead>
                 <tbody>
