@@ -58,77 +58,53 @@ export const Ranking: React.FC = () => {
     if (error) return <p className="ranking-status error">{error}</p>;
     
     return (
-        <div className="ranking-container">
-            <h1>Ranking global</h1>
-            <table className="ranking-table">
-                <thead>
-                    <tr>
-                        <th className="th-static">#</th>
+        <div className="ranking-page">
+            <div className="ranking-container">
+                <h1>Ranking global</h1>
+                <div className="ranking-table-wrapper">
+                    <table className="ranking-table">
+                        <thead>
+                          <tr>
+                            <th className="th-static">#</th>
 
-                        <th onClick={() => handleSort('username')} className="th-sortable">
-                          <div className="th-content">
-                            <span>Jugador</span>
-                            <button type="button" className="sort-button">
-                              {renderSortArrow('username')}
-                            </button>
-                          </div>
-                        </th>
-
-                        <th onClick={() => handleSort('totalGames')} className="th-sortable">
-                          <div className="th-content">
-                            <span>Partidas</span>
-                            <button type="button" className="sort-button">
-                              {renderSortArrow('totalGames')}
-                            </button>
-                          </div>
-                        </th>
-
-                        <th onClick={() => handleSort('gamesWon')} className="th-sortable">
-                          <div className="th-content">
-                            <span>Victorias</span>
-                            <button type="button" className="sort-button">
-                              {renderSortArrow('gamesWon')}
-                            </button>
-                          </div>
-                        </th>
-
-                        <th onClick={() => handleSort('gamesLost')} className="th-sortable">
-                          <div className="th-content">
-                            <span>Derrotas</span>
-                            <button type="button" className="sort-button">
-                              {renderSortArrow('gamesLost')}
-                            </button>
-                          </div>
-                        </th>
-
-                        <th onClick={() => handleSort('percentage')} className="th-sortable">
-                          <div className="th-content">
-                            <span>% Victoria</span>
-                            <button type="button" className="sort-button">
-                              {renderSortArrow('percentage')}
-                            </button>
-                          </div>
-                        </th>
-
-                    </tr>
-                </thead>
-                <tbody>
-                    {sortedPlayers.map((player,index) => (
-                        <tr key={player._id}>
-                            <td>{index + 1}</td>
-                            <td>{player.username}</td>
-                            <td>{player.totalGames}</td>
-                            <td>{player.gamesWon}</td>
-                            <td>{player.gamesLost}</td>
-                            <td>
+                            {([ 
+                              { key: 'username',   label: 'Jugador'   },
+                              { key: 'totalGames', label: 'Partidas'  },
+                              { key: 'gamesWon',   label: 'Victorias' },
+                              { key: 'gamesLost',  label: 'Derrotas'  },
+                              { key: 'percentage', label: '% Victoria'},
+                            ] as { key: SortKey; label: string }[]).map(({ key, label }) => (
+                              <th key={key} onClick={() => handleSort(key)} className="th-sortable">
+                                <div className="th-content">
+                                  <span>{label}</span>
+                                  <button type="button" className={'sort-button' + (sortConfig.key === key ? ' active' : '')}>
+                                    {renderSortArrow(key)}
+                                  </button>
+                                </div>
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        
+                        <tbody>
+                          {sortedPlayers.map((player, index) => (
+                            <tr key={player._id}>
+                              <td>{index + 1}</td>
+                              <td>{player.username}</td>
+                              <td>{player.totalGames}</td>
+                              <td>{player.gamesWon}</td>
+                              <td>{player.gamesLost}</td>
+                              <td>
                                 {player.totalGames > 0
-                                ? ((player.gamesWon / player.totalGames) * 100).toFixed(1) + '%'
-                                : '-'}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                                  ? ((player.gamesWon / player.totalGames) * 100).toFixed(1) + '%'
+                                  : '-'}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     )
 }
