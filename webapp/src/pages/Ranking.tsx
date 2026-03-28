@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../pages-styles/Ranking.css';
 import { getGlobalRanking } from '../services/rankingService';
 import type { PlayerStats } from '../services/rankingService';
+import { useAuth } from '../context/AuthContext';
 
 type SortKey = 'username' | 'totalGames' | 'gamesWon' | 'gamesLost' | 'percentage';
 
@@ -13,6 +14,7 @@ export const Ranking: React.FC = () => {
         key: 'gamesWon',
         direction: 'desc',
     })
+    const { user} = useAuth();
 
     useEffect(() => {
         getGlobalRanking()
@@ -90,7 +92,10 @@ export const Ranking: React.FC = () => {
                           {sortedPlayers.map((player, index) => (
                             <tr key={player._id}>
                               <td>{index + 1}</td>
-                              <td>{player.username}</td>
+                              <td>
+                                {user && user.username === player.username && '✪ '}
+                                {player.username}
+                                </td>
                               <td>{player.totalGames}</td>
                               <td>{player.gamesWon}</td>
                               <td>{player.gamesLost}</td>
