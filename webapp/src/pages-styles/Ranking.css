@@ -9,6 +9,7 @@
     overflow-x: hidden;
     display: flex;
     justify-content: center;
+    border-radius: 24px;
 }
 
 @keyframes electric-bg-move {
