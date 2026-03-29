@@ -11,6 +11,7 @@ interface UserStatsData {
     totalGames: number;
     gamesWon: number;
     gamesLost: number;
+    score?:number;
 }
 
 /**

@@ -3,6 +3,7 @@
  * 
  * Rutas para gestionar estadísticas de usuarios
  * GET  /getuserstats/:username - Obtener estadísticas del usuario
+ * GET  /getuserscore/:username - Obtener la puntuación del usuario si la tiene
  * POST /updateuserstats       - Actualizar estadísticas después de una partida (SOLO si se ha finalizado)
  */
 
@@ -34,11 +35,42 @@ router.get('/getuserstats/:username', async (req, res) => {
             username: user.username,
             totalGames: user.totalGames,
             gamesWon: user.gamesWon,
-            gamesLost: user.gamesLost
+            gamesLost: user.gamesLost,
+            score: user.score ?? 0
         });
 
     } catch (err) {
         console.error("Error en GET /getuserstats:", err);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+});
+
+/** 
+ * GET /getuserscore/:username
+ * Obtiene la puntuación del usuario
+ */
+router.get('/getuserscore/:username', async (req, res) => {
+    try{
+        const {username} = req.params;
+
+        // Sanitizar username
+        const sanitizedUsername = String(username || '')
+            .trim()
+            .replace(/[^\w\s@.-]/gi, '');
+
+        // Buscar usuario
+        const user = await User.findOne({ username: sanitizedUsername });
+
+        if (!user) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        res.json({
+            score: user.score ?? null
+        });
+
+    }catch(err){
+        console.error("Error en GET /getuserscore:", err);
         res.status(500).json({ error: "Error interno del servidor" });
     }
 });
@@ -52,7 +84,7 @@ router.get('/getuserstats/:username', async (req, res) => {
  */
 router.post('/updateuserstats', async (req, res) => {
     try {
-        const { username, won } = req.body;
+        const { username, won, score } = req.body;
 
         // Validación básica
         if (!username || won === undefined) {
@@ -79,6 +111,10 @@ router.post('/updateuserstats', async (req, res) => {
             user.gamesLost += 1;
         }
 
+        if(score != undefined && (!user.score || score > user.score)){
+            user.score = score;
+        }
+
         await user.save();
 
         res.json({
@@ -86,7 +122,8 @@ router.post('/updateuserstats', async (req, res) => {
             username: user.username,
             totalGames: user.totalGames,
             gamesWon: user.gamesWon,
-            gamesLost: user.gamesLost
+            gamesLost: user.gamesLost,
+            score: user.score
         });
 
     } catch (err) {
