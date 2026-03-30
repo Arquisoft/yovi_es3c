@@ -12,9 +12,9 @@ setWorldConstructor(CustomWorld)
 
 Before(async function () {
   // Allow turning off headless mode and enabling slow motion/devtools via env vars
-  const headless = true
-  const slowMo = 0
-  const devtools = false
+  const headless = process.env.PLAYWRIGHT_HEADLESS !== 'false'
+  const slowMo = process.env.PLAYWRIGHT_SLOW_MO ? parseInt(process.env.PLAYWRIGHT_SLOW_MO) : 0
+  const devtools = process.env.PLAYWRIGHT_DEVTOOLS === 'true'
 
   this.browser = await chromium.launch({ headless, slowMo, devtools })
   this.page = await this.browser.newPage()

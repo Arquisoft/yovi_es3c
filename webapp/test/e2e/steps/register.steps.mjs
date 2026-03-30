@@ -38,6 +38,36 @@ When('I enter {string} as a duplicated username and submit', async function (use
   await page.click('.submit-button')
 })
 
+When('I leave the {string} field empty and submit', async function (fieldName) {
+  const page = this.page
+  if(!page) throw new Error('Page not initialized')
+
+  if(fieldName !== 'username')
+    await page.fill('#username', "pruebina")
+
+  if(fieldName !== 'password')
+    await page.fill('#password', 'TestPassword123!')
+
+  if(fieldName !== 'confirmPassword')
+    await page.fill('#confirmPassword', 'TestPassword123!')
+
+  await page.click('.submit-button')
+
+})
+
+When('I fill the form with two different passwords', async function() {
+
+  const page = this.page
+  if(!page) throw new Error('Page not initialized')
+
+  await page.fill('#username', 'pruebina')
+  await page.fill('#password', 'TestPassword123!')
+  await page.fill('#confirmPassword', 'WrongPassword')
+
+  await page.click('.submit-button')
+}) 
+
+
 Then('I should see a welcome message containing {string}', async function (expected) {
   const page = this.page
   if (!page) throw new Error('Page not initialized')
