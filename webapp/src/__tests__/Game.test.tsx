@@ -5,6 +5,7 @@ import {MemoryRouter} from 'react-router-dom'
 import { AuthProvider } from '../context/AuthContext'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
+import * as gameService from '../services/gameService'
 
 // Mock de useNavigate
 const mockNavigate = vi.fn()
@@ -93,4 +94,38 @@ describe('Game Component', () => {
         expect(screen.getByText(/¡el bot gana!/i)).toBeInTheDocument()
       })
     })
+
+    test('llama a updateUserStats con won=true cuando el jugador gana', async () => {
+        localStorage.setItem('user', JSON.stringify({ id: '1', username: 'test1' }))
+        vi.spyOn(gameService, 'updateUserStats').mockResolvedValue({})
+        const user = userEvent.setup()
+        const { getByRole } = renderComponent()
+
+        await user.click(getByRole('button', { name: /simular victoria/i }))
+
+        await waitFor(() => {
+            expect(gameService.updateUserStats).toHaveBeenCalledWith(
+                'test1',
+                true
+            )
+        })
+    })
+
+    test('llama a updateUserStats con won=false cuando el jugador pierde', async () => {
+        localStorage.setItem('user', JSON.stringify({ id: '1', username: 'test1' }))
+        vi.spyOn(gameService, 'updateUserStats').mockResolvedValue({})
+        const user = userEvent.setup()
+        const { getByRole } = renderComponent()
+
+        await user.click(getByRole('button', { name: /simular derrota/i }))
+
+        await waitFor(() => {
+            expect(gameService.updateUserStats).toHaveBeenCalledWith(
+                'test1',
+                false
+            )
+        })
+    })
+
+    
 })
