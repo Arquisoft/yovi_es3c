@@ -1,5 +1,5 @@
 import {render, screen, waitFor} from '@testing-library/react'
-import {describe, expect, test, vi, afterEach} from 'vitest'
+import {describe, expect, test, vi, afterEach, beforeEach} from 'vitest'
 import Game from '../pages/Game'
 import {MemoryRouter} from 'react-router-dom'
 import { AuthProvider } from '../context/AuthContext'
@@ -23,6 +23,7 @@ vi.mock('react-router-dom', async() => {
 
 vi.mock('../services/gameService', () => ({
     updateUserStats: vi.fn().mockResolvedValue({}),
+    getUserScore: vi.fn().mockResolvedValue({score:0}),
 }))
 
 vi.mock('../config/botsConfig', () => ({
@@ -43,7 +44,18 @@ vi.mock('../pages/gui/GameBoard', () => ({
     )
 }))
 
+vi.mock('../pages/DialogResult', () => ({
+  default: ({ won }: { won: boolean }) => (
+    <div>{won ? '¡Has ganado!' : '¡Has perdido!'}</div>
+  )
+}))
+
 describe('Game Component', () => {
+    beforeEach(() => {
+        localStorage.setItem('user', JSON.stringify({username:'test1'}))
+        HTMLDialogElement.prototype.showModal = vi.fn()
+        HTMLDialogElement.prototype.close = vi.fn()
+    })
     afterEach(() => {
         vi.clearAllMocks()
         localStorage.clear()
@@ -51,21 +63,21 @@ describe('Game Component', () => {
 
     const renderComponent = () => 
         render(
-            <AuthProvider>
-                <MemoryRouter initialEntries={[{pathname: '/game', state: { size: 11, botId: 'random_bot'}}]}>
-                    <Game />
-                </MemoryRouter>
-            </AuthProvider>
+            <MemoryRouter>
+                <AuthProvider>
+                        <Game />
+                </AuthProvider>
+            </MemoryRouter>
         )
 
     test('muestra el texto iniical del turno', () => {
         renderComponent()
-        expect(screen.getByText(/es tu turno/i)).toBeInTheDocument()
+        expect(screen.getByText('Es tu turno')).toBeInTheDocument()
     })
 
     test('muestra el nombre del bot', () => {
         renderComponent()
-        expect(screen.getByText(/bot: aleatorio/i)).toBeInTheDocument()
+        expect(screen.getByText(/Aleatorio/i)).toBeInTheDocument()
     })
 
     test('renderiza el tablero mockeado', () => {
@@ -73,31 +85,29 @@ describe('Game Component', () => {
         expect(screen.getByTestId('mock-gameboard')).toBeInTheDocument()
     })
 
-    test('cuando el jugador gana, cambia el texto a ¡Tú ganas!', async () => {
+    test('cuando el jugador gana, cambia el texto a ¡Has ganado!', async () => {
       const user = userEvent.setup()
       const {getByRole} = renderComponent()
 
       await user.click(getByRole('button', { name: /simular victoria/i }))
 
       await waitFor(() => {
-        expect(screen.getByText(/¡tú ganas!/i)).toBeInTheDocument()
+        expect(screen.getByText(/¡Has ganado!/i)).toBeInTheDocument()
       })
     })
 
-    test('cuando gana el bot, cambia el texto a ¡El bot gana!', async () => {
+    test('cuando gana el bot, cambia el texto a ¡Has perdido!', async () => {
       const user = userEvent.setup()
       const {getByRole} = renderComponent()
 
       await user.click(getByRole('button', { name: /simular derrota/i }))
 
       await waitFor(() => {
-        expect(screen.getByText(/¡el bot gana!/i)).toBeInTheDocument()
+        expect(screen.getByText(/¡Has perdido!/i)).toBeInTheDocument()
       })
     })
 
     test('llama a updateUserStats con won=true cuando el jugador gana', async () => {
-        localStorage.setItem('user', JSON.stringify({ id: '1', username: 'test1' }))
-        vi.spyOn(gameService, 'updateUserStats').mockResolvedValue({})
         const user = userEvent.setup()
         const { getByRole } = renderComponent()
 
@@ -106,14 +116,13 @@ describe('Game Component', () => {
         await waitFor(() => {
             expect(gameService.updateUserStats).toHaveBeenCalledWith(
                 'test1',
-                true
+                true,
+                10000
             )
         })
     })
 
     test('llama a updateUserStats con won=false cuando el jugador pierde', async () => {
-        localStorage.setItem('user', JSON.stringify({ id: '1', username: 'test1' }))
-        vi.spyOn(gameService, 'updateUserStats').mockResolvedValue({})
         const user = userEvent.setup()
         const { getByRole } = renderComponent()
 
@@ -122,7 +131,8 @@ describe('Game Component', () => {
         await waitFor(() => {
             expect(gameService.updateUserStats).toHaveBeenCalledWith(
                 'test1',
-                false
+                false,
+                10
             )
         })
     })
