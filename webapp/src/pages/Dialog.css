@@ -1,0 +1,175 @@
+.game-dialog-overlay {
+  border: none;
+  border-radius: 24px;
+  padding: 0;
+  max-width: 480px;
+  width: 92vw;
+  box-shadow: 0 8px 48px rgba(35, 41, 70, 0.22);
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.game-dialog-overlay::backdrop {
+  background: rgba(36, 99, 235, 0.18);
+  backdrop-filter: blur(4px);
+}
+
+/* ── Cabecera con el mensaje principal ── */
+.game-dialog__header {
+  padding: 32px 32px 20px;
+  text-align: center;
+  border-bottom: 2px solid #e0e7ff;
+}
+
+.game-dialog__title {
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  margin: 0 0 4px;
+  line-height: 1.1;
+}
+
+.game-dialog__title--win {
+  color: #10b981;
+  text-shadow: 0 2px 12px rgba(16, 185, 129, 0.18);
+}
+
+.game-dialog__title--loss {
+  color: #ef4444;
+  text-shadow: 0 2px 12px rgba(239, 68, 68, 0.18);
+}
+
+/* ── Cuerpo: info + ranking ── */
+.game-dialog__body {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  padding: 24px 28px;
+  min-height: 160px;
+}
+
+.game-dialog__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-right: 24px;
+  border-right: 2px solid #e0e7ff;
+}
+
+.game-dialog__info-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #4f46e5;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.game-dialog__info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.game-dialog__info-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.game-dialog__info-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #232946;
+}
+
+/* ── Ranking ── */
+.game-dialog__ranking {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 24px;
+}
+
+.game-dialog__ranking-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #4f46e5;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.game-dialog__ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.game-dialog__ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #232946;
+  background: #f3f4f6;
+  border-radius: 10px;
+  padding: 6px 10px;
+}
+
+.game-dialog__ranking-item--1 { border-left: 4px solid #f59e0b; }
+.game-dialog__ranking-item--2 { border-left: 4px solid #9ca3af; }
+.game-dialog__ranking-item--3 { border-left: 4px solid #b45309; }
+
+.game-dialog__ranking-badge {
+  font-size: 1.1rem;
+}
+
+/* ── Footer con botones ── */
+.game-dialog__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 28px 28px;
+  border-top: 2px solid #e0e7ff;
+}
+
+.game-dialog__btn {
+  width: 100%;
+  padding: 15px 24px;
+  border-radius: 14px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s;
+}
+
+.game-dialog__btn--primary {
+  background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.22);
+}
+
+.game-dialog__btn--primary:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 28px rgba(79, 70, 229, 0.32);
+}
+
+.game-dialog__btn--secondary {
+  background: #e0e7ff;
+  color: #4f46e5;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.08);
+}
+
+.game-dialog__btn--secondary:hover {
+  background: #c7d2fe;
+  transform: scale(1.02);
+}
