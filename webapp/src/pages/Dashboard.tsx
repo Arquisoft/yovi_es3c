@@ -80,6 +80,9 @@ export const Dashboard: React.FC = () => {
     return (
         <div className="dashboard">
             <GameSetupForm onStart={handleStartGame} />
+            <button className="help-btn" onClick={() => navigate('/help')} aria-label="Ver ayuda y reglas del juego"> 
+                ? Ayuda 
+            </button>
             <div className="dashboard-card">
                 {loading ? (
                     <p>Cargando estadísticas...</p>

@@ -14,6 +14,7 @@ import Ranking from './pages/Ranking';
 import Game from './pages/Game';
 import { Dashboard } from './pages/Dashboard';
 import { useEffect } from 'react';
+import Help from './pages/Help'
 
 export default function App() {
   return (
@@ -51,6 +52,7 @@ function AppContent() {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path='/help' element={<Help />}/>
             <Route path="/game" element={<Game />} />
           </Route>
 
