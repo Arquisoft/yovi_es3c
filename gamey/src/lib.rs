@@ -34,9 +34,19 @@ pub mod core;
 pub mod gamey_error;
 pub mod notation;
 pub mod bot_server;
+pub mod play;
 pub use bot::*;
 pub use cli::*;
 pub use core::*;
 pub use gamey_error::*;
 pub use notation::*;
 pub use bot_server::*;
+
+use tracing_subscriber;
+
+pub fn init_tracing() {
+    let _ = tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::DEBUG)
+        .with_test_writer() // <-- esto hace que se vea en tests
+        .try_init();
+}

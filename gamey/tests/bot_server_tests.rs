@@ -6,6 +6,8 @@ use gamey::{YBotRegistry, YEN, create_default_state, create_router, state::AppSt
 use http_body_util::BodyExt;
 use std::sync::Arc;
 use tower::ServiceExt;
+use gamey::init_tracing;
+
 
 /// Helper to create a test app with the default state
 fn test_app() -> axum::Router {
@@ -40,6 +42,8 @@ async fn test_status_endpoint_returns_ok() {
     let body = response.into_body().collect().await.unwrap().to_bytes();
     assert_eq!(&body[..], b"OK");
 }
+
+
 
 // ============================================================================
 // Choose endpoint tests - Success cases
@@ -385,6 +389,59 @@ async fn test_choose_montecarlo_bot() {
     assert!(body_str.contains("montecarlo_bot"));
 }
 
+// ============================================================================
+// Play endpoint tests
+// ============================================================================
+
+
+//test actualmente no pasa al no recibir de la peticion, cambiar el test, probado via comandos
+//desplegando el serv primero con target/debug/gamey.exe --mode server --port 4000
+// y despues en un powershell C:\Users\User\yovi_es3c\gamey\src>curl.exe -X POST "http://localhost:4000/play" -H "Content-Type: application/json" --data @body.json
+// para ello has de tener en src un json, como este ejemplo
+//{
+//  "position": {
+//    "size": 3,
+//    "turn": 0,
+//    "players": ["B", "R"],
+//    "layout": "./../..."
+//  },
+//  "bot_id": "random_bot"
+//}
+
+#[tokio::test]
+async fn test_play_endpoint_returns_next_move() {
+    crate::init_tracing();
+    let app = test_app();
+
+   let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
+
+    let body = serde_json::json!({
+        "position": yen,
+        "bot_id": "random_bot"
+    });
+
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/play")
+                .header("content-type", "application/json")
+                .body(Body::from(body.to_string()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::OK);
+
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+
+    assert!(json.get("next_move").is_some());
+}
+
+
 // Comprueba que el estado por defecto tiene todos los bots registrados
 #[tokio::test]
 async fn test_default_state_has_all_bots() {
@@ -396,5 +453,7 @@ async fn test_default_state_has_all_bots() {
     assert!(names.iter().any(|n| n == "defensive_bot"));
     assert!(names.iter().any(|n| n == "montecarlo_bot"));
 }
+
+
 
 

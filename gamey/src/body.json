@@ -1,0 +1,10 @@
+
+{
+  "position": {
+    "size": 3,
+    "turn": 0,
+    "players": ["B", "R"],
+    "layout": "./../..."
+  },
+  "bot_id": "random_bot"
+}
