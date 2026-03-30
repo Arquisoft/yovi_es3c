@@ -66,6 +66,10 @@ form {
   margin: 0 auto;
 }
 
+.login-error {
+    color: red;
+}
+
 /* Dashboard styles - Pantalla intermedia */
 .dashboard {
   max-width: 750px;
