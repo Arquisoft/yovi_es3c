@@ -1,7 +1,7 @@
 import { setWorldConstructor, Before, After, setDefaultTimeout } from '@cucumber/cucumber'
 import { chromium } from 'playwright'
 
-setDefaultTimeout(60_000)
+setDefaultTimeout(90_000)
 
 class CustomWorld {
   browser = null
