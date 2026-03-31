@@ -91,11 +91,20 @@ Then('I should see an error message containing {string}', async function(message
   const page = this.page
   if (!page) throw new Error('Page not initialized')
 
-  // Esperar a que aparezca el mensaje de error
+  await page.waitForSelector('[data-testid="error-message"]', {timeout: 10000})
   const content = await page.content()
+
   assert.ok(
-    content.includes(message), 
+    content.includes(message),
     `Expected page to include error message: "${message}"`
   )
+
+
+  // // Esperar a que aparezca el mensaje de error
+  // const content = await page.content()
+  // assert.ok(
+  //   await content.includes(message), 
+  //   `Expected page to include error message: "${message}"`
+  // )
 
 })

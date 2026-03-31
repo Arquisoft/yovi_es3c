@@ -77,7 +77,7 @@ const Register: React.FC = () => {
             className="form-input"
           />
         </div>
-        {error && <p style={{color:'red'}}>{error}</p>}
+        {error && <p data-testid="error-message" style={{color:'red'}}>{error}</p>}
         <button type="submit" className='submit-button'>Registrarse</button>
       </form>
       <p>
