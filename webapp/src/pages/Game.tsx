@@ -8,6 +8,7 @@ import { BOTS } from '../config/botsConfig';
 import './Game.css';
 import DialogResult from './DialogResult';
 import {useNavigate} from 'react-router-dom';
+import HelpDialog from './HelpDialog';
 
 function Game() {
   let loggedIn = false;
@@ -24,6 +25,9 @@ function Game() {
   const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
   const [moveCount, setMoveCount] = useState(1);
   const dialogRef = useRef<HTMLDialogElement>(null);
+
+  // Dialog con la ayuda.
+  const [helpOpen, setHelpOpen] = useState(false)
 
   // Devuelve el tiempo de la partida en un formato mm:ss
   const timeFormat = (ms: number): string => {
@@ -125,6 +129,8 @@ function Game() {
   return (
     <div className="game-container">
       <div className="game-header">
+        <button className="help-btn" onClick={() => setHelpOpen(true)} aria-label="Abrir ayuda">?</button>
+        <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
         <p>{textoTurno}</p>
         <div className='game-info'>
           <p>Bot: {displayBotName}</p>
