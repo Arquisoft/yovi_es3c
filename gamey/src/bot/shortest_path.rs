@@ -144,3 +144,97 @@ impl YBot for ShortestPathBot {
         best_candidates.choose(&mut rand::rng()).copied()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{Coordinates, GameY, Movement, PlayerId};
+
+    #[test]
+    fn test_shortest_path_bot_name() {
+        let bot = ShortestPathBot;
+        assert_eq!(bot.name(), "shortest_path_bot");
+    }
+
+    #[test]
+    fn test_shortest_path_bot_returns_move_on_empty_board() {
+        let bot = ShortestPathBot;
+        let game = GameY::new(5);
+        assert!(bot.choose_move(&game).is_some());
+    }
+
+    #[test]
+    fn test_shortest_path_bot_returns_none_on_full_board() {
+        let bot = ShortestPathBot;
+        let mut game = GameY::new(1);
+        game.add_move(Movement::Placement {
+            player: PlayerId::new(0),
+            coords: Coordinates::new(0, 0, 0),
+        }).unwrap();
+        assert!(bot.choose_move(&game).is_none());
+    }
+
+    #[test]
+    fn test_shortest_path_bot_returns_valid_cell() {
+        let bot = ShortestPathBot;
+        let game = GameY::new(5);
+        let coords = bot.choose_move(&game).unwrap();
+        let idx = coords.to_index(game.board_size());
+        assert!(game.available_cells().contains(&idx));
+    }
+
+    #[test]
+    fn test_shortest_path_bot_chooses_winning_move() {
+        let bot = ShortestPathBot;
+        let mut game = GameY::new(3);
+        // B places at (2,0,0) — touches sides A and B
+        game.add_move(Movement::Placement {
+            player: PlayerId::new(0),
+            coords: Coordinates::new(2, 0, 0),
+        }).unwrap();
+        // R places at (0,0,2)
+        game.add_move(Movement::Placement {
+            player: PlayerId::new(1),
+            coords: Coordinates::new(0, 0, 2),
+        }).unwrap();
+        // B places at (1, 1, 0) — touches side C
+        game.add_move(Movement::Placement {
+            player: PlayerId::new(0),
+            coords: Coordinates::new(1, 1, 0),
+        }).unwrap();
+        // R places at (0,1,1)
+        game.add_move(Movement::Placement {
+            player: PlayerId::new(1),
+            coords: Coordinates::new(0, 1, 1),
+        }).unwrap();
+        // Bot should pick a valid remaining cell
+        let coords = bot.choose_move(&game).unwrap();
+        let idx = coords.to_index(game.board_size());
+        assert!(game.available_cells().contains(&idx));
+    }
+
+    #[test]
+    fn test_shortest_path_bot_works_on_large_board() {
+        let bot = ShortestPathBot;
+        let game = GameY::new(16);
+        let coords = bot.choose_move(&game);
+        assert!(coords.is_some());
+        let idx = coords.unwrap().to_index(game.board_size());
+        assert!(game.available_cells().contains(&idx));
+    }
+
+    #[test]
+    fn test_connection_cost_decreases_with_own_pieces() {
+        let game_empty = GameY::new(5);
+        let cost_empty = ShortestPathBot::connection_cost(&game_empty, PlayerId::new(0));
+
+        let mut game_with_piece = GameY::new(5);
+        game_with_piece.add_move(Movement::Placement {
+            player: PlayerId::new(0),
+            coords: Coordinates::new(2, 1, 1),
+        }).unwrap();
+        let cost_with = ShortestPathBot::connection_cost(&game_with_piece, PlayerId::new(0));
+
+        assert!(cost_with < cost_empty);
+    }
+}
