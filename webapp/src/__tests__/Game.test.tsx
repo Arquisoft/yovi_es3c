@@ -32,6 +32,7 @@ vi.mock('../config/botsConfig', () => ({
         heuristic_bot: 'Heurístico',
         defensive_bot: 'Defensivo',
         montecarlo_bot: 'Montecarlo',
+        shortest_path_bot: 'Dijkstra',
     },
 }))
 
