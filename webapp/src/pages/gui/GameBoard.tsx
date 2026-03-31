@@ -14,23 +14,22 @@ interface GameBoardProps {
 }
 
 function GameBoard(
-  { 
-    size = 15, 
-    layout, 
-    botId = 'random_bot', 
+  {
+    size = 15,
+    layout,
+    botId = 'random_bot',
     setTextoTurno,
-    gameOver, 
-    onGameOver, 
+    gameOver,
+    onGameOver,
     onMoveMade,
-  }: GameBoardProps) 
-{
+  }: GameBoardProps) {
   const initialLayout = layout || createInitialLayout(size);
   const [boardLayout, setBoardLayout] = useState(initialLayout);
   const [isWaiting, setIsWaiting] = useState(false);
   const apiUrl = import.meta.env.VITE_GAMEY_API_URL ?? 'http://localhost:4000';
 
   // Comprobar si el juego ha acabado
-  const hasGameFinished = async (currentLayout: string) : Promise<Boolean> => {
+  const hasGameFinished = async (currentLayout: string): Promise<Boolean> => {
     try {
       const res = await fetch(`${apiUrl}/v1/ybot/check`, {
         method: 'POST',
@@ -44,11 +43,11 @@ function GameBoard(
       });
 
       const statusResponse = await res.json();
-      
+
       if (statusResponse.status === 'finished' && statusResponse.winner !== null) {
         // El juego ha terminado
         onGameOver(statusResponse.winner);
-        return true; 
+        return true;
       }
       return false;
     } catch (error) {
@@ -57,25 +56,30 @@ function GameBoard(
     }
   };
 
-  const handlePlayMove = async (row: number, col: number) : Promise<void> => {
+  const handlePlayMove = async (row: number, col: number): Promise<void> => {
     // Evitar clicks mientras el bot está pensando o el juego ha terminado
-    if (isWaiting || gameOver) return; 
-    
+    if (isWaiting || gameOver) return;
+
     const currentState = getLayoutState(boardLayout, row, col);
-    
+
     // Solo permitir jugar en casillas vacías
     if (currentState !== '.') return;
-    
+
     // Actualizar con el movimiento del jugador
     const newLayout = updateLayoutPosition(boardLayout, row, col, 'B');
     setBoardLayout(newLayout);
+    try {
+      localStorage.setItem('game-board', newLayout);
+    } catch (error) {
+      console.error('Error saving game state to localStorage:', error);
+    }
     onMoveMade();
 
     // Validar si el jugador ha ganado
     if (await hasGameFinished(newLayout)) {
       return;
     }
-    
+
     // Llamar al bot
     setIsWaiting(true);
     setTextoTurno("Es el turno del Bot");
@@ -93,20 +97,25 @@ function GameBoard(
       });
 
       const botResponse = await res.json();
-      
+
       if (botResponse.coords) {
         // Simular que el bot tarda 1 segundo en decidir, pero solo si ya no tardó más
         const elapsedTime = Date.now() - startTime;
         const remainingDelay = Math.max(0, 1000 - elapsedTime);
-        
+
         if (remainingDelay > 0) {
           await new Promise(resolve => setTimeout(resolve, remainingDelay));
         }
-        
+
         // Actualizar con el movimiento del bot
         const { row: botRow, col: botCol } = coordToRowCol(botResponse.coords.x, botResponse.coords.y, size);
         const finalLayout = updateLayoutPosition(newLayout, botRow, botCol, 'R');
         setBoardLayout(finalLayout);
+        try {
+          localStorage.setItem('game-board', finalLayout);
+        } catch (error) {
+          console.error('Error saving game state to localStorage:', error);
+        }
 
         // Validar si el bot ha ganado
         if (await hasGameFinished(newLayout)) {
@@ -128,7 +137,7 @@ function GameBoard(
 
     for (let col = 0; col < row + 1; col++) {
       const state = getLayoutState(boardLayout, row, col);
-      
+
       elements.push(
         <GameSquare
           key={`${row}-${col}`}
