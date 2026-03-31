@@ -22,7 +22,9 @@ async function getBotMove(botId, layout) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ size: BOARD_SIZE, players: ['B', 'R'], turn: 1, layout }),
     });
+
     const data = await res.json();
+
     if (!data?.coords) throw new Error('API no devolvió coordenadas: ' + JSON.stringify(data));
     const row = BOARD_SIZE - 1 - data.coords.x;
     const col = data.coords.y;
@@ -47,6 +49,7 @@ async function playUntilEnd(page, botId, endSelector) {
         finished = await page.isVisible(endSelector);
         moves++;
     }
+
 }
 
 Given('el usuario está logueado y en la pantalla de configuración', async function () {

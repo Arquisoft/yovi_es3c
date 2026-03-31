@@ -68,7 +68,11 @@ function GameBoard(
     // Actualizar con el movimiento del jugador
     const newLayout = updateLayoutPosition(boardLayout, row, col, 'B');
     setBoardLayout(newLayout);
-    localStorage.setItem('game-board', newLayout);
+    try {
+      localStorage.setItem('game-board', newLayout);
+    } catch (error) {
+      console.error('Error saving game state to localStorage:', error);
+    }
     onMoveMade();
 
     // Validar si el jugador ha ganado
@@ -107,7 +111,11 @@ function GameBoard(
         const { row: botRow, col: botCol } = coordToRowCol(botResponse.coords.x, botResponse.coords.y, size);
         const finalLayout = updateLayoutPosition(newLayout, botRow, botCol, 'R');
         setBoardLayout(finalLayout);
-        localStorage.setItem('game-board', finalLayout);
+        try {
+          localStorage.setItem('game-board', finalLayout);
+        } catch (error) {
+          console.error('Error saving game state to localStorage:', error);
+        }
 
         // Validar si el bot ha ganado
         if (await hasGameFinished(newLayout)) {
