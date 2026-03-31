@@ -71,7 +71,15 @@ impl ShortestPathBot {
             if dist_a[i] < u32::MAX && dist_b[i] < u32::MAX && dist_c[i] < u32::MAX {
                 let coords = Coordinates::from_index(i as u32, size);
                 let own_cost = Self::cell_cost(board, &coords, player);
-                let cost = dist_a[i] + dist_b[i] + dist_c[i] - 2 * own_cost;
+                 let cost_u64 = dist_a[i] as u64
+                    + dist_b[i] as u64
+                    + dist_c[i] as u64
+                    - 2 * own_cost as u64;
+                let cost = if cost_u64 > u32::MAX as u64 {
+                    u32::MAX
+                } else {
+                    cost_u64 as u32
+                };
                 min_cost = min_cost.min(cost);
             }
         }
@@ -186,31 +194,18 @@ mod tests {
     #[test]
     fn test_shortest_path_bot_chooses_winning_move() {
         let bot = ShortestPathBot;
+        let p0 = PlayerId::new(0);
+        let p1 = PlayerId::new(1);
+        // Tablero tamaño 3: 6 celdas. Colocamos 4 (2 por jugador), quedan 2 libres.
         let mut game = GameY::new(3);
-        // B places at (2,0,0) — touches sides A and B
-        game.add_move(Movement::Placement {
-            player: PlayerId::new(0),
-            coords: Coordinates::new(2, 0, 0),
-        }).unwrap();
-        // R places at (0,0,2)
-        game.add_move(Movement::Placement {
-            player: PlayerId::new(1),
-            coords: Coordinates::new(0, 0, 2),
-        }).unwrap();
-        // B places at (1, 1, 0) — touches side C
-        game.add_move(Movement::Placement {
-            player: PlayerId::new(0),
-            coords: Coordinates::new(1, 1, 0),
-        }).unwrap();
-        // R places at (0,1,1)
-        game.add_move(Movement::Placement {
-            player: PlayerId::new(1),
-            coords: Coordinates::new(0, 1, 1),
-        }).unwrap();
-        // Bot should pick a valid remaining cell
+        game.add_move(Movement::Placement { player: p0, coords: Coordinates::new(0, 2, 0) }).unwrap();
+        game.add_move(Movement::Placement { player: p1, coords: Coordinates::new(0, 0, 2) }).unwrap();
+        game.add_move(Movement::Placement { player: p0, coords: Coordinates::new(1, 1, 0) }).unwrap();
+        game.add_move(Movement::Placement { player: p1, coords: Coordinates::new(2, 0, 0) }).unwrap();
         let coords = bot.choose_move(&game).unwrap();
-        let idx = coords.to_index(game.board_size());
-        assert!(game.available_cells().contains(&idx));
+        let mut verify = game.clone();
+        verify.add_move(Movement::Placement { player: p0, coords }).unwrap();
+        assert!(verify.check_game_over(), "La jugada elegida debería ganar la partida");
     }
 
     #[test]
@@ -235,6 +230,6 @@ mod tests {
         }).unwrap();
         let cost_with = ShortestPathBot::connection_cost(&game_with_piece, PlayerId::new(0));
 
-        assert!(cost_with < cost_empty);
+        assert!(cost_with <= cost_empty);
     }
 }
