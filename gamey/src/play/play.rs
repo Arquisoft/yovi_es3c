@@ -26,7 +26,7 @@ pub struct PlayResponse {
 }
 
 pub async fn play_handler(
-    State(state): State<AppState>,
+    State(_state): State<AppState>,
     Json(body): Json<PlayRequest>,
 ) -> Result<Json<PlayResponse>, Json<ErrorResponse>> {
 
