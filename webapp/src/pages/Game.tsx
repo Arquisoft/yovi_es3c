@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import GameBoard from './gui/GameBoard';
+import GameBoard, { type GameBoardHandle } from './gui/GameBoard';
 import TurnTimer from './gui/TurnTimer';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -18,6 +18,8 @@ function Game() {
   const location = useLocation();
   const { user } = useAuth();
   const { size, botId } = location.state || { size: 12, botId: "heuristic_bot" };
+  // useRef es un hook que sirve para mantener referencia a un componente y poder llamar a sus métodos.
+  const gameBoardRef = useRef<GameBoardHandle>(null);
 
   const [playerScore, setPlayerScore] = useState(10000);
   const [textoTurno, setTextoTurno] = useState<String>("Es tu turno");
@@ -84,7 +86,7 @@ function Game() {
 
     console.log(userScore);
 
-    if(userScore.score < finalScore)
+    if(userScore && userScore.score < finalScore)
       newRecord = true;
 
     setDialogContent(
@@ -132,14 +134,14 @@ function Game() {
         <TurnTimer
           timeLimit={turnTimeLimit}
           isActive={isPlayerTurn && !gameOver}
-          onTimeUp={() => console.log("Tiempo del jugador agotado")}
+          onTimeUp={() => gameBoardRef.current?.skipPlayerTurn()}
           type="player"
         />
         <p>{textoTurno}</p>
         <TurnTimer
           timeLimit={turnTimeLimit}
           isActive={!isPlayerTurn && !gameOver}
-          onTimeUp={() => console.log("Tiempo del bot agotado")}
+          onTimeUp={() => setIsPlayerTurn(true)}
           type="bot"
         />
       </div>
@@ -156,6 +158,7 @@ function Game() {
 
         <main className="game-main">
           <GameBoard
+            ref={gameBoardRef}
             size={size}
             botId={botId}
             setTextoTurno={setTextoTurno}
