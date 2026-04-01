@@ -24,7 +24,7 @@ function Game() {
   const [playerScore, setPlayerScore] = useState(10000);
   const [gameOver, setGameOver] = useState(false);
   const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
-  const [moveCount, setMoveCount] = useState(1);
+  const [moveCount, setMoveCount] = useState(0);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [turnTimeLimit] = useState(getTimeLimitForBot(botId));
   const dialogRef = useRef<HTMLDialogElement>(null);
