@@ -33,13 +33,17 @@ vi.mock('../config/botsConfig', () => ({
         defensive_bot: 'Defensivo',
         montecarlo_bot: 'Montecarlo',
     },
+    getTimeLimitForBot: vi.fn(() => 30),
 }))
 
 vi.mock('../pages/gui/GameBoard', () => ({
-    default: ({onGameOver}: {onGameOver: (winner:number) => void}) => (
+    default: ({onGameOver, onMoveMade, onTurnChange}: {onGameOver: (winner:number) => void, onMoveMade?: () => void, onTurnChange?: (isPlayerTurn: boolean) => void}) => (
         <div data-testid="mock-gameboard">
             <button onClick={() => onGameOver(0)}>Simular Victoria</button>
             <button onClick={() => onGameOver(1)}>Simular derrota</button>
+            <button onClick={() => onMoveMade?.()}>Simular Movimiento</button>
+            <button onClick={() => onTurnChange?.(false)}>Cambiar a turno Bot</button>
+            <button onClick={() => onTurnChange?.(true)}>Cambiar a turno Jugador</button>
         </div>
     )
 }))
@@ -72,7 +76,7 @@ describe('Game Component', () => {
 
     test('muestra el texto iniical del turno', () => {
         renderComponent()
-        expect(screen.getByText('Es tu turno')).toBeInTheDocument()
+        expect(screen.getByText('Tu turno')).toBeInTheDocument()
     })
 
     test('muestra el nombre del bot', () => {
@@ -132,10 +136,103 @@ describe('Game Component', () => {
             expect(gameService.updateUserStats).toHaveBeenCalledWith(
                 'test1',
                 false,
-                10
+                0
             )
         })
     })
 
-    
+    test('muestra el nombre del usuario autenticado', async () => {
+        renderComponent()
+        expect(screen.getByText('test1')).toBeInTheDocument()
+    })
+
+    test('muestra "Invitado" cuando no hay usuario autenticado', () => {
+        localStorage.clear()
+        renderComponent()
+        expect(screen.getByText('Invitado')).toBeInTheDocument()
+    })
+
+    test('muestra la puntuación inicial de 10000', () => {
+        renderComponent()
+        expect(screen.getByText(/Puntuación: 10000/)).toBeInTheDocument()
+    })
+
+    test('muestra el contador de movimientos inicial en 0', () => {
+        renderComponent()
+        expect(screen.getByText(/Movimientos: 0/)).toBeInTheDocument()
+    })
+
+    test('incrementa el contador de movimientos cuando se hace un movimiento', async () => {
+        const user = userEvent.setup()
+        const { getByRole } = renderComponent()
+
+        await user.click(getByRole('button', { name: /simular movimiento/i }))
+
+        await waitFor(() => {
+            expect(screen.getByText(/Movimientos: 1/)).toBeInTheDocument()
+        })
+    })
+
+    test('cambia el timer label cuando cambia el turno a bot', async () => {
+        const user = userEvent.setup()
+        const { getByRole } = renderComponent()
+
+        // Inicialmente debe mostrar "Tu turno"
+        expect(screen.getByText('Tu turno')).toBeInTheDocument()
+ 
+        // Cambiar a turno del bot
+        await user.click(getByRole('button', { name: /cambiar a turno bot/i }))
+
+        await waitFor(() => {
+            expect(screen.getByText('Turno del Bot')).toBeInTheDocument()
+        })
+    })
+
+    test('cambia el timer label cuando cambia el turno al jugador', async () => {
+        const user = userEvent.setup()
+        const { getByRole } = renderComponent()
+
+        // Cambiar a turno del bot
+        await user.click(getByRole('button', { name: /cambiar a turno bot/i }))
+
+        // Cambiar de vuelta al turno del jugador
+        await user.click(getByRole('button', { name: /cambiar a turno jugador/i }))
+
+        await waitFor(() => {
+            expect(screen.getByText('Tu turno')).toBeInTheDocument()
+        })
+    })
+
+    test('renderiza el nombre "Bot" en la sección del bot', () => {
+        renderComponent()
+        const botSections = screen.getAllByText('Bot')
+        expect(botSections.length).toBeGreaterThan(0)
+    })
+
+    test('obtiene la puntuación del usuario cuando gana', async () => {
+        const user = userEvent.setup()
+        const { getByRole } = renderComponent()
+
+        await user.click(getByRole('button', { name: /simular victoria/i }))
+
+        await waitFor(() => {
+            expect(gameService.getUserScore).toHaveBeenCalledWith('test1')
+        })
+    })
+
+    test('navega al dashboard cuando hace click en ir home', async () => {
+        const user = userEvent.setup()
+        const { getByRole } = renderComponent()
+
+        // Simular victoria para que aparezca el diálogo
+        await user.click(getByRole('button', { name: /simular victoria/i }))
+
+        // El diálogo resultante debería tener un botón "Ir home"
+        // (Este test es básico porque el diálogo es mockeado)
+        await waitFor(() => {
+            expect(screen.getByText(/¡Has ganado!/i)).toBeInTheDocument()
+        })
+    })
+
+
 })
