@@ -1,5 +1,6 @@
 import HelpContent from "./HelpContent";
 import { useNavigate } from "react-router-dom";
+import '../pages-styles/Help.css';
 
 const Help = () => {
     const navigate = useNavigate()
