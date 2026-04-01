@@ -20,6 +20,17 @@
     padding-bottom: 15px;
 }
 
+.turn-indicator {
+    font-size: 4em;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+    flex: 0 0 auto;
+    text-align: center;
+    line-height: 1;
+    padding: 10px 20px;
+}
+
 .game-header p {
     font-size: 1.5em;
     border-color: black;
