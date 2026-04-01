@@ -1,18 +1,61 @@
 .game-container {
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    gap: 20px;
-    order: 1px solid #ccc;
+    flex-direction: column;
+    max-width: 95%;
+    width: 100%;
+    margin: 0 auto;
+    border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #fff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     padding: 1%;
+    gap: 20px;
+}
+
+.game-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 15px;
 }
 
 .game-header p {
     font-size: 1.5em;
     border-color: black;
-    margin: .5em;
+    margin: 0.5em;
     min-width: 200px;
+}
+
+.game-content {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.player-panel, .bot-panel {
+    flex: 0 0 200px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.player-panel h3, .bot-panel h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.player-panel p, .bot-panel p {
+    margin: 10px 0;
+    color: #666;
+}
+
+.game-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
 }
