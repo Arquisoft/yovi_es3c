@@ -3,13 +3,13 @@ Feature: Game
 
   Scenario: El usuario gana una partida
     Given el usuario está logueado y en la pantalla de configuración
-    When selecciona la dificultad "fácil", el bot "Aleatorio" y el tamaño "12"
+    When selecciona la dificultad "fácil", el bot "Aleatorio" y el tamaño "8"
     And realiza movimientos hasta ganar la partida
     Then debería ver el mensaje "¡Has ganado!" en el resumen
 
   Scenario: El usuario pierde una partida
     Given el usuario está logueado y en la pantalla de configuración
-    When selecciona la dificultad "difícil", el bot "Montecarlo" y el tamaño "12"
+    When selecciona la dificultad "difícil", el bot "Montecarlo" y el tamaño "8"
     And realiza movimientos hasta perder la partida
     Then debería ver el mensaje "¡Has perdido!" en el resumen
 
