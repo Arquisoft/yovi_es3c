@@ -133,12 +133,14 @@ function Game() {
           timeLimit={turnTimeLimit}
           isActive={isPlayerTurn && !gameOver}
           onTimeUp={() => console.log("Tiempo del jugador agotado")}
+          type="player"
         />
         <p>{textoTurno}</p>
         <TurnTimer
           timeLimit={turnTimeLimit}
           isActive={!isPlayerTurn && !gameOver}
           onTimeUp={() => console.log("Tiempo del bot agotado")}
+          type="bot"
         />
       </div>
 

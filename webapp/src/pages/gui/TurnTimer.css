@@ -10,26 +10,35 @@
   min-width: 120px;
 }
 
-.turn-timer.active {
-  background-color: #e3f2fd;
-  border-color: #2196F3;
-}
-
 .turn-timer.inactive {
   opacity: 0.6;
   background-color: #fafafa;
   border-color: #cccccc;
 }
 
-.turn-timer.warning {
-  background-color: #fff3cd;
-  border-color: #ffc107;
+/* Timer del jugador - Azul */
+.turn-timer-player.active {
+  background-color: #e3f2fd;
+  border-color: #2196F3;
 }
 
-.turn-timer.danger {
-  background-color: #fce4e4;
+.turn-timer-player.active .timer-display {
+  color: #1976D2;
+}
+
+/* Timer del bot - Rojo */
+.turn-timer-bot.active {
+  background-color: #ffebee;
   border-color: #f44336;
-  animation: pulse 0.5s infinite alternate;
+}
+
+.turn-timer-bot.active .timer-display {
+  color: #d32f2f;
+}
+
+/* Animación de pulso solo para el timer activo */
+.turn-timer.active {
+  animation: pulse 1s infinite;
 }
 
 .timer-label {
@@ -44,21 +53,58 @@
   font-weight: bold;
   color: #333;
   font-family: monospace;
+  transition: color 0.3s ease;
 }
 
-.turn-timer.danger .timer-display {
-  color: #f44336;
-}
-
-.turn-timer.warning .timer-display {
-  color: #ff9800;
+.turn-timer.inactive .timer-display {
+  color: #999;
 }
 
 @keyframes pulse {
-  from {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 0 rgba(33, 150, 243, 0);
+  }
+}
+
+.turn-timer-bot.active {
+  animation: pulse-bot 1s infinite;
+}
+
+@keyframes pulse-bot {
+  0%, 100% {
     box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
   }
-  to {
+  50% {
+    box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
+  }
+}
+
+/* Animación de vibración cuando quedan 5 segundos o menos */
+.turn-timer-player.danger {
+  animation: pulse-danger-player 0.5s infinite !important;
+}
+
+.turn-timer-bot.danger {
+  animation: pulse-danger-bot 0.5s infinite !important;
+}
+
+@keyframes pulse-danger-player {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(33, 150, 243, 0);
+  }
+}
+
+@keyframes pulse-danger-bot {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+  }
+  50% {
     box-shadow: 0 0 0 10px rgba(244, 67, 54, 0);
   }
 }
