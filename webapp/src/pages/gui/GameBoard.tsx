@@ -111,6 +111,7 @@ const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(
       }
     } catch (error) {
       console.error('Error calling bot:', error);
+      onTurnChange?.(true);
     } finally {
       setIsWaiting(false);
     }

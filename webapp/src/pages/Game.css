@@ -12,32 +12,6 @@
     gap: 20px;
 }
 
-.game-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 1vh;
-}
-
-.turn-indicator {
-    font-size: 4em;
-    font-weight: bold;
-    color: #333;
-    margin: 0;
-    flex: 0 0 auto;
-    text-align: center;
-    line-height: 1;
-    padding: 10px 20px;
-}
-
-.game-header p {
-    font-size: 1.5em;
-    border-color: black;
-    margin: 0.5em;
-    min-width: 200px;
-}
-
 .game-content {
     display: flex;
     justify-content: center;
@@ -45,24 +19,36 @@
     align-items: flex-start;
 }
 
-.player-panel, .bot-panel {
-    flex: 0 0 200px;
-    padding: 20px;
+.game-aside {
+    flex: 0 0 auto;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 15%;
+}
+
+.player-info, .bot-info {
+    padding: 15px;
     background-color: #f9f9f9;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    text-align: center;
 }
 
-.player-panel h3, .bot-panel h3 {
-    margin-top: 0;
+.player-info h3, .bot-info h3 {
+    margin: 0;
     color: #333;
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
-.player-panel p, .bot-panel p {
-    margin: 10px 0;
+.player-info p, .bot-info p {
+    margin: 5px 0;
     color: #666;
+    font-size: 0.9em;
 }
 
 .game-main {
