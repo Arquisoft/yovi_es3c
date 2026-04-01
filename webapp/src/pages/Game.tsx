@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import GameBoard, { type GameBoardHandle } from './gui/GameBoard';
 import TurnTimer from './gui/TurnTimer';
 import { useLocation } from 'react-router-dom';
@@ -126,6 +126,14 @@ function Game() {
 
   const displayBotName = BOTS[botId] || botId;
 
+  const handlePlayerTimeUp = useCallback(() => {
+    gameBoardRef.current?.skipPlayerTurn();
+  }, []);
+
+  const handleBotTimeUp = useCallback(() => {
+    setIsPlayerTurn(true);
+  }, []);
+
   return (
     <div className="game-container">
 
@@ -133,7 +141,7 @@ function Game() {
         <TurnTimer
           timeLimit={turnTimeLimit}
           isActive={isPlayerTurn && !gameOver}
-          onTimeUp={() => gameBoardRef.current?.skipPlayerTurn()}
+          onTimeUp={handlePlayerTimeUp}
           label={isPlayerTurn && `Tu turno` || undefined}
           type="player"
         />
@@ -141,7 +149,7 @@ function Game() {
         <TurnTimer
           timeLimit={turnTimeLimit}
           isActive={!isPlayerTurn && !gameOver}
-          onTimeUp={() => setIsPlayerTurn(true)}
+          onTimeUp={handleBotTimeUp}
           label={!isPlayerTurn && `Turno del Bot` || undefined}
           type="bot"
         />

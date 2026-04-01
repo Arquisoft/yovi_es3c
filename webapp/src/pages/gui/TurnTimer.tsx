@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import './TurnTimer.css';
 
 interface TurnTimerProps {
@@ -12,10 +12,19 @@ interface TurnTimerProps {
 function TurnTimer({ timeLimit, isActive, onTimeUp, label, type = 'player' }: TurnTimerProps) {
   const [timeRemaining, setTimeRemaining] = useState(timeLimit);
 
+  // Resetear cuando el timer se activate o cambie el timeLimit
   useEffect(() => {
-    setTimeRemaining(timeLimit);
-  }, [timeLimit, isActive]);
+    if (isActive) {
+      setTimeRemaining(timeLimit);
+    }
+  }, [isActive, timeLimit]);
 
+  // Memoizar el callback para evitar cambios innecesarios
+  const handleTimeUp = useCallback(() => {
+    onTimeUp?.();
+  }, [onTimeUp]);
+
+  // Interval para contar hacia atrás
   useEffect(() => {
     if (!isActive || timeRemaining <= 0) {
       return;
@@ -25,7 +34,7 @@ function TurnTimer({ timeLimit, isActive, onTimeUp, label, type = 'player' }: Tu
       setTimeRemaining(prev => {
         const newTime = prev - 1;
         if (newTime <= 0) {
-          onTimeUp?.();
+          handleTimeUp();
           return 0;
         }
         return newTime;
@@ -33,7 +42,7 @@ function TurnTimer({ timeLimit, isActive, onTimeUp, label, type = 'player' }: Tu
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isActive, timeRemaining, onTimeUp]);
+  }, [isActive, timeRemaining, handleTimeUp]);
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);

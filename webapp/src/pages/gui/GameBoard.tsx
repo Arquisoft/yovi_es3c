@@ -63,6 +63,59 @@ const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(
     }
   };
 
+  // Función para que el bot haga su movimiento dado un layout actual
+  const makeBotMove = async (currentLayout: string): Promise<void> => {
+    setIsWaiting(true);
+    onTurnChange?.(false);
+
+    try {
+      const startTime = Date.now();
+      const res = await fetch(`${apiUrl}/v1/ybot/choose/${botId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          size: size,
+          players: ['B', 'R'],
+          turn: 1,
+          layout: currentLayout,
+        }),
+      });
+
+      const botResponse = await res.json();
+
+      if (botResponse.coords) {
+        // Simular que el bot tarda 1 segundo en decidir
+        const elapsedTime = Date.now() - startTime;
+        const remainingDelay = Math.max(0, 1000 - elapsedTime);
+
+        if (remainingDelay > 0) {
+          await new Promise(resolve => setTimeout(resolve, remainingDelay));
+        }
+
+        // Actualizar con el movimiento del bot
+        const { row: botRow, col: botCol } = coordToRowCol(botResponse.coords.x, botResponse.coords.y, size);
+        const finalLayout = updateLayoutPosition(currentLayout, botRow, botCol, 'R');
+        setBoardLayout(finalLayout);
+        try {
+          localStorage.setItem('game-board', finalLayout);
+        } catch (error) {
+          console.error('Error saving game state to localStorage:', error);
+        }
+
+        // Validar si el bot ha ganado
+        if (await hasGameFinished(finalLayout)) {
+          return;
+        }
+
+        onTurnChange?.(true);
+      }
+    } catch (error) {
+      console.error('Error calling bot:', error);
+    } finally {
+      setIsWaiting(false);
+    }
+  };
+
   const handlePlayMove = async (row: number, col: number): Promise<void> => {
     // Evitar clicks mientras el bot está pensando o el juego ha terminado
     if (isWaiting || gameOver) return;
@@ -87,55 +140,8 @@ const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(
       return;
     }
 
-    // Llamar al bot
-    setIsWaiting(true);
-    onTurnChange?.(false);
-    try {
-      const startTime = Date.now();
-      const res = await fetch(`${apiUrl}/v1/ybot/choose/${botId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          size: size,
-          players: ['B', 'R'],
-          turn: 1,
-          layout: newLayout,
-        }),
-      });
-
-      const botResponse = await res.json();
-
-      if (botResponse.coords) {
-        // Simular que el bot tarda 1 segundo en decidir, pero solo si ya no tardó más
-        const elapsedTime = Date.now() - startTime;
-        const remainingDelay = Math.max(0, 1000 - elapsedTime);
-
-        if (remainingDelay > 0) {
-          await new Promise(resolve => setTimeout(resolve, remainingDelay));
-        }
-
-        // Actualizar con el movimiento del bot
-        const { row: botRow, col: botCol } = coordToRowCol(botResponse.coords.x, botResponse.coords.y, size);
-        const finalLayout = updateLayoutPosition(newLayout, botRow, botCol, 'R');
-        setBoardLayout(finalLayout);
-        try {
-          localStorage.setItem('game-board', finalLayout);
-        } catch (error) {
-          console.error('Error saving game state to localStorage:', error);
-        }
-
-        // Validar si el bot ha ganado
-        if (await hasGameFinished(newLayout)) {
-          return;
-        }
-
-        onTurnChange?.(true);
-      }
-    } catch (error) {
-      console.error('Error calling bot:', error);
-    } finally {
-      setIsWaiting(false);
-    }
+    // Dejar que el bot juegue con el nuevo layout
+    await makeBotMove(newLayout);
   };
 
   const rows = [];
@@ -169,52 +175,7 @@ const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(
 
   // Función para que el bot juegue automáticamente (cuando se agota el tiempo del jugador)
   const skipPlayerTurn = async () => {
-    setIsWaiting(true);
-    onTurnChange?.(false);
-
-    try {
-      const res = await fetch(`${apiUrl}/v1/ybot/choose/${botId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          size: size,
-          players: ['B', 'R'],
-          turn: 1,
-          layout: boardLayout,
-        }),
-      });
-
-      const botResponse = await res.json();
-
-      if (botResponse.coords) {
-        const startTime = Date.now();
-        const elapsedTime = Date.now() - startTime;
-        const remainingDelay = Math.max(0, 1000 - elapsedTime);
-
-        if (remainingDelay > 0) {
-          await new Promise(resolve => setTimeout(resolve, remainingDelay));
-        }
-
-        const { row: botRow, col: botCol } = coordToRowCol(botResponse.coords.x, botResponse.coords.y, size);
-        const finalLayout = updateLayoutPosition(boardLayout, botRow, botCol, 'R');
-        setBoardLayout(finalLayout);
-        try {
-          localStorage.setItem('game-board', finalLayout);
-        } catch (error) {
-          console.error('Error saving game state to localStorage:', error);
-        }
-
-        if (await hasGameFinished(finalLayout)) {
-          return;
-        }
-
-        onTurnChange?.(true);
-      }
-    } catch (error) {
-      console.error('Error calling bot:', error);
-    } finally {
-      setIsWaiting(false);
-    }
+    await makeBotMove(boardLayout);
   };
 
   useImperativeHandle(ref, () => ({
