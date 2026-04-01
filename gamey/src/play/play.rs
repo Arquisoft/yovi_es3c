@@ -68,11 +68,23 @@ pub async fn play_handler(
     // LOG 3: respuesta HTTP cruda
     tracing::debug!("Respuesta HTTP del módulo Rust: {:?}", rust_response);
 
-    let parsed: MoveResponse = rust_response
-        .json()
-        .await
+   let text = rust_response
+    .text()
+    .await
+    .map_err(|e| {
+        tracing::debug!("Error leyendo body: {}", e);
+        Json(ErrorResponse::error(
+            &format!("Error reading body: {}", e),
+            Some(api_version.into()),
+            Some(body.bot_id.clone()),
+        ))
+    })?;
+
+    tracing::debug!("Body crudo recibido: '{}'", text);
+
+    let parsed: MoveResponse = serde_json::from_str(&text)
         .map_err(|e| {
-            tracing::debug!("Error parseando MoveResponse: {}", e);
+            tracing::debug!("Error parseando MoveResponse: {} | body fue: '{}'", e, text);
             Json(ErrorResponse::error(
                 &format!("Invalid response from Rust module: {}", e),
                 Some(api_version.into()),
