@@ -1,0 +1,64 @@
+.turn-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  min-width: 120px;
+}
+
+.turn-timer.active {
+  background-color: #e3f2fd;
+  border-color: #2196F3;
+}
+
+.turn-timer.inactive {
+  opacity: 0.6;
+  background-color: #fafafa;
+  border-color: #cccccc;
+}
+
+.turn-timer.warning {
+  background-color: #fff3cd;
+  border-color: #ffc107;
+}
+
+.turn-timer.danger {
+  background-color: #fce4e4;
+  border-color: #f44336;
+  animation: pulse 0.5s infinite alternate;
+}
+
+.timer-label {
+  font-size: 0.9em;
+  color: #666;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.timer-display {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #333;
+  font-family: monospace;
+}
+
+.turn-timer.danger .timer-display {
+  color: #f44336;
+}
+
+.turn-timer.warning .timer-display {
+  color: #ff9800;
+}
+
+@keyframes pulse {
+  from {
+    box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+  }
+  to {
+    box-shadow: 0 0 0 10px rgba(244, 67, 54, 0);
+  }
+}
