@@ -137,32 +137,23 @@ function Game() {
   return (
     <div className="game-container">
 
-      <div className="game-header">
-        <TurnTimer
-          timeLimit={turnTimeLimit}
-          isActive={isPlayerTurn && !gameOver}
-          onTimeUp={handlePlayerTimeUp}
-          label={isPlayerTurn && `Tu turno` || undefined}
-          type="player"
-        />
-        <span className="turn-indicator">{isPlayerTurn ? '⇐' : '⇒'}</span>
-        <TurnTimer
-          timeLimit={turnTimeLimit}
-          isActive={!isPlayerTurn && !gameOver}
-          onTimeUp={handleBotTimeUp}
-          label={!isPlayerTurn && `Turno del Bot` || undefined}
-          type="bot"
-        />
-      </div>
-
       <dialog ref={dialogRef} className="game-dialog-overlay">{dialogContent}</dialog>
 
       <div className="game-content">
 
-        <aside className="player-panel">
-          <h3>{user?.username || "Invitado"}</h3>
-          <p>Puntuación: {playerScore}</p>
-          <p>Movimientos: {moveCount}</p>
+        <aside className='game-aside'>
+          <TurnTimer
+            timeLimit={turnTimeLimit}
+            isActive={isPlayerTurn && !gameOver}
+            onTimeUp={handlePlayerTimeUp}
+            label={isPlayerTurn? "Tu turno" : undefined}
+            type="player"
+          />
+          <div className="player-info">
+            <h3>{user?.username || "Invitado"}</h3>
+            <p>Puntuación: {playerScore}</p>
+            <p>Movimientos: {moveCount}</p>
+          </div>
         </aside>
 
         <main className="game-main">
@@ -181,9 +172,18 @@ function Game() {
           />
         </main>
 
-        <aside className="bot-panel">
-          <h3>Bot</h3>
-          <p>{displayBotName}</p>
+        <aside className="game-aside">
+          <TurnTimer
+            timeLimit={turnTimeLimit}
+            isActive={!isPlayerTurn && !gameOver}
+            onTimeUp={handleBotTimeUp}
+            label={!isPlayerTurn? "Turno del Bot" : undefined}
+            type="bot"
+          />
+          <div className="bot-info">
+            <h3>Bot</h3>
+            <p>{displayBotName}</p>
+          </div>
         </aside>
 
       </div>
