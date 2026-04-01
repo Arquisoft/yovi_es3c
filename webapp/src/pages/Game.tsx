@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateUserStats } from '../services/gameService';
 import { getUserScore } from '../services/gameService';
-import { BOTS } from '../config/botsConfig';
+import { BOTS, getTimeLimitForBot } from '../config/botsConfig';
 import './Game.css';
 import DialogResult from './DialogResult';
 import {useNavigate} from 'react-router-dom';
@@ -25,7 +25,7 @@ function Game() {
   const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
   const [moveCount, setMoveCount] = useState(1);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
-  const [turnTimeLimit, setTurnTimeLimit] = useState(60);
+  const [turnTimeLimit] = useState(getTimeLimitForBot(botId));
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   // Devuelve el tiempo de la partida en un formato mm:ss
