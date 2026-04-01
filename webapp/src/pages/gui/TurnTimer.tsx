@@ -6,9 +6,10 @@ interface TurnTimerProps {
   isActive: boolean; // si el timer debe estar contando
   onTimeUp?: () => void; // callback cuando el tiempo se acabe
   label?: string; // etiqueta (ej: "Tu turno", "Turno del bot")
+  type?: 'player' | 'bot'; // tipo de timer (jugador o bot)
 }
 
-function TurnTimer({ timeLimit, isActive, onTimeUp, label }: TurnTimerProps) {
+function TurnTimer({ timeLimit, isActive, onTimeUp, label, type = 'player' }: TurnTimerProps) {
   const [timeRemaining, setTimeRemaining] = useState(timeLimit);
 
   useEffect(() => {
@@ -40,11 +41,10 @@ function TurnTimer({ timeLimit, isActive, onTimeUp, label }: TurnTimerProps) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const isWarning = timeRemaining <= 10 && timeRemaining > 0;
-  const isDanger = timeRemaining <= 5;
+  const isDanger = timeRemaining <= 5 && timeRemaining > 0;
 
   return (
-    <div className={`turn-timer ${isActive ? 'active' : 'inactive'} ${isWarning ? 'warning' : ''} ${isDanger ? 'danger' : ''}`}>
+    <div className={`turn-timer turn-timer-${type} ${isActive ? 'active' : 'inactive'} ${isDanger ? 'danger' : ''}`}>
       {label && <span className="timer-label">{label}</span>}
       <span className="timer-display">{formatTime(timeRemaining)}</span>
     </div>
