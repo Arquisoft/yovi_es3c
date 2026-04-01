@@ -22,7 +22,6 @@ function Game() {
   const gameBoardRef = useRef<GameBoardHandle>(null);
 
   const [playerScore, setPlayerScore] = useState(10000);
-  const [textoTurno, setTextoTurno] = useState<String>("Es tu turno");
   const [gameOver, setGameOver] = useState(false);
   const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
   const [moveCount, setMoveCount] = useState(1);
@@ -135,13 +134,15 @@ function Game() {
           timeLimit={turnTimeLimit}
           isActive={isPlayerTurn && !gameOver}
           onTimeUp={() => gameBoardRef.current?.skipPlayerTurn()}
+          label={isPlayerTurn && `Tu turno` || undefined}
           type="player"
         />
-        <p>{textoTurno}</p>
+        <span className="turn-indicator">{isPlayerTurn ? '⇐' : '⇒'}</span>
         <TurnTimer
           timeLimit={turnTimeLimit}
           isActive={!isPlayerTurn && !gameOver}
           onTimeUp={() => setIsPlayerTurn(true)}
+          label={!isPlayerTurn && `Turno del Bot` || undefined}
           type="bot"
         />
       </div>
@@ -161,7 +162,6 @@ function Game() {
             ref={gameBoardRef}
             size={size}
             botId={botId}
-            setTextoTurno={setTextoTurno}
             gameOver={gameOver}
             onGameOver={handleGameOver}
             onMoveMade={() => {

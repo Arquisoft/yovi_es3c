@@ -7,7 +7,6 @@ interface GameBoardProps {
   size?: number;
   layout?: string;
   botId?: string;
-  setTextoTurno: (text: string) => void;
   gameOver: boolean;
   onGameOver: (winner: number) => void;
   onMoveMade: () => void;
@@ -24,7 +23,6 @@ const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(
       size = 15,
       layout,
       botId = 'random_bot',
-      setTextoTurno,
       gameOver,
       onGameOver,
       onMoveMade,
@@ -91,7 +89,6 @@ const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(
 
     // Llamar al bot
     setIsWaiting(true);
-    setTextoTurno("Es el turno del Bot");
     onTurnChange?.(false);
     try {
       const startTime = Date.now();
@@ -132,7 +129,6 @@ const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(
           return;
         }
 
-        setTextoTurno("Es tu turno");
         onTurnChange?.(true);
       }
     } catch (error) {
@@ -174,7 +170,6 @@ const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(
   // Función para que el bot juegue automáticamente (cuando se agota el tiempo del jugador)
   const skipPlayerTurn = async () => {
     setIsWaiting(true);
-    setTextoTurno("Es el turno del Bot");
     onTurnChange?.(false);
 
     try {
@@ -213,7 +208,6 @@ const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(
           return;
         }
 
-        setTextoTurno("Es tu turno");
         onTurnChange?.(true);
       }
     } catch (error) {
