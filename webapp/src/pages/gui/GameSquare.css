@@ -1,5 +1,5 @@
 .hexagon {
-  height: clamp(2em, 4vw, 10em);
+  height: clamp(1.5em, 3vw, 8em);
   aspect-ratio: 0.866;
   clip-path: polygon(-50% 50%, 50% 100%, 150% 50%, 50% 0);
   background: var(--color, grey);
