@@ -124,28 +124,42 @@ function Game() {
 
   return (
     <div className="game-container">
-      <div className="game-header">
+      
+      <div className="game-header">  
         <p>{textoTurno}</p>
-        <div className='game-info'>
-          <p>Bot: {displayBotName}</p>
-        </div>
       </div>
-      <dialog ref={dialogRef} className="game-dialog-overlay">{dialogContent}</dialog>
-      <main className="game-main">
-        <GameBoard
-          size={size}
-          botId={botId}
-          setTextoTurno={setTextoTurno}
-          gameOver={gameOver}
-          onGameOver={handleGameOver}
-          onMoveMade={() => { 
-            let timeMoveMadeAt = new Date().getTime();
-            calculateScoreOnMove(timeMoveMadeAt-startTime.current);
-            setMoveCount(prev => prev + 1);
-          }}
-        />
-      </main>
 
+      <dialog ref={dialogRef} className="game-dialog-overlay">{dialogContent}</dialog>
+
+      <div className="game-content">
+
+        <aside className="player-panel">
+          <h3>{user?.username || "Invitado"}</h3>
+          <p>Puntuación: {playerScore}</p>
+          <p>Movimientos: {moveCount}</p>
+        </aside>
+
+        <main className="game-main">
+          <GameBoard
+            size={size}
+            botId={botId}
+            setTextoTurno={setTextoTurno}
+            gameOver={gameOver}
+            onGameOver={handleGameOver}
+            onMoveMade={() => {
+              let timeMoveMadeAt = new Date().getTime();
+              calculateScoreOnMove(timeMoveMadeAt-startTime.current);
+              setMoveCount(prev => prev + 1);
+            }}
+          />
+        </main>
+
+        <aside className="bot-panel">
+          <h3>Bot</h3>
+          <p>{displayBotName}</p>
+        </aside>
+
+      </div>
     </div>
   );
 }
