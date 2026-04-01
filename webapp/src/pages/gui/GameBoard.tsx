@@ -11,6 +11,7 @@ interface GameBoardProps {
   gameOver: boolean;
   onGameOver: (winner: number) => void;
   onMoveMade: () => void;
+  onTurnChange?: (isPlayerTurn: boolean) => void;
 }
 
 function GameBoard(
@@ -22,6 +23,7 @@ function GameBoard(
     gameOver,
     onGameOver,
     onMoveMade,
+    onTurnChange,
   }: GameBoardProps) {
   const initialLayout = layout || createInitialLayout(size);
   const [boardLayout, setBoardLayout] = useState(initialLayout);
@@ -83,6 +85,7 @@ function GameBoard(
     // Llamar al bot
     setIsWaiting(true);
     setTextoTurno("Es el turno del Bot");
+    onTurnChange?.(false);
     try {
       const startTime = Date.now();
       const res = await fetch(`${apiUrl}/v1/ybot/choose/${botId}`, {
@@ -123,6 +126,7 @@ function GameBoard(
         }
 
         setTextoTurno("Es tu turno");
+        onTurnChange?.(true);
       }
     } catch (error) {
       console.error('Error calling bot:', error);

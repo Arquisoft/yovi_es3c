@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import GameBoard from './gui/GameBoard';
+import TurnTimer from './gui/TurnTimer';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateUserStats } from '../services/gameService';
@@ -23,6 +24,8 @@ function Game() {
   const [gameOver, setGameOver] = useState(false);
   const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
   const [moveCount, setMoveCount] = useState(1);
+  const [isPlayerTurn, setIsPlayerTurn] = useState(true);
+  const [turnTimeLimit, setTurnTimeLimit] = useState(60);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   // Devuelve el tiempo de la partida en un formato mm:ss
@@ -124,9 +127,19 @@ function Game() {
 
   return (
     <div className="game-container">
-      
-      <div className="game-header">  
+
+      <div className="game-header">
+        <TurnTimer
+          timeLimit={turnTimeLimit}
+          isActive={isPlayerTurn && !gameOver}
+          onTimeUp={() => console.log("Tiempo del jugador agotado")}
+        />
         <p>{textoTurno}</p>
+        <TurnTimer
+          timeLimit={turnTimeLimit}
+          isActive={!isPlayerTurn && !gameOver}
+          onTimeUp={() => console.log("Tiempo del bot agotado")}
+        />
       </div>
 
       <dialog ref={dialogRef} className="game-dialog-overlay">{dialogContent}</dialog>
@@ -151,6 +164,7 @@ function Game() {
               calculateScoreOnMove(timeMoveMadeAt-startTime.current);
               setMoveCount(prev => prev + 1);
             }}
+            onTurnChange={setIsPlayerTurn}
           />
         </main>
 
