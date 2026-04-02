@@ -8,7 +8,9 @@ use reqwest::Client;
 use std::env;
 use crate::{
     YEN,
-    Coordinates,
+    GameY,
+    Movement,
+    PlayerId,
     MoveResponse,
     ErrorResponse,
     state::AppState,
@@ -27,7 +29,7 @@ fn default_bot_id() -> String {
 
 #[derive(Serialize)]
 pub struct PlayResponse {
-    next_move: Coordinates,
+    next_move: YEN,
 }
 
 pub async fn play_handler(
@@ -37,7 +39,6 @@ pub async fn play_handler(
 
     let api_version = "v1";
 
-    // LOG 1: request recibido
     tracing::debug!(
         "PlayRequest recibido: bot_id={}, position={:?}",
         body.bot_id,
@@ -51,7 +52,6 @@ pub async fn play_handler(
         body.bot_id
     );
 
-    // LOG 2: URL que se va a llamar
     tracing::debug!("URL llamada al módulo Rust: {}", url);
 
     let client = Client::new();
@@ -70,20 +70,19 @@ pub async fn play_handler(
             ))
         })?;
 
-    // LOG 3: respuesta HTTP cruda
     tracing::debug!("Respuesta HTTP del módulo Rust: {:?}", rust_response);
 
-   let text = rust_response
-    .text()
-    .await
-    .map_err(|e| {
-        tracing::debug!("Error leyendo body: {}", e);
-        Json(ErrorResponse::error(
-            &format!("Error reading body: {}", e),
-            Some(api_version.into()),
-            Some(body.bot_id.clone()),
-        ))
-    })?;
+    let text = rust_response
+        .text()
+        .await
+        .map_err(|e| {
+            tracing::debug!("Error leyendo body: {}", e);
+            Json(ErrorResponse::error(
+                &format!("Error reading body: {}", e),
+                Some(api_version.into()),
+                Some(body.bot_id.clone()),
+            ))
+        })?;
 
     tracing::debug!("Body crudo recibido: '{}'", text);
 
@@ -97,11 +96,43 @@ pub async fn play_handler(
             ))
         })?;
 
-    // LOG 4: MoveResponse parseado
     tracing::debug!("MoveResponse parseado: {:?}", parsed);
 
+    // Convertir YEN a GameY para aplicar el movimiento
+    let mut game = GameY::try_from(body.position.clone())
+        .map_err(|e| {
+            tracing::debug!("Error convirtiendo YEN a GameY: {}", e);
+            Json(ErrorResponse::error(
+                &format!("Invalid YEN position: {}", e),
+                Some(api_version.into()),
+                Some(body.bot_id.clone()),
+            ))
+        })?;
+
+    // Determinar el jugador actual a partir del turno en el YEN
+    let current_player = PlayerId::new(body.position.turn());
+
+    // Aplicar el movimiento
+    game.add_move(Movement::Placement {
+        player: current_player,
+        coords: parsed.coords,
+    })
+    .map_err(|e| {
+        tracing::debug!("Error aplicando movimiento: {}", e);
+        Json(ErrorResponse::error(
+            &format!("Error applying move: {}", e),
+            Some(api_version.into()),
+            Some(body.bot_id.clone()),
+        ))
+    })?;
+
+    // Convertir el GameY actualizado de vuelta a YEN
+    let next_yen: YEN = (&game).into();
+
+    tracing::debug!("YEN resultante: {:?}", next_yen);
+
     Ok(Json(PlayResponse {
-        next_move: parsed.coords,
+        next_move: next_yen,
     }))
 }
 
