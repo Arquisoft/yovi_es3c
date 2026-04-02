@@ -8,11 +8,13 @@
     border-radius: 28px;
     overflow: hidden;
     box-shadow: none;
+    animation: dialog-fade-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .help-dialog::backdrop {
     background: rgba(17, 24, 39, 0.62);
     backdrop-filter: blur(6px);
+    animation: backdrop-fade-in 0.25s ease forwards;
 }
 
 .help-dialog-inner {
@@ -151,6 +153,14 @@
     outline-offset: 3px;
 }
 
+.help-dialog.closing {
+    animation: dialog-fade-out 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.help-dialog.closing::backdrop {
+    animation: backdrop-fade-out 0.2s ease forwards;
+}
+
 @media (max-width: 640px) {
     .help-dialog {
         max-width: 94vw;
@@ -187,4 +197,36 @@
         width: 38px;
         height: 38px;
     }
+}
+
+@keyframes dialog-fade-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes dialog-fade-out {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95) translateY(12px);
+    }
+}
+
+@keyframes backdrop-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes backdrop-fade-out {
+    from {opacity: 1;}
+    to {opacity: 0;}
 }

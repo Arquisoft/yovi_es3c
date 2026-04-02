@@ -129,7 +129,7 @@ function Game() {
   return (
     <div className="game-container">
       <div className="game-header">
-        <button className="help-btn" onClick={() => setHelpOpen(true)} aria-label="Abrir ayuda">?</button>
+        <button className="help-btn" onClick={() => setHelpOpen(true)} aria-label="Abrir ayuda">? Ayuda</button>
         <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
         <p>{textoTurno}</p>
         <div className='game-info'>

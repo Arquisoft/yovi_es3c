@@ -14,12 +14,22 @@ const HelpDialog = ({open, onClose }: HelpDialogProps) => {
         const dialog = dialogRef.current
         if (!dialog) return
         if (open) dialog.showModal()
-            else dialog.close()
     }, [open])
 
     // Cerrar al hacer click fuera del dialog.
+    const handleClose = () => {
+        const dialog = dialogRef.current;
+        if (!dialog) return
+        dialog.classList.add('closing')
+        dialog.addEventListener('animationed', () => {
+            dialog.classList.remove('closing')
+            dialog.close()
+            onClose()
+        }, {once:true})
+    }
+
     const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
-        if (e.target === dialogRef.current) onClose()
+        if (e.target === dialogRef.current) handleClose()
     }
 
     return (
@@ -31,7 +41,7 @@ const HelpDialog = ({open, onClose }: HelpDialogProps) => {
             onClick={handleBackdropClick}
         >
             <div className="help-dialog-inner">
-                <button className="help-dialog-close" onClick={onClose} aria-lael="Cerrar ayuda">
+                <button className="help-dialog-close" onClick={handleClose} aria-lael="Cerrar ayuda">
                     X
                 </button>
                 <HelpContent />
