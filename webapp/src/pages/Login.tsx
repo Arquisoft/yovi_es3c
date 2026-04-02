@@ -68,7 +68,7 @@ const Login: React.FC = () => {
           />
         </div>
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p className='login-error'>{error}</p>}
 
         <button type="submit" className="submit-button">
           Iniciar Sesión

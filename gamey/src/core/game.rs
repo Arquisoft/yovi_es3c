@@ -80,6 +80,14 @@ impl GameY {
         (self.board_size * (self.board_size + 1)) / 2
     }
 
+    /// Returns what occupies a given cell: Empty or Occupied(player).
+    pub fn cell_at(&self, coords: &Coordinates) -> Cell {
+        match self.board_map.get(coords) {
+            Some((_, player)) => Cell::Occupied(*player),
+            None => Cell::Empty,
+        }
+    }
+
     /// Checks if the movement is made by the correct player.
     ///
     /// Returns an error if it's not the specified player's turn.

@@ -31,7 +31,7 @@ pub use choose::MoveResponse;
 pub use error::ErrorResponse;
 pub use version::*;
 
-use crate::{DefensiveBot, GameYError, HeuristicBot, MonteCarloBot, RandomBot, YBotRegistry, state::AppState};
+use crate::{DefensiveBot, GameYError, HeuristicBot, MonteCarloBot, RandomBot, ShortestPathBot, YBotRegistry, state::AppState};
 
 /// Creates the Axum router with the given state.
 ///
@@ -59,7 +59,8 @@ pub fn create_default_state() -> AppState {
         .with_bot(Arc::new(RandomBot))
         .with_bot(Arc::new(HeuristicBot))
         .with_bot(Arc::new(DefensiveBot))
-        .with_bot(Arc::new(MonteCarloBot));
+        .with_bot(Arc::new(MonteCarloBot))
+        .with_bot(Arc::new(ShortestPathBot));
     AppState::new(bots)
 }
 

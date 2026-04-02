@@ -10,7 +10,7 @@ interface GameSquareProps {
 }
 
 export default function GameSquare({ row, col, state, onClick, disabled }: GameSquareProps) {
-   
+
   const getColor = () => {
     if (state === 'B') return 'blue';
     if (state === 'R') return 'red';
@@ -20,6 +20,8 @@ export default function GameSquare({ row, col, state, onClick, disabled }: GameS
   return (
     <div
       className="hexagon"
+      data-row={row}
+      data-col={col}
       style={{
         '--color': getColor(),
         '--cursor': disabled ? 'not-allowed' : 'pointer',

@@ -17,6 +17,8 @@ export function Header() {
             <Link to="/dashboard" className="nav-link">Jugar</Link>
           }
 
+          <Link to="/ranking" className="nav-link">Ranking</Link>
+
           {!authentication.getUser() && 
             (
               <div className='nav-account'>
