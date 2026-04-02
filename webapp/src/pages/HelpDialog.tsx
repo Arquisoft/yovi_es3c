@@ -21,11 +21,18 @@ const HelpDialog = ({open, onClose }: HelpDialogProps) => {
         const dialog = dialogRef.current;
         if (!dialog) return
         dialog.classList.add('closing')
-        dialog.addEventListener('animationed', () => {
+
+        let alreadyClosed = false
+        const doClose = () => {
+            if (alreadyClosed) return
+            alreadyClosed = true
             dialog.classList.remove('closing')
             dialog.close()
             onClose()
-        }, {once:true})
+        }
+
+        dialog.addEventListener('animationed', doClose, { once:true})
+        setTimeout(doClose, 300)
     }
 
     const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
