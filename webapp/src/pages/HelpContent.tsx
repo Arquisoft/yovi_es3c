@@ -3,7 +3,7 @@ const HelpContent = () => {
         <div className="help-content">
             <h2>¿Cómo jugar?</h2>
             <p>
-                YoVi es un juego de estrategia por turnso en un tablero triangular.
+                YoVi es un juego de estrategia por turnos en un tablero triangular.
                 Tú juegas con las fichas azules y el bot con las fichas rojas.
             </p>
 
