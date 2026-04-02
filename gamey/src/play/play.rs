@@ -17,7 +17,12 @@ use crate::{
 #[derive(Deserialize)]
 pub struct PlayRequest {
     position: YEN,
+    #[serde(default = "default_bot_id")]
     bot_id: String,
+}
+
+fn default_bot_id() -> String {
+    "montecarlo_bot".to_string()
 }
 
 #[derive(Serialize)]
