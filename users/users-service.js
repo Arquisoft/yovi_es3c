@@ -47,10 +47,6 @@ app.use(express.json());
 // Registrar rutas de estadísticas
 app.use(statsRoutes);
 
-// Registrar ruta de juego (play)
-const playRoutes = require('./routes/play');
-app.use(playRoutes);
-
 
 // Endpoint inicio de sesion
 app.post('/login', async (req, res) => {
