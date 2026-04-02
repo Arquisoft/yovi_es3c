@@ -8,6 +8,12 @@ use std::sync::Arc;
 use tower::ServiceExt;
 use gamey::init_tracing;
 
+use httpmock::{MockServer, Method::POST};
+use serde_json::Value;
+use std::sync::Mutex;
+
+static TEST_MUTEX: Mutex<()> = Mutex::new(());
+
 
 /// Helper to create a test app with the default state
 fn test_app() -> axum::Router {
@@ -394,32 +400,39 @@ async fn test_choose_montecarlo_bot() {
 // ============================================================================
 
 
-//test actualmente no pasa al no recibir de la peticion, cambiar el test, probado via comandos
-//desplegando el serv primero con target/debug/gamey.exe --mode server --port 4000
-// y despues en un powershell C:\Users\User\yovi_es3c\gamey\src>curl.exe -X POST "http://localhost:4000/play" -H "Content-Type: application/json" --data @body.json
-// para ello has de tener en src un json, como este ejemplo
-//{
-//  "position": {
-//    "size": 3,
-//    "turn": 0,
-//    "players": ["B", "R"],
-//    "layout": "./../..."
-//  },
-//  "bot_id": "random_bot"
-//}
-
 #[tokio::test]
 async fn test_play_endpoint_returns_next_move() {
+    let _lock = TEST_MUTEX.lock().unwrap();
     crate::init_tracing();
+
+    let server = MockServer::start();
+
+    unsafe {
+        std::env::set_var("RUST_URL", server.base_url());
+    }
+
     let app = test_app();
 
-   let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
+    let _mock = server.mock(|when: httpmock::When, then: httpmock::Then| {
+        when.method(POST)
+            .path("/v1/ybot/choose/random_bot");
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(
+                serde_json::to_string(&serde_json::json!({
+                    "api_version": "v1",
+                    "bot_id": "random_bot",
+                    "coords": { "x": 1, "y": 2, "z": 0 }
+                })).unwrap()
+            );
+    });
+
+    let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
 
     let body = serde_json::json!({
         "position": yen,
         "bot_id": "random_bot"
     });
-
 
     let response = app
         .oneshot(
@@ -433,12 +446,77 @@ async fn test_play_endpoint_returns_next_move() {
         .await
         .unwrap();
 
-    assert_eq!(response.status(), StatusCode::OK);
+    assert_eq!(response.status(), axum::http::StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let json: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+    let json: Value = serde_json::from_slice(&bytes).unwrap();
 
-    assert!(json.get("next_move").is_some());
+    let next_move = json.get("next_move").unwrap();
+    assert!(next_move.get("size").is_some());
+    assert!(next_move.get("turn").is_some());
+    assert!(next_move.get("players").is_some());
+    assert!(next_move.get("layout").is_some());
+    assert_eq!(next_move.get("turn").unwrap(), 1);
+    assert_ne!(next_move.get("layout").unwrap(), "./../.../....");
+}
+
+#[tokio::test]
+async fn test_play_endpoint_default_bot_id() {
+    let _lock = TEST_MUTEX.lock().unwrap();
+    crate::init_tracing();
+
+    let server = MockServer::start();
+
+    unsafe {
+        std::env::set_var("RUST_URL", server.base_url());
+    }
+
+    let app = test_app();
+
+    let _mock = server.mock(|when: httpmock::When, then: httpmock::Then| {
+        when.method(POST)
+            .path("/v1/ybot/choose/montecarlo_bot");
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(
+                serde_json::to_string(&serde_json::json!({
+                    "api_version": "v1",
+                    "bot_id": "montecarlo_bot",
+                    "coords": { "x": 1, "y": 2, "z": 0 }
+                })).unwrap()
+            );
+    });
+
+    let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
+
+    let body = serde_json::json!({
+        "position": yen
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/play")
+                .header("content-type", "application/json")
+                .body(Body::from(body.to_string()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), axum::http::StatusCode::OK);
+
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: Value = serde_json::from_slice(&bytes).unwrap();
+
+    let next_move = json.get("next_move").unwrap();
+    assert!(next_move.get("size").is_some());
+    assert!(next_move.get("turn").is_some());
+    assert!(next_move.get("players").is_some());
+    assert!(next_move.get("layout").is_some());
+    assert_eq!(next_move.get("turn").unwrap(), 1);
+    assert_ne!(next_move.get("layout").unwrap(), "./../.../....");
 }
 
 
