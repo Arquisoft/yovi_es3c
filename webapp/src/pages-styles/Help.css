@@ -36,6 +36,19 @@
     mask-composite: exclude;
 }
 
+.help-page::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.18;
+    background: url('https://www.transparenttextures.com/patterns/noise.png');
+}
+
 @keyframes electric-bg-move {
     0%   { background-position: 0% 50%; }
     100% { background-position: 100% 50%; }
@@ -157,4 +170,27 @@
 .help-back-btn:active {
     transform: scale(0.98);
     box-shadow: 0 2px 8px rgba(79, 70, 229, 0.18);
+}
+
+@media (max-width: 600px) {
+    .help-container {
+        padding: 28px 16px 24px 16px;
+        border-radius: 18px;
+        margin: 16px auto;
+    }
+
+    .help-content h2 {
+        font-size: 1.25rem;
+        padding: 8px 14px;
+    }
+
+    .help-content h3 {
+        font-size: 1rem;
+    }
+
+    .help-back-btn {
+        font-size: 1rem;
+        padding: 12px 28px;
+        min-width: 160px;
+    }
 }
