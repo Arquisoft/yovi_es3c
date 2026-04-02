@@ -7,6 +7,8 @@ info:
 servers:
   - url: http://localhost:4000
     description: Development server
+  - url: http://20.199.40.219
+    description: Production server
 
 paths:
   /play:
@@ -20,7 +22,6 @@ paths:
               type: object
               required:
                 - position
-                - bot_id
               properties:
                 position:
                   type: object
@@ -47,7 +48,8 @@ paths:
                       description: Representación del tablero en texto.
                 bot_id:
                   type: string
-                  description: Identificador del bot que debe elegir el movimiento.
+                  description: Identificador del bot que debe elegir el movimiento. Si no se especifica, se usa "montecarlo_bot" por defecto.
+                  default: montecarlo_bot
       responses:
         '200':
           description: Siguiente movimiento calculado correctamente.
