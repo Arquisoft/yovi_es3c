@@ -16,30 +16,3 @@
     margin: .5em;
     min-width: 200px;
 }
-
-.help-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 9999px;
-    border: none;
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-    color: #fff;
-    font-size: 1.2rem;
-    font-weight: 800;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.35);
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
-    flex-shrink: 0;
-}
-
-.help-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
-}
-
-.help-btn:active {
-    transform: scale(0.94);
-}
