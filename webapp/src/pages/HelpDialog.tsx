@@ -31,24 +31,26 @@ const HelpDialog = ({open, onClose }: HelpDialogProps) => {
             onClose()
         }
 
-        dialog.addEventListener('animationed', doClose, { once:true})
+        dialog.addEventListener('animationend', doClose, { once:true})
         setTimeout(doClose, 300)
     }
 
-    const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
-        if (e.target === dialogRef.current) handleClose()
-    }
+    useEffect(() => {
+        const dialog = dialogRef.current
+        if (!dialog) return
+
+        const handleBackdropClick = (e: MouseEvent) => {
+            if (e.target === dialog) handleClose()
+        }
+
+        dialog.addEventListener('click', handleBackdropClick)
+        return () => dialog.removeEventListener('click', handleBackdropClick)
+    }, [open, onClose])
 
     return (
-        <dialog
-            ref={dialogRef}
-            className='help-dialog'
-            aria-modal="true"
-            aria-label="Ayuda del juego"
-            onClick={handleBackdropClick}
-        >
+        <dialog ref={dialogRef} className='help-dialog'>
             <div className="help-dialog-inner">
-                <button className="help-dialog-close" onClick={handleClose} aria-lael="Cerrar ayuda">
+                <button className="help-dialog-close" onClick={handleClose} aria-label="Cerrar ayuda">
                     X
                 </button>
                 <HelpContent />
