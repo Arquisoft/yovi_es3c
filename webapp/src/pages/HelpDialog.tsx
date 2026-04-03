@@ -48,7 +48,7 @@ const HelpDialog = ({open, onClose }: HelpDialogProps) => {
     }, [open, onClose])
 
     return (
-        <dialog ref={dialogRef} className='help-dialog'>
+        <dialog ref={dialogRef} className='help-dialog' aria-modal='true' aria-label='Ayuda del juego'>
             <div className="help-dialog-inner">
                 <button className="help-dialog-close" onClick={handleClose} aria-label="Cerrar ayuda">
                     X
