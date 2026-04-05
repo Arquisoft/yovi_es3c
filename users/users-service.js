@@ -47,6 +47,7 @@ app.use(express.json());
 // Registrar rutas de estadísticas
 app.use(statsRoutes);
 
+
 // Endpoint inicio de sesion
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;

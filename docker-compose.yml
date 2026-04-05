@@ -6,6 +6,8 @@ services:
     ports:
       - "3000:3000"
     env_file: .env
+    environment:
+      - RUST_URL=http://gamey:4000
     networks:
       - monitor-net
 

@@ -6,6 +6,14 @@ use gamey::{YBotRegistry, YEN, create_default_state, create_router, state::AppSt
 use http_body_util::BodyExt;
 use std::sync::Arc;
 use tower::ServiceExt;
+use gamey::init_tracing;
+
+use httpmock::{MockServer, Method::POST};
+use serde_json::Value;
+use std::sync::Mutex;
+
+static TEST_MUTEX: Mutex<()> = Mutex::new(());
+
 
 /// Helper to create a test app with the default state
 fn test_app() -> axum::Router {
@@ -40,6 +48,8 @@ async fn test_status_endpoint_returns_ok() {
     let body = response.into_body().collect().await.unwrap().to_bytes();
     assert_eq!(&body[..], b"OK");
 }
+
+
 
 // ============================================================================
 // Choose endpoint tests - Success cases
@@ -385,6 +395,346 @@ async fn test_choose_montecarlo_bot() {
     assert!(body_str.contains("montecarlo_bot"));
 }
 
+// ============================================================================
+// Play endpoint tests
+// ============================================================================
+
+
+#[tokio::test]
+async fn test_play_endpoint_returns_next_move() {
+    let _lock = TEST_MUTEX.lock().unwrap_or_else(|e| e.into_inner());
+    crate::init_tracing();
+
+    let server = MockServer::start();
+
+    unsafe {
+        std::env::set_var("RUST_URL", server.base_url());
+    }
+
+    let app = test_app();
+
+    let _mock = server.mock(|when: httpmock::When, then: httpmock::Then| {
+        when.method(POST)
+            .path("/v1/ybot/choose/random_bot");
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(
+                serde_json::to_string(&serde_json::json!({
+                    "api_version": "v1",
+                    "bot_id": "random_bot",
+                    "coords": { "x": 1, "y": 2, "z": 0 }
+                })).unwrap()
+            );
+    });
+
+    let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
+
+    let body = serde_json::json!({
+        "position": yen,
+        "bot_id": "random_bot"
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/play")
+                .header("content-type", "application/json")
+                .body(Body::from(body.to_string()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), axum::http::StatusCode::OK);
+
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: Value = serde_json::from_slice(&bytes).unwrap();
+
+    let next_move = json.get("next_move").unwrap();
+    assert!(next_move.get("size").is_some());
+    assert!(next_move.get("turn").is_some());
+    assert!(next_move.get("players").is_some());
+    assert!(next_move.get("layout").is_some());
+    assert_eq!(next_move.get("turn").unwrap(), 1);
+    assert_ne!(next_move.get("layout").unwrap(), "./../.../....");
+}
+
+#[tokio::test]
+async fn test_play_endpoint_default_bot_id() {
+    let _lock = TEST_MUTEX.lock().unwrap_or_else(|e| e.into_inner());
+    crate::init_tracing();
+
+    let server = MockServer::start();
+
+    unsafe {
+        std::env::set_var("RUST_URL", server.base_url());
+    }
+
+    let app = test_app();
+
+    let _mock = server.mock(|when: httpmock::When, then: httpmock::Then| {
+        when.method(POST)
+            .path("/v1/ybot/choose/montecarlo_bot");
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(
+                serde_json::to_string(&serde_json::json!({
+                    "api_version": "v1",
+                    "bot_id": "montecarlo_bot",
+                    "coords": { "x": 1, "y": 2, "z": 0 }
+                })).unwrap()
+            );
+    });
+
+    let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
+
+    let body = serde_json::json!({
+        "position": yen
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/play")
+                .header("content-type", "application/json")
+                .body(Body::from(body.to_string()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), axum::http::StatusCode::OK);
+
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: Value = serde_json::from_slice(&bytes).unwrap();
+
+    let next_move = json.get("next_move").unwrap();
+    assert!(next_move.get("size").is_some());
+    assert!(next_move.get("turn").is_some());
+    assert!(next_move.get("players").is_some());
+    assert!(next_move.get("layout").is_some());
+    assert_eq!(next_move.get("turn").unwrap(), 1);
+    assert_ne!(next_move.get("layout").unwrap(), "./../.../....");
+}
+
+#[tokio::test]
+async fn test_play_endpoint_rust_module_unreachable() {
+    let _lock = TEST_MUTEX.lock().unwrap_or_else(|e| e.into_inner());
+    crate::init_tracing();
+
+    unsafe {
+        std::env::set_var("RUST_URL", "http://127.0.0.1:19999");
+    }
+
+    let app = test_app();
+
+    let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
+
+    let body = serde_json::json!({
+        "position": yen,
+        "bot_id": "random_bot"
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/play")
+                .header("content-type", "application/json")
+                .body(Body::from(body.to_string()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), axum::http::StatusCode::OK);
+
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: Value = serde_json::from_slice(&bytes).unwrap();
+    assert!(json.get("message").is_some());
+}
+
+#[tokio::test]
+async fn test_play_endpoint_invalid_json_from_rust_module() {
+    let _lock = TEST_MUTEX.lock().unwrap_or_else(|e| e.into_inner());
+    crate::init_tracing();
+
+    let server = MockServer::start();
+
+    unsafe {
+        std::env::set_var("RUST_URL", server.base_url());
+    }
+
+    let app = test_app();
+
+    let _mock = server.mock(|when: httpmock::When, then: httpmock::Then| {
+        when.method(POST)
+            .path("/v1/ybot/choose/random_bot");
+        then.status(200)
+            .header("content-type", "application/json")
+            .body("{ invalid json }");
+    });
+
+    let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
+
+    let body = serde_json::json!({
+        "position": yen,
+        "bot_id": "random_bot"
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/play")
+                .header("content-type", "application/json")
+                .body(Body::from(body.to_string()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), axum::http::StatusCode::OK);
+
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: Value = serde_json::from_slice(&bytes).unwrap();
+    assert!(json.get("message").is_some());
+}
+
+#[tokio::test]
+async fn test_play_endpoint_invalid_yen_position() {
+    let _lock = TEST_MUTEX.lock().unwrap_or_else(|e| e.into_inner());
+    crate::init_tracing();
+
+    let server = MockServer::start();
+
+    unsafe {
+        std::env::set_var("RUST_URL", server.base_url());
+    }
+
+    let app = test_app();
+
+    let _mock = server.mock(|when: httpmock::When, then: httpmock::Then| {
+        when.method(POST)
+            .path("/v1/ybot/choose/random_bot");
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(
+                serde_json::to_string(&serde_json::json!({
+                    "api_version": "v1",
+                    "bot_id": "random_bot",
+                    "coords": { "x": 1, "y": 2, "z": 0 }
+                })).unwrap()
+            );
+    });
+
+    let body = serde_json::json!({
+        "position": {
+            "size": 4,
+            "turn": 0,
+            "players": ["B", "R"],
+            "layout": "./..."
+        },
+        "bot_id": "random_bot"
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/play")
+                .header("content-type", "application/json")
+                .body(Body::from(body.to_string()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), axum::http::StatusCode::OK);
+
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: Value = serde_json::from_slice(&bytes).unwrap();
+    assert!(json.get("message").is_some());
+}
+
+#[tokio::test]
+async fn test_play_endpoint_occupied_cell() {
+    let _lock = TEST_MUTEX.lock().unwrap_or_else(|e| e.into_inner());
+    crate::init_tracing();
+
+    let server = MockServer::start();
+
+    unsafe {
+        std::env::set_var("RUST_URL", server.base_url());
+    }
+
+    let app = test_app();
+
+    let _mock = server.mock(|when: httpmock::When, then: httpmock::Then| {
+        when.method(POST)
+            .path("/v1/ybot/choose/random_bot");
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(
+                serde_json::to_string(&serde_json::json!({
+                    "api_version": "v1",
+                    "bot_id": "random_bot",
+                    "coords": { "x": 2, "y": 0, "z": 0 }
+                })).unwrap()
+            );
+    });
+
+    let yen = YEN::new(3, 1, vec!['B', 'R'], "B/../...".to_string());
+
+    let body = serde_json::json!({
+        "position": yen,
+        "bot_id": "random_bot"
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/play")
+                .header("content-type", "application/json")
+                .body(Body::from(body.to_string()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), axum::http::StatusCode::OK);
+
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: Value = serde_json::from_slice(&bytes).unwrap();
+    assert!(json.get("message").is_some());
+}
+
+#[tokio::test]
+async fn test_play_endpoint_invalid_json_body() {
+    let _lock = TEST_MUTEX.lock().unwrap_or_else(|e| e.into_inner());
+    crate::init_tracing();
+
+    let app = test_app();
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/play")
+                .header("content-type", "application/json")
+                .body(Body::from("{ invalid json }"))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert!(response.status().is_client_error());
+}
+
+
 // Comprueba que el estado por defecto tiene todos los bots registrados
 #[tokio::test]
 async fn test_default_state_has_all_bots() {
@@ -396,5 +746,7 @@ async fn test_default_state_has_all_bots() {
     assert!(names.iter().any(|n| n == "defensive_bot"));
     assert!(names.iter().any(|n| n == "montecarlo_bot"));
 }
+
+
 
 
