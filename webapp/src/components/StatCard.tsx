@@ -9,13 +9,6 @@ interface StatCardProps {
 
 function getIcon(type: StatType): JSX.Element {
     switch (type) {
-        case "neutral":
-            return (
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="8" r="4" fill="#A7F3D0" />
-                    <path d="M4 20c0-4 8-4 8-4s8 0 8 4" stroke="#4B5563" strokeWidth="2" fill="#F3F4F6" />
-                </svg>
-            );
         case "partidas":
             return (
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
@@ -42,6 +35,7 @@ function getIcon(type: StatType): JSX.Element {
                     <path d="M9 16c1.5-2 4.5-2 6 0" stroke="#EF4444" strokeWidth="2" />
                 </svg>
             );
+        case "neutral":
         default:
             return (
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none">

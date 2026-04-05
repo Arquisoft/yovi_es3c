@@ -48,11 +48,11 @@
 }
 
 .nav-link:hover {
-  color: #2196F3;
+  color: #ffffff;
   background-color: rgba(33, 150, 243, 0.1);
 }
 
 .nav-link.logout:hover {
-  color: #ff1111;
+  color: #ffffff;
   background-color: rgba(244, 67, 54, 0.2);
 }
