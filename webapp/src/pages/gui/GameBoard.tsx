@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, forwardRef, useImperativeHandle } from 'react';
 import GameSquare from './GameSquare';
 import { coordToRowCol, createInitialLayout, updateLayoutPosition, getLayoutState } from './boardUtils';
 import './GameBoard.css';
@@ -7,22 +7,29 @@ interface GameBoardProps {
   size?: number;
   layout?: string;
   botId?: string;
-  setTextoTurno: (text: string) => void;
   gameOver: boolean;
   onGameOver: (winner: number) => void;
   onMoveMade: () => void;
+  onTurnChange?: (isPlayerTurn: boolean) => void;
 }
 
-function GameBoard(
-  {
-    size = 15,
-    layout,
-    botId = 'random_bot',
-    setTextoTurno,
-    gameOver,
-    onGameOver,
-    onMoveMade,
-  }: GameBoardProps) {
+export interface GameBoardHandle {
+  skipPlayerTurn: () => Promise<void>;
+}
+
+const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(
+  (
+    {
+      size = 15,
+      layout,
+      botId = 'random_bot',
+      gameOver,
+      onGameOver,
+      onMoveMade,
+      onTurnChange,
+    },
+    ref
+  ) => {
   const initialLayout = layout || createInitialLayout(size);
   const [boardLayout, setBoardLayout] = useState(initialLayout);
   const [isWaiting, setIsWaiting] = useState(false);
@@ -56,6 +63,60 @@ function GameBoard(
     }
   };
 
+  // Función para que el bot haga su movimiento dado un layout actual
+  const makeBotMove = async (currentLayout: string): Promise<void> => {
+    setIsWaiting(true);
+    onTurnChange?.(false);
+
+    try {
+      const startTime = Date.now();
+      const res = await fetch(`${apiUrl}/v1/ybot/choose/${botId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          size: size,
+          players: ['B', 'R'],
+          turn: 1,
+          layout: currentLayout,
+        }),
+      });
+
+      const botResponse = await res.json();
+
+      if (botResponse.coords) {
+        // Simular que el bot tarda 1 segundo en decidir
+        const elapsedTime = Date.now() - startTime;
+        const remainingDelay = Math.max(0, 1000 - elapsedTime);
+
+        if (remainingDelay > 0) {
+          await new Promise(resolve => setTimeout(resolve, remainingDelay));
+        }
+
+        // Actualizar con el movimiento del bot
+        const { row: botRow, col: botCol } = coordToRowCol(botResponse.coords.x, botResponse.coords.y, size);
+        const finalLayout = updateLayoutPosition(currentLayout, botRow, botCol, 'R');
+        setBoardLayout(finalLayout);
+        try {
+          localStorage.setItem('game-board', finalLayout);
+        } catch (error) {
+          console.error('Error saving game state to localStorage:', error);
+        }
+
+        // Validar si el bot ha ganado
+        if (await hasGameFinished(finalLayout)) {
+          return;
+        }
+
+        onTurnChange?.(true);
+      }
+    } catch (error) {
+      console.error('Error calling bot:', error);
+      onTurnChange?.(true);
+    } finally {
+      setIsWaiting(false);
+    }
+  };
+
   const handlePlayMove = async (row: number, col: number): Promise<void> => {
     // Evitar clicks mientras el bot está pensando o el juego ha terminado
     if (isWaiting || gameOver) return;
@@ -80,55 +141,8 @@ function GameBoard(
       return;
     }
 
-    // Llamar al bot
-    setIsWaiting(true);
-    setTextoTurno("Es el turno del Bot");
-    try {
-      const startTime = Date.now();
-      const res = await fetch(`${apiUrl}/v1/ybot/choose/${botId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          size: size,
-          players: ['B', 'R'],
-          turn: 1,
-          layout: newLayout,
-        }),
-      });
-
-      const botResponse = await res.json();
-
-      if (botResponse.coords) {
-        // Simular que el bot tarda 1 segundo en decidir, pero solo si ya no tardó más
-        const elapsedTime = Date.now() - startTime;
-        const remainingDelay = Math.max(0, 1000 - elapsedTime);
-
-        if (remainingDelay > 0) {
-          await new Promise(resolve => setTimeout(resolve, remainingDelay));
-        }
-
-        // Actualizar con el movimiento del bot
-        const { row: botRow, col: botCol } = coordToRowCol(botResponse.coords.x, botResponse.coords.y, size);
-        const finalLayout = updateLayoutPosition(newLayout, botRow, botCol, 'R');
-        setBoardLayout(finalLayout);
-        try {
-          localStorage.setItem('game-board', finalLayout);
-        } catch (error) {
-          console.error('Error saving game state to localStorage:', error);
-        }
-
-        // Validar si el bot ha ganado
-        if (await hasGameFinished(newLayout)) {
-          return;
-        }
-
-        setTextoTurno("Es tu turno");
-      }
-    } catch (error) {
-      console.error('Error calling bot:', error);
-    } finally {
-      setIsWaiting(false);
-    }
+    // Dejar que el bot juegue con el nuevo layout
+    await makeBotMove(newLayout);
   };
 
   const rows = [];
@@ -160,11 +174,22 @@ function GameBoard(
     );
   }
 
+  // Función para que el bot juegue automáticamente (cuando se agota el tiempo del jugador)
+  const skipPlayerTurn = async () => {
+    await makeBotMove(boardLayout);
+  };
+
+  useImperativeHandle(ref, () => ({
+    skipPlayerTurn,
+  }));
+
   return (
     <div className="game-board">
       {rows}
     </div>
   );
-}
+});
+
+GameBoard.displayName = 'GameBoard';
 
 export default GameBoard;

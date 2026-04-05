@@ -2,7 +2,7 @@ import { Given, When, Then } from '@cucumber/cucumber'
 import assert from 'assert'
 
 const API_URL = process.env.VITE_GAMEY_API_URL || 'http://localhost:4000';
-const BOARD_SIZE = 12;
+const BOARD_SIZE = 8;
 const MAX_MOVES = 100;
 const EMPTY_LAYOUT = Array.from({ length: BOARD_SIZE }, (_, i) => '.'.repeat(i + 1)).join('/');
 const DIALOG_SELECTOR = '.game-dialog__title--win, .game-dialog__title--loss';
@@ -86,7 +86,7 @@ Given('el usuario ha terminado una partida', async function () {
     await page.click('button:has-text("Fácil")');
     await page.click('button:has-text("Aleatorio")');
     const input = await page.$('input[type="range"]');
-    if (input) await input.fill('12');
+    if (input) await input.fill('8');
     await page.click('button:has-text("Jugar")');
     await page.waitForSelector('.game-board');
     await playUntilEnd(page, 'montecarlo_bot', DIALOG_SELECTOR);
@@ -111,8 +111,8 @@ When('pulsa volver al inicio', async function () {
 
 Then('debería volver a empezar una nueva partida', async function () {
     await this.page.waitForSelector('.game-board');
-    const texto = await this.page.textContent('.game-header p');
-    assert.ok(texto.includes('Es tu turno'));
+    const texto = await this.page.textContent('.player-info');
+    assert.ok(texto.includes('10000'), 'No se reinició la puntuación a 10000');
 });
 
 Then('debería volver a la pantalla de configuración', async function () {
