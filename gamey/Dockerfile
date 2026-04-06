@@ -1,4 +1,4 @@
-# Use a Rust base image for compilation
+# Use a Rust image based on Debian Bookworm so the compiled binary matches the runtime libc.
 FROM rust:bookworm AS builder
 
 WORKDIR /app/gamey
