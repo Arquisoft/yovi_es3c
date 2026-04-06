@@ -27,7 +27,6 @@ export default function GameSquare({ row, col, state, onClick, disabled }: GameS
   return (
     <div
       className="hexagon"
-      role="button"
       tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
       data-row={row}
