@@ -3,12 +3,19 @@
   background-size: 200% 200%;
   animation: electric-bg-move 2s ease-in-out infinite alternate;
   background-position: 0% 0%;
-  min-height: 100vh;
-  width: 100vw;
-  margin: 0;
-  padding: 0;
   overflow-x: hidden;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 100vh;
+  padding: 20px 0 20px 0;
+  gap: 0px;
+  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
+  border-radius: 32px;
 }
 
 .dashboard::after {
@@ -45,28 +52,9 @@
   background: url('https://www.transparenttextures.com/patterns/noise.png');
 }
 
-@keyframes electric-bg-move {
-  0% { background-position: 0% 0%; }
-  100% { background-position: 100% 100%; }
-}
-
 @keyframes electric-lines-move {
   0% { background-position: 0 0; }
   100% { background-position: 200px 200px; }
-}
-
-.dashboard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 100vh;
-  padding: 20px 0 20px 0;
-  gap: 0px;
-  margin: 0 auto;
-  max-width: 1200px;
-  width: 100%;
-  border-radius: 32px;
 }
 
 @keyframes electric-bg-move {
