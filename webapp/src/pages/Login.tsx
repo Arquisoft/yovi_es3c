@@ -41,6 +41,11 @@ const Login: React.FC = () => {
     }
   };
 
+  const handleGuestLogin = () => {
+    authentication.loginAsGuest();
+    navigate('/dashboard');
+  };
+
   return (
     <div className="login-container">
       <h2>Iniciar Sesión</h2>
@@ -74,6 +79,9 @@ const Login: React.FC = () => {
           Iniciar Sesión
         </button>
       </form>
+      <button onClick={handleGuestLogin} className="submit-button">
+        Jugar como invitado
+      </button>
       <p>
         ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
       </p>

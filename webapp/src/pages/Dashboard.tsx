@@ -27,7 +27,7 @@ interface UserStatsData {
  */
 export const Dashboard: React.FC = () => {
     // Obtener usuario autenticado y función de navegación
-    const { user } = useAuth();
+    const { user, isGuest } = useAuth();
     const navigate = useNavigate();
 
     // Estado para las estadísticas del usuario
@@ -43,6 +43,10 @@ export const Dashboard: React.FC = () => {
      * o cuando cambia el usuario autenticado
      */
     useEffect(() => {
+         if (isGuest) {
+            setLoading(false);
+            return;
+        }
         const loadUserStats = async () => {
             if (!user || !user.username) {
                 setError("Usuario no autenticado");
@@ -63,7 +67,7 @@ export const Dashboard: React.FC = () => {
         };
 
         loadUserStats();
-    }, [user]);
+    }, [user, isGuest]);
 
     /**
      * Manejador cuando se inicia una partida
@@ -88,17 +92,19 @@ export const Dashboard: React.FC = () => {
                 ? Ayuda 
             </button>
             <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
-            <div className="dashboard-card">
-                {loading ? (
-                    <p>Cargando estadísticas...</p>
-                ) : error ? (
-                    <p style={{ color: 'red' }}>Error: {error}</p>
-                ) : userStats ? (
-                    <UserStats stats={userStats} />
-                ) : (
-                    <UserStats />
-                )}
-            </div>
+            {!isGuest && (
+                <div className="dashboard-card">
+                    {loading ? (
+                        <p>Cargando estadísticas...</p>
+                    ) : error ? (
+                        <p style={{ color: 'red' }}>Error: {error}</p>
+                    ) : userStats ? (
+                        <UserStats stats={userStats} />
+                    ) : (
+                        <UserStats />
+                    )}
+                </div>
+            )}
         </div>
     );
 };

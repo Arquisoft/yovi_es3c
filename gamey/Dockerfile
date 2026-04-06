@@ -1,5 +1,5 @@
 # Use a Rust base image for compilation
-FROM rust:latest AS builder
+FROM rust:bookworm AS builder
 
 WORKDIR /app/gamey
 

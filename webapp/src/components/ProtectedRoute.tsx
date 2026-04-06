@@ -2,10 +2,10 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export const ProtectedRoute = () => {
-  const { user } = useAuth();
+  const { user, isGuest } = useAuth();
 
   // Si no hay usuario, redirigimos al login
-  if (!user) {
+  if (!user && !isGuest) {
     return <Navigate to="/login" replace />;
   }
 

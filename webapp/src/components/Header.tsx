@@ -28,7 +28,7 @@ export function Header() {
             )
           }
 
-          {authentication.getUser() && 
+          {authentication.getUser() && !authentication.isGuest && 
             (
               <div className='nav-account'>
                 <p className='nav-link'>{authentication.getUser()?.username}</p>
@@ -36,6 +36,12 @@ export function Header() {
               </div>
             )
           }
+          {authentication.getUser() && authentication.isGuest && (
+            <div className='nav-account'>
+              <Link to="/login" className="nav-link" onClick={authentication.logout}>Iniciar sesión</Link>
+              <Link to="/register" className="nav-link" onClick={authentication.logout}>Registrarme</Link>
+            </div>
+          )}
           
         </nav>
       </div>
