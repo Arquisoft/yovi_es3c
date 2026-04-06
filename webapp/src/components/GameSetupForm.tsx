@@ -93,13 +93,13 @@ export const GameSetupForm: React.FC<GameSetupFormProps> = ({ onStart }) => {
                         list="tickmarks"
                     />
                     <datalist id="tickmarks">
-                        {[new Array(9)].map((_, i) => {
+                        {[... new Array(9)].map((_, i) => {
                             const val = 8 + i;
                             return <option key={val} value={val} />;
                         })}
                     </datalist>
                     <div className="slider-marks">
-                        {[new Array(9)].map((_, i) => (
+                        {[... new Array(9)].map((_, i) => (
                             <span
                                 key={8 + i}
                                 className="slider-mark"
@@ -108,7 +108,7 @@ export const GameSetupForm: React.FC<GameSetupFormProps> = ({ onStart }) => {
                         ))}
                     </div>
                     <div className="slider-ticks">
-                        {[new Array(9)].map((_, i) => {
+                        {[... new Array(9)].map((_, i) => {
                             const val = 8 + i;
                             return (
                                 <span
