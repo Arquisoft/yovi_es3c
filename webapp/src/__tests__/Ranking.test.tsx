@@ -60,7 +60,7 @@ describe('Ranking Compontent', () => {
         await waitFor(() => {
             expect(screen.getByText('test1')).toBeInTheDocument()
             expect(screen.getByText('test2')).toBeInTheDocument()
-            expect(screen.getByText('test3')).toBeInTheDocument()
+            expect(screen.queryByText('test3')).not.toBeInTheDocument()
         })
     })
 
@@ -89,18 +89,17 @@ describe('Ranking Compontent', () => {
         })
     })
 
-    test('muestra "-" en % victoria para jugadores sin partidas', async () => {
-        const { getGlobalRanking } = vi.mocked(
-          await import('../services/rankingService')
-        )
-        getGlobalRanking.mockResolvedValue(mockPlayers)
+    test('muestra solo jugadores con al menos 1 partida', async() => {
+        vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
 
         renderComponent()
 
         await waitFor(() => {
-          // test3 tiene 0 partidas
-          const celdas = screen.getAllByText('-')
-          expect(celdas.length).toBeGreaterThan(0)
+            const filas = screen.getAllByRole('row')
+            // 1 fila de indice y 2 jugadores con partidas (test1 y test2).
+            expect(filas).toHaveLength(3)
+            // test3 tiene 0 partidas
+            expect(screen.queryByText('test3')).not.toBeInTheDocument()
         })
     })
 
