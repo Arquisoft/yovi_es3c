@@ -9,6 +9,7 @@ interface DialogResultProps {
     newRecord: boolean;
     onPlayAgain: () => void;
     onGoHome: () => void;
+    user?: {username: string } | null;
 
     gameInfo: {
         movesMade: number;
@@ -30,6 +31,7 @@ const DialogResult = ({
   onPlayAgain,
   onGoHome,
   gameInfo,
+  user,
 }: DialogResultProps) => {
   const[top3, setTop3] = useState<PlayerStats[]>([]);
   const[rankingLoading, setRankingLoading] = useState<boolean>(true);
@@ -38,7 +40,7 @@ const DialogResult = ({
   useEffect(() => {
     getGlobalRanking()
           .then((players) => {
-            const sorted = [...players].sort((a,b) => b.gamesWon - a.gamesWon);
+            const sorted = [...players].sort((a,b) => b.score - a.score);
             setTop3(sorted.slice(0, 3));
           })
           .catch(() => setRankingError('Error al cargar el ranking.'))
@@ -99,8 +101,11 @@ const DialogResult = ({
                   <span className="game-dialog__ranking-badge">
                     {RANKING_BADGES[position] ?? `#${position}`}
                   </span> 
-                  <span className="game-dialog__ranking-name">{player.username}</span>
-                  <span className="game-dialog__ranking-socre">{player.gamesWon}</span> 
+                  <span className="game-dialog__ranking-name">
+                    {user && user.username === player.username && '✪ '}
+                    {player.username}
+                  </span>
+                  <span className="game-dialog__ranking-socre">{player.score}</span> 
                 </div>
               )
             })}
