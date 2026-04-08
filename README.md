@@ -4,6 +4,18 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
 
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
+
+
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)
+![Node.js](https://img.shields.io/badge/Node.js-18+-green)
+![Rust](https://img.shields.io/badge/Rust-1.70+-orange)
+![Docker](https://img.shields.io/badge/Docker-Compose-blue)
+
+
 This project has been developed as part of the Software Architecture course (2026) at the University of Oviedo.  
 It is an academic project that provides basic functionality and serves as a foundation for the ASW labs.
 
@@ -29,11 +41,15 @@ The project is divided into three main components, each in its own directory:
 
 Each component has its own `package.json` file with the necessary scripts to run and test the application.
 
-## Basic Features
+## Core Features
 
-- **User Registration**: The web application provides a simple form to register new users.
-- **User Service**: The user service receives the registration request, simulates some processing, and returns a welcome message.
-- **GameY**: A basic Game engine which only chooses a random piece.
+- **User Registration & Authentication**: Create and manage user accounts with login functionality.
+- **Game Y**: Play the Y board game with variable board sizes against AI opponents.
+- **Game Statistics & Ranking**: Track game history, win/loss records, and view player rankings.
+- **Multiple Bot Strategies**: Choose from different difficulty levels (Random, Heuristic, Monte Carlo, Shortest Path, Defensive).
+- **Move Validation & Win Detection**: Real-time move validation and win condition checking powered by the Rust engine.
+- **Bot API**: Standardized API for external bots to play matches using YEN notation.
+- **Web Interface**: Responsive user interface built with React for playing games and viewing stats.
 
 ## Components
 
@@ -142,9 +158,27 @@ npm run dev
 
 The web application will be available at `http://localhost:5173`.
 
-#### 3. Running the GameY application
+#### 3. Running the GameY Engine
 
-At this moment the GameY application is not needed but once it is needed you should also start it from the command line.
+Navigate to the `gamey` directory:
+
+```bash
+cd gamey
+```
+
+You can run the game engine in two modes:
+
+**Interactive mode (play in terminal):**
+```bash
+cargo run
+```
+
+**Server mode (API for Web App and external bots):**
+```bash
+cargo run -- --mode server --port 4000
+```
+
+The Game Engine API will be available at `http://localhost:4000`.
 
 ## Available Scripts
 
@@ -155,7 +189,7 @@ Each component has its own set of scripts defined in its `package.json`. Here ar
 - `npm run dev`: Starts the development server for the webapp.
 - `npm test`: Runs the unit tests.
 - `npm run test:e2e`: Runs the end-to-end tests.
-- `npm run start:all`: A convenience script to start both the `webapp` and the `users` service concurrently.
+- `npm run start:all`: A convenience script to start the `webapp`, the `users` and the `gamey` service concurrently.
 
 ### Users (`users/package.json`)
 
@@ -167,4 +201,5 @@ Each component has its own set of scripts defined in its `package.json`. Here ar
 - `cargo build`: Builds the gamey application.
 - `cargo test`: Runs the unit tests.
 - `cargo run`: Runs the gamey application.
+- `cargo run -- --mode server --port 4000`: Runs the gamey bot server at the port 4000 
 - `cargo doc`: Generates documentation for the GameY engine application
