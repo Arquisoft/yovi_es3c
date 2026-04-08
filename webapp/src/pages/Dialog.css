@@ -173,3 +173,34 @@
   background: #c7d2fe;
   transform: scale(1.02);
 }
+
+/* Estado de carga del ranking */
+.game-dialog__ranking-loading {
+  font-size: 0.85 rem;
+  color: #6b7820;
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* Estado de error. */
+.game-dialog__ranking-error{
+  font-size: 0.85 rem;
+  color: #ef4444;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.game-dialog__ranking-name{
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Victorias del jugador. */
+.game-dialog__ranking-score{
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #4f46e5;
+  margin-left: auto;
+}
