@@ -1,10 +1,7 @@
 import './Dialog.css';
-
-interface RankingEntry {
-    position: number;
-    name: string;
-    score: string;
-}
+import {useEffect, useState} from 'react';
+import { getGlobalRanking } from '../services/rankingService';
+import type { PlayerStats } from '../services/rankingService';
 
 interface DialogResultProps {
     loggedIn: boolean;
@@ -18,8 +15,6 @@ interface DialogResultProps {
         duration: string;
         score: number;
     };
-
-    ranking: RankingEntry[];
 }
 
 const RANKING_BADGES: Record<number, string> = {
@@ -28,12 +23,6 @@ const RANKING_BADGES: Record<number, string> = {
     3: '🥉',
 };
 
-const DEFAULT_RANKING: RankingEntry[] = [
-    { position: 1, name: 'Jugador1', score: '-' },
-    { position: 2, name: 'Jugador2', score: '-' },
-    { position: 3, name: 'Jugador3', score: '-' },
-];
-
 const DialogResult = ({
   loggedIn,
   won,
@@ -41,8 +30,21 @@ const DialogResult = ({
   onPlayAgain,
   onGoHome,
   gameInfo,
-  ranking = DEFAULT_RANKING,
 }: DialogResultProps) => {
+  const[top3, setTop3] = useState<PlayerStats[]>([]);
+  const[rankingLoading, setRankingLoading] = useState<boolean>(true);
+  const[rankingError, setRankingError] = useState<string>('');
+
+  useEffect(() => {
+    getGlobalRanking()
+          .then((players) => {
+            const sorted = [...players].sort((a,b) => b.gamesWon - a.gamesWon);
+            setTop3(sorted.slice(0, 3));
+          })
+          .catch(() => setRankingError('Error al cargar el ranking.'))
+          .finally(() => setRankingLoading(false));
+  }, []);
+  
   return (
     <>
       {/* ── Cabecera ── */}
@@ -81,17 +83,27 @@ const DialogResult = ({
         <div className="game-dialog__ranking">
           <p className="game-dialog__ranking-title">Ranking</p>
           <div className="game-dialog__ranking-list">
-            {ranking.map((entry) => (
-              <div
-                key={entry.position}
-                className={`game-dialog__ranking-item game-dialog__ranking-item--${entry.position}`}
-              >
-                <span className="game-dialog__ranking-badge">
-                  {RANKING_BADGES[entry.position] ?? `#${entry.position}`}
-                </span>
-                <span>{entry.name}</span>
-              </div>
-            ))}
+            {rankingLoading && (
+              <p className="game-dialog__ranking-loading">Cargando...</p>
+            )}
+            {rankingError && (
+              <p className="game-dialog__ranking-error">{rankingError}</p>
+            )}
+            {!rankingLoading && !rankingError && top3.map((player, index) => {
+              const position = index + 1;
+              return (
+                <div
+                  key={player._id}
+                  className={`game-dialog__ranking-item game-dialog__ranking-item--&{position}`}
+                >
+                  <span className="game-dialog__ranking-badge">
+                    {RANKING_BADGES[position] ?? `#${position}`}
+                  </span> 
+                  <span className="game-dialog__ranking-name">{player.username}</span>
+                  <span className="game-dialog__ranking-socre">{player.gamesWon}</span> 
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>
