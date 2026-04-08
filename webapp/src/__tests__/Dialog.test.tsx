@@ -1,8 +1,10 @@
 import '@testing-library/jest-dom'
-import {render, screen } from '@testing-library/react'
+import {render, screen, waitFor } from '@testing-library/react'
 import {describe, expect, test, vi} from 'vitest'
 import userEvent from '@testing-library/user-event';
 import DialogResult from '../pages/DialogResult'
+import { getGlobalRanking } from '../services/rankingService';
+
 
 const defaultTestingProps = {
     won: true,
@@ -13,11 +15,6 @@ const defaultTestingProps = {
         movesMade: 12,
         score: 8000
     },
-    ranking : [
-        { position:1, name: 'Jugador1', score: '100'},
-        { position: 2, name: 'Jugador2', score: '50'},
-        { position: 3, name: 'Jugador3', score: '15'}
-        ],
     onPlayAgain: vi.fn(),
     onGoHome: vi.fn()
 };
@@ -30,6 +27,14 @@ vi.mock('react-router-dom', async () => {
         useNavigate: () => mockNavigate
     }
 });
+vi.mock('../services/rankingService', () => ({
+    getGlobalRanking: vi.fn().mockResolvedValue([
+        { _id: '1', username: 'Jugador1', gamesWon: 100 },
+        { _id: '2', username: 'Jugador2', gamesWon: 50 },
+        { _id: '3', username: 'Jugador3', gamesWon: 15 },
+        { _id: '4', username: 'Jugador4', gamesWon: 5 },
+    ])
+}));
 
 describe('DialogResult', () => {
 
@@ -119,5 +124,64 @@ describe('DialogResult', () => {
             expect(onGoHome).toHaveBeenCalledOnce();
         });
     });
-
 });
+
+describe('Ranking', () => {
+    test('muestra el título del ranking', async() => {
+        render(<DialogResult {...defaultTestingProps} />);
+        expect(screen.getByText('Ranking')).toBeInTheDocument();
+    });
+
+    test('muestra "Cargando..." mientras se obtienen los datos', () => {
+        // getGlobalRanking nunca resuelve en este test.
+        vi.mocked(getGlobalRanking).mockReturnValueOnce(new Promise(() => {}));
+        render(<DialogResult {...defaultTestingProps} />);
+        expect(screen.getByText('Cargando...')).toBeInTheDocument();
+    });
+
+    test('muestra el top 3 de jugadores por victorias tras cargar', async() => {
+        render(<DialogResult {...defaultTestingProps} />);
+        await waitFor(() => {
+            expect(screen.queryByText('Jugador4')).not.toBeInTheDocument();
+        });
+    });
+
+    test('ordena por victorias aunque el servicio devuelva datos desordenados', async () => {
+        vi.mocked(getGlobalRanking).mockResolvedValueOnce([
+            {_id: '3', username: 'Jugador3', gamesWon: 15, totalGames: 15, gamesLost: 0},
+            {_id: '1', username: 'Jugador1', gamesWon: 100, totalGames: 100, gamesLost: 0},
+            {_id: '2', username: 'Jugador2', gamesWon: 50, totalGames: 50, gamesLost: 0},
+        ]);
+        render(<DialogResult {...defaultTestingProps} />);
+        await waitFor(() => {
+            const names = screen.getAllByText(/Jugador\d/).map(el => el.textContent);
+            expect(names[0]).toBe('Jugador1');
+            expect(names[1]).toBe('Jugador2');
+            expect(names[2]).toBe('Jugador3');
+        });
+    });
+
+    test('muestra los emojis de medalla correctos', async () => {
+        render(<DialogResult {...defaultTestingProps} />);
+        await waitFor(() => {
+            expect(screen.getByText('🥇')).toBeInTheDocument();
+            expect(screen.getByText('🥈')).toBeInTheDocument();
+            expect(screen.getByText('🥉')).toBeInTheDocument();
+        });
+    });
+
+    test('muestra mensaje de error si el servicio falla.', async() => {
+        vi.mocked(getGlobalRanking).mockRejectedValueOnce(new Error('Network error'));
+        render(<DialogResult {...defaultTestingProps} />);
+        await waitFor(() => {
+            expect(screen.getByText('Error al cargar el ranking.')).toBeInTheDocument();
+        });
+    });
+
+    test('no muestra "Cargando..." tras resolver', async () => {
+        render(<DialogResult {...defaultTestingProps} />);
+        await waitFor(() => {
+            expect(screen.queryByText('Cargando...')).not.toBeInTheDocument();
+        });
+    });
+})
