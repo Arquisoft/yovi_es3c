@@ -4,14 +4,14 @@ import { getGlobalRanking } from '../services/rankingService';
 import type { PlayerStats } from '../services/rankingService';
 import { useAuth } from '../context/AuthContext';
 
-type SortKey = 'username' | 'totalGames' | 'gamesWon' | 'gamesLost' | 'percentage';
+type SortKey = 'username' | 'totalGames' | 'gamesWon' | 'gamesLost' | 'percentage' | 'score';
 
 export const Ranking: React.FC = () => {
     const [players, setPlayers] = useState<PlayerStats[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>('');
     const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'asc' | 'desc' }>({
-        key: 'gamesWon',
+        key: 'score',
         direction: 'desc',
     })
     const { user} = useAuth();
@@ -73,6 +73,7 @@ export const Ranking: React.FC = () => {
 
                             {([ 
                               { key: 'username',   label: 'Jugador'   },
+                              { key: 'score', label: 'Mejor Puntuación'},
                               { key: 'totalGames', label: 'Partidas'  },
                               { key: 'gamesWon',   label: 'Victorias' },
                               { key: 'gamesLost',  label: 'Derrotas'  },
@@ -98,6 +99,7 @@ export const Ranking: React.FC = () => {
                                 {user && user.username === player.username && '✪ '}
                                 {player.username}
                                 </td>
+                              <td>{player.score}</td>
                               <td>{player.totalGames}</td>
                               <td>{player.gamesWon}</td>
                               <td>{player.gamesLost}</td>

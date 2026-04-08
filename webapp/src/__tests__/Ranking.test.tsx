@@ -13,9 +13,9 @@ vi.mock('../services/rankingService', () => ({
 }))
 
 const mockPlayers = [
-    { _id: '1', username: 'test1', totalGames: 10, gamesWon: 8, gamesLost: 2},
-    { _id: '2', username: 'test2', totalGames: 6, gamesWon: 3, gamesLost: 3},
-    { _id: '3', username: 'test3', totalGames: 0, gamesWon: 0, gamesLost: 0},
+    { _id: '1', username: 'test1', totalGames: 10, gamesWon: 8, gamesLost: 2, score: 1},
+    { _id: '2', username: 'test2', totalGames: 6, gamesWon: 3, gamesLost: 3, score: 1},
+    { _id: '3', username: 'test3', totalGames: 0, gamesWon: 0, gamesLost: 0, score: 1},
 ]
 
 const renderComponent = () =>
