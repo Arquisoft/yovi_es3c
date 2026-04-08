@@ -22,7 +22,7 @@ router.get('/getuserstats/:username', async (req, res) => {
         // Sanitizar username
         const sanitizedUsername = String(username || '')
             .trim()
-            .replace(/[^\w\s@.-]/gi, '');
+            .replaceAll(/[^\w\s@.-]/gi, '');
 
         // Buscar usuario
         const user = await User.findOne({ username: sanitizedUsername });
@@ -56,7 +56,7 @@ router.get('/getuserscore/:username', async (req, res) => {
         // Sanitizar username
         const sanitizedUsername = String(username || '')
             .trim()
-            .replace(/[^\w\s@.-]/gi, '');
+            .replaceAll(/[^\w\s@.-]/gi, '');
 
         // Buscar usuario
         const user = await User.findOne({ username: sanitizedUsername });
@@ -94,7 +94,7 @@ router.post('/updateuserstats', async (req, res) => {
         // Sanitizar username
         const sanitizedUsername = String(username || '')
             .trim()
-            .replace(/[^\w\s@.-]/gi, '');
+            .replaceAll(/[^\w\s@.-]/gi, '');
 
         // Buscar usuario
         const user = await User.findOne({ username: sanitizedUsername });

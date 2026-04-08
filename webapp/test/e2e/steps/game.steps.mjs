@@ -101,6 +101,8 @@ Then('debería ver el mensaje {string} en el resumen', async function (mensaje) 
     assert.ok(content.includes(mensaje), `No se encontró el mensaje "${mensaje}"`);
 });
 
+
+
 When('pulsa jugar de nuevo', async function () {
     await this.page.click('button:has-text("Jugar de nuevo")');
 });

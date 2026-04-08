@@ -16,44 +16,79 @@ impl ShortestPathBot {
         }
     }
 
+    fn initialize_side_nodes(
+        board: &GameY,
+        player: PlayerId,
+        is_side: fn(&Coordinates) -> bool,
+        dist: &mut Vec<u32>,
+        heap: &mut BinaryHeap<Reverse<(u32, u32)>>
+    ) {
+        let size = board.board_size();
+        let total = board.total_cells() as usize;
+
+        for idx in 0..total as u32 {
+            let coords = Coordinates::from_index(idx, size);
+            if !is_side(&coords) {
+                continue;
+            }
+            let cost = Self::cell_cost(board, &coords, player);
+            if cost < u32::MAX && cost < dist[idx as usize] {
+                dist[idx as usize] = cost;
+                heap.push(Reverse((cost, idx)));
+            }
+        }
+    }
+
+    fn relax_neighbors(
+        board: &GameY,
+        player: PlayerId,
+        d: u32,
+        idx: u32,
+        dist: &mut Vec<u32>,
+        heap: &mut BinaryHeap<Reverse<(u32, u32)>>,
+    ) {
+        let size = board.board_size();
+        let coords = Coordinates::from_index(idx, size);
+
+        for neighbor in board.get_neighbors(&coords) {
+            let n_idx = neighbor.to_index(size) as usize;
+            let n_cost = Self::cell_cost(board, &neighbor, player);
+            if n_cost == u32::MAX {
+                continue;
+            }
+            let new_dist = d.saturating_add(n_cost);
+            if new_dist < dist[n_idx] {
+                dist[n_idx] = new_dist;
+                heap.push(Reverse((new_dist, n_idx as u32)));
+            }
+        }
+    }
+
+    fn run_dijkstra_loop(
+        board: &GameY,
+        player: PlayerId,
+        dist: &mut Vec<u32>,
+        heap: &mut BinaryHeap<Reverse<(u32, u32)>>,
+    ) {
+        while let Some(Reverse((d, idx))) = heap.pop() {
+            if d > dist[idx as usize] {
+                continue;
+            }
+            Self::relax_neighbors(board, player, d, idx, dist, heap);
+        }
+    }
+
     fn dijkstra_from_side(
         board: &GameY,
         player: PlayerId,
         is_side: fn(&Coordinates) -> bool,
     ) -> Vec<u32> {
-        let size = board.board_size();
         let total = board.total_cells() as usize;
         let mut dist = vec![u32::MAX; total];
         let mut heap = BinaryHeap::new();
 
-        for idx in 0..total as u32 {
-            let coords = Coordinates::from_index(idx, size);
-            if is_side(&coords) {
-                let cost = Self::cell_cost(board, &coords, player);
-                if cost < u32::MAX && cost < dist[idx as usize] {
-                    dist[idx as usize] = cost;
-                    heap.push(Reverse((cost, idx)));
-                }
-            }
-        }
-
-        while let Some(Reverse((d, idx))) = heap.pop() {
-            if d > dist[idx as usize] {
-                continue;
-            }
-            let coords = Coordinates::from_index(idx, size);
-            for neighbor in board.get_neighbors(&coords) {
-                let n_idx = neighbor.to_index(size) as usize;
-                let n_cost = Self::cell_cost(board, &neighbor, player);
-                if n_cost < u32::MAX {
-                    let new_dist = d.saturating_add(n_cost);
-                    if new_dist < dist[n_idx] {
-                        dist[n_idx] = new_dist;
-                        heap.push(Reverse((new_dist, n_idx as u32)));
-                    }
-                }
-            }
-        }
+        Self::initialize_side_nodes(board, player, is_side, &mut dist, &mut heap);
+        Self::run_dijkstra_loop(board, player, &mut dist, &mut heap);
 
         dist
     }
