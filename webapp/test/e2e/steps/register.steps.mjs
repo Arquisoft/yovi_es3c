@@ -74,7 +74,6 @@ Then('I should see a welcome message containing {string}', async function (expec
   
   // Usar el username único que fue registrado
   const registeredUsername = this.registeredUsername
-  console.log(`Waiting for dashboard with username: ${registeredUsername}`)
   
   // Esperar a que aparezca el dashboard
   await page.waitForSelector('.dashboard', { timeout: 10000 })

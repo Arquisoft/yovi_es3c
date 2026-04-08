@@ -1,10 +1,11 @@
-import { useRef, useState } from 'react';
-import GameBoard from './gui/GameBoard';
+import { useRef, useState, useCallback } from 'react';
+import GameBoard, { type GameBoardHandle } from './gui/GameBoard';
+import TurnTimer from './gui/TurnTimer';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateUserStats } from '../services/gameService';
 import { getUserScore } from '../services/gameService';
-import { BOTS } from '../config/botsConfig';
+import { BOTS, getTimeLimitForBot } from '../config/botsConfig';
 import './Game.css';
 import DialogResult from './DialogResult';
 import {useNavigate} from 'react-router-dom';
@@ -17,12 +18,15 @@ function Game() {
   const location = useLocation();
   const { user } = useAuth();
   const { size, botId } = location.state || { size: 12, botId: "heuristic_bot" };
+  // useRef es un hook que sirve para mantener referencia a un componente y poder llamar a sus métodos.
+  const gameBoardRef = useRef<GameBoardHandle>(null);
 
   const [playerScore, setPlayerScore] = useState(10000);
-  const [textoTurno, setTextoTurno] = useState<String>("Es tu turno");
   const [gameOver, setGameOver] = useState(false);
   const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
-  const [moveCount, setMoveCount] = useState(1);
+  const [moveCount, setMoveCount] = useState(0);
+  const [isPlayerTurn, setIsPlayerTurn] = useState(true);
+  const [turnTimeLimit] = useState(getTimeLimitForBot(botId));
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   // Devuelve el tiempo de la partida en un formato mm:ss
@@ -81,7 +85,7 @@ function Game() {
 
     console.log(userScore);
 
-    if(userScore.score < finalScore)
+    if(userScore && userScore.score < finalScore)
       newRecord = true;
 
     setDialogContent(
@@ -122,30 +126,67 @@ function Game() {
 
   const displayBotName = BOTS[botId] || botId;
 
+  const handlePlayerTimeUp = useCallback(() => {
+    gameBoardRef.current?.skipPlayerTurn();
+  }, []);
+
+  const handleBotTimeUp = useCallback(() => {
+    setIsPlayerTurn(true);
+  }, []);
+
   return (
     <div className="game-container">
-      <div className="game-header">
-        <p>{textoTurno}</p>
-        <div className='game-info'>
-          <p>Bot: {displayBotName}</p>
-        </div>
-      </div>
-      <dialog ref={dialogRef} className="game-dialog-overlay">{dialogContent}</dialog>
-      <main className="game-main">
-        <GameBoard
-          size={size}
-          botId={botId}
-          setTextoTurno={setTextoTurno}
-          gameOver={gameOver}
-          onGameOver={handleGameOver}
-          onMoveMade={() => { 
-            let timeMoveMadeAt = new Date().getTime();
-            calculateScoreOnMove(timeMoveMadeAt-startTime.current);
-            setMoveCount(prev => prev + 1);
-          }}
-        />
-      </main>
 
+      <dialog ref={dialogRef} className="game-dialog-overlay">{dialogContent}</dialog>
+
+      <div className="game-content">
+
+        <aside className='game-aside'>
+          <TurnTimer
+            timeLimit={turnTimeLimit}
+            isActive={isPlayerTurn && !gameOver}
+            onTimeUp={handlePlayerTimeUp}
+            label={isPlayerTurn? "Tu turno" : undefined}
+            type="player"
+          />
+          <div className="player-info">
+            <h3>{user?.username || "Invitado"}</h3>
+            <p>Puntuación: {playerScore}</p>
+            <p>Movimientos: {moveCount}</p>
+          </div>
+        </aside>
+
+        <main className="game-main">
+          <GameBoard
+            ref={gameBoardRef}
+            size={size}
+            botId={botId}
+            gameOver={gameOver}
+            onGameOver={handleGameOver}
+            onMoveMade={() => {
+              let timeMoveMadeAt = new Date().getTime();
+              calculateScoreOnMove(timeMoveMadeAt-startTime.current);
+              setMoveCount(prev => prev + 1);
+            }}
+            onTurnChange={setIsPlayerTurn}
+          />
+        </main>
+
+        <aside className="game-aside">
+          <TurnTimer
+            timeLimit={turnTimeLimit}
+            isActive={!isPlayerTurn && !gameOver}
+            onTimeUp={handleBotTimeUp}
+            label={!isPlayerTurn? "Turno del Bot" : undefined}
+            type="bot"
+          />
+          <div className="bot-info">
+            <h3>Bot</h3>
+            <p>{displayBotName}</p>
+          </div>
+        </aside>
+
+      </div>
     </div>
   );
 }

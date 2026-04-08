@@ -20,9 +20,10 @@
     "test:e2e:slow": "start-server-and-test start:all http://localhost:5173 test:e2e:slow:run",
     "test:e2e:debug:run": "cross-env PLAYWRIGHT_HEADLESS=false PLAYWRIGHT_SLOW_MO=500 PLAYWRIGHT_DEVTOOLS=true cucumber-js --import test/e2e/support/setup.mjs --import test/e2e/steps/**/*.mjs test/e2e/features --format progress",
     "test:e2e:debug": "start-server-and-test start:all http://localhost:5173 test:e2e:debug:run",
-    "start:all": "concurrently \"npm run dev\" \"npm --prefix ../users start\""
+    "start:all": "concurrently \"npm run dev\" \"npm --prefix ../users start\" \"cd ../gamey && cargo run -- --mode server --port 4000\""
   },
   "dependencies": {
+    "express": "^5.2.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.13.1"
@@ -52,6 +53,7 @@
     "typescript-eslint": "^8.46.4",
     "vite": "^7.3.1",
     "vitest": "^4.0.16",
-    "vitest-sonar-reporter": "^3.0.0"
+    "vitest-sonar-reporter": "^3.0.0",
+    "wait-on": "^9.0.4"
   }
 }

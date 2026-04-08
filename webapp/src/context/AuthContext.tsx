@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { useMemo, createContext, useState, useContext, useEffect } from 'react';
 import type { ReactNode } from 'react';
 
 // 1. Definimos la interfaz para el usuario
@@ -51,8 +51,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const getUser = (): User | null => user;
 
+  const contextValue = useMemo(
+    () => ({ user, login, logout, loading, getUser }),
+    [user, login, logout, loading, getUser]
+  );
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading, getUser }}>
+    <AuthContext.Provider value={contextValue}>
       {!loading && children}
     </AuthContext.Provider>
   );
