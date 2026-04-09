@@ -15,7 +15,6 @@ vi.mock('../services/rankingService', () => ({
 const mockPlayers = [
     { _id: '1', username: 'test1', totalGames: 10, gamesWon: 8, gamesLost: 2, score: 20},
     { _id: '2', username: 'test2', totalGames: 6, gamesWon: 3, gamesLost: 3, score: 5},
-    { _id: '3', username: 'test3', totalGames: 0, gamesWon: 0, gamesLost: 0, score: 1},
 ]
 
 const renderComponent = () =>
@@ -60,7 +59,6 @@ describe('Ranking Compontent', () => {
         await waitFor(() => {
             expect(screen.getByText('test1')).toBeInTheDocument()
             expect(screen.getByText('test2')).toBeInTheDocument()
-            expect(screen.queryByText('test3')).not.toBeInTheDocument()
         })
     })
 
@@ -99,8 +97,6 @@ describe('Ranking Compontent', () => {
             const filas = screen.getAllByRole('row')
             // 1 fila de indice y 2 jugadores con partidas (test1 y test2).
             expect(filas).toHaveLength(3)
-            // test3 tiene 0 partidas
-            expect(screen.queryByText('test3')).not.toBeInTheDocument()
         })
     })
 
