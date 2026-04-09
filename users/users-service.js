@@ -61,7 +61,7 @@ app.post('/login', async (req, res) => {
     // Sanitizar username igual que en createuser para solo permitir letras numeros arroba puntos y guiones
     const sanitizedUsername = String(username || '')
       .trim()
-      .replace(/[^\w\s@.-]/gi, '');
+      .replaceAll(/[^\w\s@.-]/gi, '');
 
     // Buscar usuario
     const user = await User.findOne({ username: sanitizedUsername });
@@ -115,7 +115,7 @@ app.post('/createuser', async (req, res) => {
     // Antes de empezar introducir el username a la bbdd, los sanitizamos
     const sanitizedUsername = String(username || '')
       .trim()
-      .replace(/[^\w\s@.-]/gi, ''); // Solo permite letras, números, @, puntos y guiones    
+      .replaceAll(/[^\w\s@.-]/gi, ''); // Solo permite letras, números, @, puntos y guiones    
 
     // Comprobamos si el usuario existe
     const existingUser = await User.findOne({ username: { $eq: sanitizedUsername } });
@@ -147,7 +147,7 @@ app.post('/createuser', async (req, res) => {
   }
 });
 
-if (require.main === module) {
+if (require.main == module) {
   app.listen(port, () => {
     console.log(`User Service escuchando en http://localhost:${port}`)
   })

@@ -13,9 +13,8 @@ vi.mock('../services/rankingService', () => ({
 }))
 
 const mockPlayers = [
-    { _id: '1', username: 'test1', totalGames: 10, gamesWon: 8, gamesLost: 2},
-    { _id: '2', username: 'test2', totalGames: 6, gamesWon: 3, gamesLost: 3},
-    { _id: '3', username: 'test3', totalGames: 0, gamesWon: 0, gamesLost: 0},
+    { _id: '1', username: 'test1', totalGames: 10, gamesWon: 8, gamesLost: 2, score: 20},
+    { _id: '2', username: 'test2', totalGames: 6, gamesWon: 3, gamesLost: 3, score: 5},
 ]
 
 const renderComponent = () =>
@@ -60,7 +59,6 @@ describe('Ranking Compontent', () => {
         await waitFor(() => {
             expect(screen.getByText('test1')).toBeInTheDocument()
             expect(screen.getByText('test2')).toBeInTheDocument()
-            expect(screen.getByText('test3')).toBeInTheDocument()
         })
     })
 
@@ -71,6 +69,7 @@ describe('Ranking Compontent', () => {
 
         await waitFor(() => {
           expect(screen.getByText('Jugador')).toBeInTheDocument()
+          expect(screen.getByText('Mejor Puntuación')).toBeInTheDocument()
           expect(screen.getByText('Partidas')).toBeInTheDocument()
           expect(screen.getByText('Victorias')).toBeInTheDocument()
           expect(screen.getByText('Derrotas')).toBeInTheDocument()
@@ -89,18 +88,26 @@ describe('Ranking Compontent', () => {
         })
     })
 
-    test('muestra "-" en % victoria para jugadores sin partidas', async () => {
-        const { getGlobalRanking } = vi.mocked(
-          await import('../services/rankingService')
-        )
-        getGlobalRanking.mockResolvedValue(mockPlayers)
+    test('muestra solo jugadores con al menos 1 partida', async() => {
+        vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
 
         renderComponent()
 
         await waitFor(() => {
-          // test3 tiene 0 partidas
-          const celdas = screen.getAllByText('-')
-          expect(celdas.length).toBeGreaterThan(0)
+            const filas = screen.getAllByRole('row')
+            // 1 fila de indice y 2 jugadores con partidas (test1 y test2).
+            expect(filas).toHaveLength(3)
+        })
+    })
+
+    test('muestra la puntuación de cada jugador', async() => {
+        vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
+
+        renderComponent()
+
+        await waitFor(() => {
+            expect(screen.getByText('20')).toBeInTheDocument()
+            expect(screen.getByText('5')).toBeInTheDocument()
         })
     })
 
@@ -131,6 +138,7 @@ describe('Ranking Compontent', () => {
         const filas = screen.getAllByRole('row')
         // Primera fila de datos (índice 1, la 0 es el thead)
         expect(filas[1]).toHaveTextContent('test1')
+        expect(filas[2]).toHaveTextContent('test2')
     })
 
     test('al hacer click dos veces en la columna Victorias invierte el orden', async () => {
@@ -149,6 +157,19 @@ describe('Ranking Compontent', () => {
 
         const filas = screen.getAllByRole('row')
         expect(filas[1]).toHaveTextContent('test1') // 8 victorias, el mayor
+    })
+
+    test('ordena por puntuación descendente por defecto', async() =>{
+        vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
+
+        renderComponent()
+
+        await waitFor(() => {
+            const filas = screen.getAllByRole('row')
+            // test1 debe aparecer antes que test2 al tener mayor puntuación.
+            expect(filas[1]).toHaveTextContent('test1')
+            expect(filas[2]).toHaveTextContent('test2')
+        })
     })
 
     // Usuario logueado.

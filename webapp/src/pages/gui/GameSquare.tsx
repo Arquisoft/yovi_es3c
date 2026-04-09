@@ -17,9 +17,18 @@ export default function GameSquare({ row, col, state, onClick, disabled }: GameS
     return 'grey';
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      onClick(row, col);
+    }
+  };
+
   return (
     <div
       className="hexagon"
+      tabIndex={disabled ? -1 : 0}
+      aria-disabled={disabled}
       data-row={row}
       data-col={col}
       style={{
@@ -27,7 +36,7 @@ export default function GameSquare({ row, col, state, onClick, disabled }: GameS
         '--cursor': disabled ? 'not-allowed' : 'pointer',
       } as React.CSSProperties}
       onClick={() => !disabled && onClick(row, col)}
+      onKeyDown={handleKeyDown}
     />
   );
-
 }
