@@ -1,6 +1,6 @@
 import {useEffect, useRef} from 'react'
 import HelpContent from './HelpContent'
-import '../pages-styles/HelpDialog.css'
+import './HelpDialog.css'
 
 interface HelpDialogProps {
     open: boolean
