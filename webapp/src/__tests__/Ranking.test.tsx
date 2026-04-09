@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, afterEach} from 'vitest'
+import { describe, expect, test, vi, afterEach, beforeEach} from 'vitest'
 import { AuthProvider } from '../context/AuthContext'
 import { MemoryRouter } from 'react-router-dom'
 import Ranking from '../pages/Ranking'
@@ -6,10 +6,18 @@ import {render, screen, waitFor} from '@testing-library/react'
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import * as rankingService from '../services/rankingService'
+import * as userService from '../services/userService'
 
 // Mock de getGlobalRanking.
 vi.mock('../services/rankingService', () => ({
     getGlobalRanking: vi.fn(),
+}))
+
+// Mock de userService
+vi.mock('../services/userService', () => ({
+    login: vi.fn(),
+    register: vi.fn(),
+    validateToken: vi.fn(),
 }))
 
 const mockPlayers = [
@@ -17,7 +25,7 @@ const mockPlayers = [
     { _id: '2', username: 'test2', totalGames: 6, gamesWon: 3, gamesLost: 3, score: 5},
 ]
 
-const renderComponent = () =>
+const renderComponent = async () => {
     render(
         <AuthProvider>
             <MemoryRouter>
@@ -26,7 +34,21 @@ const renderComponent = () =>
         </AuthProvider>
     )
 
+    // Esperar a que AuthProvider termine de cargar
+    await waitFor(() => {
+        const content = screen.queryByText(/ranking global|cargando ranking|error al cargar/i)
+        expect(content).toBeInTheDocument()
+    }, { timeout: 2000 })
+}
+
 describe('Ranking Compontent', () => {
+    beforeEach(() => {
+        vi.clearAllMocks()
+        localStorage.clear()
+        // Mock validateToken para que no llame al backend
+        vi.mocked(userService.validateToken).mockResolvedValue(null)
+    })
+
     afterEach(() => {
         vi.clearAllMocks()
         localStorage.clear()
@@ -37,14 +59,14 @@ describe('Ranking Compontent', () => {
     test('muestra el mensaje de carga inicial', async() => {
         vi.spyOn(rankingService, 'getGlobalRanking').mockReturnValue(new Promise(() => {}))
 
-        renderComponent()
+        await renderComponent()
         expect(screen.getByText(/cargando ranking/i)).toBeInTheDocument()
     })
 
     test('muestra el título Ranking global', async () => {
         vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
 
-        renderComponent()
+        await renderComponent()
 
         await waitFor(() => {
             expect(screen.getByText(/ranking global/i)).toBeInTheDocument()
@@ -54,7 +76,7 @@ describe('Ranking Compontent', () => {
     test('muestra la lista de jugadores tras cargar', async () => {
         vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
 
-        renderComponent()
+        await renderComponent()
 
         await waitFor(() => {
             expect(screen.getByText('test1')).toBeInTheDocument()
@@ -65,7 +87,7 @@ describe('Ranking Compontent', () => {
     test('muestra los índices de columna correctamente', async () => {
         vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
 
-        renderComponent()
+        await renderComponent()
 
         await waitFor(() => {
           expect(screen.getByText('Jugador')).toBeInTheDocument()
@@ -80,7 +102,7 @@ describe('Ranking Compontent', () => {
     test('muestra el porcentaje de victoria correctamente', async () => {
         vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
 
-        renderComponent()
+        await renderComponent()
 
         await waitFor(() => {
           expect(screen.getByText('80.0%')).toBeInTheDocument() // test1: 8/10
@@ -91,7 +113,7 @@ describe('Ranking Compontent', () => {
     test('muestra solo jugadores con al menos 1 partida', async() => {
         vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
 
-        renderComponent()
+        await renderComponent()
 
         await waitFor(() => {
             const filas = screen.getAllByRole('row')
@@ -103,7 +125,7 @@ describe('Ranking Compontent', () => {
     test('muestra la puntuación de cada jugador', async() => {
         vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
 
-        renderComponent()
+        await renderComponent()
 
         await waitFor(() => {
             expect(screen.getByText('20')).toBeInTheDocument()
@@ -116,7 +138,7 @@ describe('Ranking Compontent', () => {
     test('muestra mensaje de error si falla la carga', async () => {
         vi.spyOn(rankingService, 'getGlobalRanking').mockRejectedValue(new Error('Error de red'))
 
-        renderComponent()
+        await renderComponent()
 
         await waitFor(() => {
             expect(screen.getByText(/error al cargar el ranking/i)).toBeInTheDocument()
@@ -129,7 +151,7 @@ describe('Ranking Compontent', () => {
         vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
         const user = userEvent.setup()
 
-        renderComponent()
+        await renderComponent()
 
         await waitFor(() => screen.getByText('Jugador'))
 
@@ -145,7 +167,7 @@ describe('Ranking Compontent', () => {
         vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
         const user = userEvent.setup()
 
-        renderComponent()
+        await renderComponent()
 
         await waitFor(() => screen.getByText('Victorias'))
 
@@ -162,7 +184,7 @@ describe('Ranking Compontent', () => {
     test('ordena por puntuación descendente por defecto', async() =>{
         vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
 
-        renderComponent()
+        await renderComponent()
 
         await waitFor(() => {
             const filas = screen.getAllByRole('row')
@@ -176,9 +198,13 @@ describe('Ranking Compontent', () => {
 
     test('muestra el indicador en la fila del usuario logueado', async () => {
         localStorage.setItem('user', JSON.stringify({ id: '1', username: 'test1' }))
+        localStorage.setItem('token', 'dummy-token')
+        
+        // Mock validateToken para retornar el usuario
+        vi.mocked(userService.validateToken).mockResolvedValue({ id: '1', username: 'test1' })
         vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
 
-        renderComponent()
+        await renderComponent()
 
         await waitFor(() => {
           expect(screen.getByText(/✪/)).toBeInTheDocument()
@@ -188,7 +214,7 @@ describe('Ranking Compontent', () => {
     test('no muestra indicador si no hay sesión iniciada', async () => {
         vi.spyOn(rankingService, 'getGlobalRanking').mockResolvedValue(mockPlayers)
 
-        renderComponent()
+        await renderComponent()
 
         await waitFor(() => {
           expect(screen.queryByText(/✪/)).not.toBeInTheDocument()
