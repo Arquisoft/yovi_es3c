@@ -10,6 +10,9 @@ const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
 dotenv.config();
 
+// Middleware de autenticación
+const { validateToken, generateToken } = require('./middleware/auth');
+
 // Modelo de usuario
 const User = require('./models/User');
 
@@ -37,7 +40,7 @@ try {
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   if (req.method === 'OPTIONS') return res.sendStatus(204);
   next();
 });
@@ -76,8 +79,10 @@ app.post('/login', async (req, res) => {
     }
 
     // Login correcto
+    const token = generateToken(user._id.toString(), user.username);
     return res.json({
       message: "Login exitoso",
+      token,
       id: user._id.toString(),
       username: user.username
     });
@@ -135,14 +140,36 @@ app.post('/createuser', async (req, res) => {
 
     await newUser.save();
 
+    const token = generateToken(newUser._id.toString(), newUser.username);
     res.status(201).json({
       message: `Usuario creado con éxito`,
+      token,
       id: newUser._id.toString(),
       username: newUser.username
     });
 
   } catch (err) {
     console.error("Error en POST /createuser:", err);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+// Endpoint de validación de token
+app.get('/validate', validateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    
+    if (!user) {
+      return res.status(401).json({ error: "Usuario no encontrado" });
+    }
+
+    return res.json({
+      valid: true,
+      id: user._id.toString(),
+      username: user.username
+    });
+  } catch (err) {
+    console.error("Error en GET /validate:", err);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
