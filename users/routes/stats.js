@@ -134,16 +134,16 @@ router.post('/updateuserstats', async (req, res) => {
 
 /**
  * GET /ranking
- * Devuelve todos los jugadores ordenados por victorias (mayor a menor).
+ * Devuelve los jugadores que han jugado al menos una partida, ordenados por victorias (mayor a menor).
  */
 router.get('/ranking', async (req, res) => {
     try {
         const players = await User.find(
-            {},
+            {totalGames: {$gt: 0}}, // Jugadores con al menos una partida jugada.
             { password: 0, __v: 0 } // No devolvemos la contraseña.
         ).sort({gamesWon: -1 });
 
-        return res.json(players);
+        return res.status(200).json(players ?? []);
     } catch (err) {
         console.error('Error en GET /ranking:', err);
         res.status(500).json({ error: 'Error interno del servidor' });
