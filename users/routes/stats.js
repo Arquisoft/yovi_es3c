@@ -143,7 +143,7 @@ router.get('/ranking', async (req, res) => {
             { password: 0, __v: 0 } // No devolvemos la contraseña.
         ).sort({gamesWon: -1 });
 
-        return res.json(players);
+        return res.status(200).json(players ?? []);
     } catch (err) {
         console.error('Error en GET /ranking:', err);
         res.status(500).json({ error: 'Error interno del servidor' });

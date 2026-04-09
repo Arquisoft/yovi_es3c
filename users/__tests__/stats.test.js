@@ -163,3 +163,55 @@ describe('POST /updateuserstats', () => {
         expect(res.body.error).toBe('Error interno del servidor');
     });
 });
+
+// Test para el GET /ranking.
+describe('GET /ranking', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    // --- CASO 1: DEVUELVE SOLO JUGADORES CON PARTIDAS JUGADAS ---
+    it('debería devolver solo jugadores con al menos una partida jugada (200)', async() => {
+        const mockPlayers = [
+            {username: 'Alice', totalGames: 10, gamesWon: 7, gamesLost: 3, score: 500},
+            {username: 'Bob', totalGames: 5, gamesWon: 2, gamesLost: 3, score: 200},
+        ];
+        const mockSort = vi.fn().mockResolvedValueOnce(mockPlayers);
+        vi.spyOn(User, 'find').mockReturnValueOnce({sort: mockSort});
+
+        const res = await request(app).get('/ranking');
+
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(2);
+        expect(User.find).toHaveBeenCalledWith(
+            {totalGames: {$gt: 0}},
+            {password: 0, __v: 0}
+        );
+    });
+
+    // --- CASO 2: DEVUELVE ARRAY VACÍO SI NADIE HA JUGADO ---
+    it('debería devolver un array vacío si no hay jugadores con partidas (200)', async() => {
+        const mockSort = vi.fn().mockResolvedValueOnce();
+        vi.spyOn(User, 'find').mockReturnValueOnce({sort: mockSort});
+
+        const res = await request(app).get('/ranking');
+
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual([]);
+    });
+    
+    // --- CASO 3: ERROR INTERNO ---
+    it('debería devolver 500 si la base de datos falla', async () => {
+        const mockSort = vi.fn().mockRejectedValueOnce(new Error('Fallo de conexión'));
+        vi.spyOn(User, 'find').mockReturnValueOnce({ sort: mockSort });
+
+        const res = await request(app).get('/ranking');
+
+        expect(res.status).toBe(500);
+        expect(res.body.error).toBe('Error interno del servidor');
+    });
+})
