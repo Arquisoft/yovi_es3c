@@ -14,10 +14,11 @@ export function Header() {
         
         <nav className="header-nav">
           {authentication.getUser() && 
-            <Link to="/dashboard" className="nav-link">Jugar</Link>
+            <>
+              <Link to="/dashboard" className="nav-link">Jugar</Link>
+              <Link to="/ranking" className="nav-link">Ranking</Link>
+            </>
           }
-
-          <Link to="/ranking" className="nav-link">Ranking</Link>
 
           {!authentication.getUser() && 
             (
