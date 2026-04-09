@@ -40,7 +40,6 @@ export const Ranking: React.FC = () => {
     };
 
     const sortedPlayers = [...players]
-        .filter(player => player.totalGames > 0)
         .sort((a, b) => {
         const {key, direction} = sortConfig;
         const dir = direction === 'asc' ? 1 : -1;
