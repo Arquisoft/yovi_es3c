@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSearchParams } from 'react-router-dom';
 import * as userService from '../services/userService';
 
 const Login: React.FC = () => {
@@ -9,6 +10,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
   const authentication = useAuth();
+  const [searchParams] = useSearchParams();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +34,12 @@ const Login: React.FC = () => {
   return (
     <div className="login-container">
       <h2>Iniciar Sesión</h2>
+
+      {searchParams.get('session') === 'expired' && 
+        <div className='login-session-expired'>
+          <p>Tu sesión ha expirado. Por favor, inicia sesión de nuevo.</p>
+        </div>
+      }
 
       <form className="shared-form" onSubmit={handleSubmit}>
         <div className="form-group">

@@ -36,7 +36,7 @@ export const httpClient = async (
 
   if (response.status === 401 && !skipAuth) {
     localStorage.removeItem('token');
-    window.location.href = '/login';
+    window.location.href = '/login?session=expired';
     throw new Error('Token expirado. Redirigiendo a login...');
   }
 
