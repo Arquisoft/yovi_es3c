@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import * as userService from '../services/userService';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -18,26 +19,13 @@ const Login: React.FC = () => {
       return;
     }
 
-    const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
-
     try {
-      const response = await fetch(`${API_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || "Error al iniciar sesión");
-        return;
-      }
-      authentication.login({ id: data.id, username: data.username });
+      const data = await userService.login(username, password);
+      authentication.login({ id: data.id, username: data.username, token: data.token });
       navigate('/dashboard');
     } catch (err) {
       console.error("Error en login:", err);
-      setError("Error de conexión con el servidor");
+      setError(err instanceof Error ? err.message : "Error de conexión con el servidor");
     }
   };
 

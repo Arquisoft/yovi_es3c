@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import * as userService from '../services/userService';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -21,25 +22,12 @@ const Register: React.FC = () => {
       return;
     }
 
-    const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
-
     try {
-      const response = await fetch(`${API_URL}/createuser`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, confirmPassword }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-      authentication.login({ id: data.id, username: data.username });
-        navigate('/dashboard');
-      } else {
-        setError(data.error || 'Error al registrarse');
-      }
+      const data = await userService.register(username, password, confirmPassword);
+      authentication.login({ id: data.id, username: data.username, token: data.token });
+      navigate('/dashboard');
     } catch (err) {
-      setError('Error de conexión con el servidor');
+      setError(err instanceof Error ? err.message : 'Error de conexión con el servidor');
     }
   };
 
