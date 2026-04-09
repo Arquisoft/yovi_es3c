@@ -1,5 +1,9 @@
 # Yovi_es3c - Game Y at UniOvi
 
+<div align="center">
+  <img src="webapp/src/assets/YoviLogo300.png" alt="Yovi Logo" width="300">
+</div>
+
 [![Release — Test, Build, Publish, Deploy](https://github.com/arquisoft/yovi_es3c/actions/workflows/release-deploy.yml/badge.svg)](https://github.com/arquisoft/yovi_es3c/actions/workflows/release-deploy.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
