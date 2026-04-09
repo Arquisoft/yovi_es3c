@@ -1,6 +1,10 @@
 services:
   users:
-    build: ./users
+    build:
+      context: ./users
+      args:
+        - JWT_SECRET=${JWT_SECRET}
+        - MONGO_URL=${MONGO_URL}
     container_name: users
     image: ghcr.io/arquisoft/yovi_es3c-users:latest
     ports:
@@ -8,6 +12,8 @@ services:
     env_file: .env
     environment:
       - RUST_URL=http://gamey:4000
+      - JWT_SECRET=${JWT_SECRET}
+      - MONGO_URL=${MONGO_URL}
     networks:
       - monitor-net
 

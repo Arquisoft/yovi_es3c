@@ -11,6 +11,7 @@ permissions:
 env:
   IMAGE_TAG: ${{ github.event.release.tag_name }}
   MONGO_URL: ${{ secrets.MONGO_URL }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
 jobs:
   test-node:
@@ -106,6 +107,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
           workdir: users
+          buildargs: JWT_SECRET=${{ secrets.JWT_SECRET }},MONGO_URL=${{ secrets.MONGO_URL }}
 
   docker-push-webapp:
     name: Publish webapp image
@@ -162,5 +164,6 @@ jobs:
           command: |
             wget https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ github.event.repository.name }}/master/docker-compose.yml -O docker-compose.yml
             echo "MONGO_URL=${{ secrets.MONGO_URL }}" > .env
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
             docker compose down
             docker compose up -d --pull always
