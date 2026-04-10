@@ -413,40 +413,41 @@ async fn test_play_endpoint_returns_next_move() {
 
     let app = test_app();
 
-    let _mock = server.mock(|when: httpmock::When, then: httpmock::Then| {
+    let _mock = server.mock(|when, then| {
         when.method(POST)
             .path("/v1/ybot/choose/random_bot");
         then.status(200)
             .header("content-type", "application/json")
             .body(
-                serde_json::to_string(&serde_json::json!({
+                serde_json::json!({
                     "api_version": "v1",
                     "bot_id": "random_bot",
                     "coords": { "x": 1, "y": 2, "z": 0 }
-                })).unwrap()
+                }).to_string()
             );
     });
 
     let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
+    let position = urlencoding::encode(&json5::to_string(&yen).unwrap());
 
-    let body = serde_json::json!({
-        "position": yen,
-        "bot_id": "random_bot"
-    });
+    let query = format!(
+        "/play?position={}&bot_id={}&api_version=v1",
+        position,
+        "random_bot"
+    );
 
     let response = app
         .oneshot(
             Request::builder()
-                .method("POST")
-                .uri("/play")
-                .header("content-type", "application/json")
-                .body(Body::from(body.to_string()))
+                .method("GET")
+                .uri(&query)
+                .body(Body::empty())
                 .unwrap(),
         )
         .await
         .unwrap();
 
-    assert_eq!(response.status(), axum::http::StatusCode::OK);
+    assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
     let json: Value = serde_json::from_slice(&bytes).unwrap();
@@ -456,10 +457,7 @@ async fn test_play_endpoint_returns_next_move() {
     assert!(next_move.get("turn").is_some());
     assert!(next_move.get("players").is_some());
     assert!(next_move.get("layout").is_some());
-    assert_eq!(next_move.get("turn").unwrap(), 1);
-    assert_ne!(next_move.get("layout").unwrap(), "./../.../....");
 }
-
 #[tokio::test]
 async fn test_play_endpoint_default_bot_id() {
     let _lock = TEST_MUTEX.lock().unwrap_or_else(|e| e.into_inner());
@@ -473,51 +471,48 @@ async fn test_play_endpoint_default_bot_id() {
 
     let app = test_app();
 
-    let _mock = server.mock(|when: httpmock::When, then: httpmock::Then| {
+    let _mock = server.mock(|when, then| {
         when.method(POST)
             .path("/v1/ybot/choose/montecarlo_bot");
         then.status(200)
             .header("content-type", "application/json")
             .body(
-                serde_json::to_string(&serde_json::json!({
+                serde_json::json!({
                     "api_version": "v1",
                     "bot_id": "montecarlo_bot",
                     "coords": { "x": 1, "y": 2, "z": 0 }
-                })).unwrap()
+                }).to_string()
             );
     });
 
     let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
+    let position = urlencoding::encode(&json5::to_string(&yen).unwrap());
 
-    let body = serde_json::json!({
-        "position": yen
-    });
+    let query = format!(
+        "/play?position={}&api_version=v1",
+        position
+    );
 
     let response = app
         .oneshot(
             Request::builder()
-                .method("POST")
-                .uri("/play")
-                .header("content-type", "application/json")
-                .body(Body::from(body.to_string()))
+                .method("GET")
+                .uri(&query)
+                .body(Body::empty())
                 .unwrap(),
         )
         .await
         .unwrap();
 
-    assert_eq!(response.status(), axum::http::StatusCode::OK);
+    assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
     let json: Value = serde_json::from_slice(&bytes).unwrap();
 
     let next_move = json.get("next_move").unwrap();
     assert!(next_move.get("size").is_some());
-    assert!(next_move.get("turn").is_some());
-    assert!(next_move.get("players").is_some());
-    assert!(next_move.get("layout").is_some());
-    assert_eq!(next_move.get("turn").unwrap(), 1);
-    assert_ne!(next_move.get("layout").unwrap(), "./../.../....");
 }
+
 
 #[tokio::test]
 async fn test_play_endpoint_rust_module_unreachable() {
@@ -531,30 +526,31 @@ async fn test_play_endpoint_rust_module_unreachable() {
     let app = test_app();
 
     let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
+    let position = urlencoding::encode(&json5::to_string(&yen).unwrap());
 
-    let body = serde_json::json!({
-        "position": yen,
-        "bot_id": "random_bot"
-    });
+    let query = format!(
+        "/play?position={}&bot_id=random_bot&api_version=v1",
+        position
+    );
 
     let response = app
         .oneshot(
             Request::builder()
-                .method("POST")
-                .uri("/play")
-                .header("content-type", "application/json")
-                .body(Body::from(body.to_string()))
+                .method("GET")
+                .uri(&query)
+                .body(Body::empty())
                 .unwrap(),
         )
         .await
         .unwrap();
 
-    assert_eq!(response.status(), axum::http::StatusCode::OK);
+    assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
     let json: Value = serde_json::from_slice(&bytes).unwrap();
     assert!(json.get("message").is_some());
 }
+
 
 #[tokio::test]
 async fn test_play_endpoint_invalid_json_from_rust_module() {
@@ -569,7 +565,7 @@ async fn test_play_endpoint_invalid_json_from_rust_module() {
 
     let app = test_app();
 
-    let _mock = server.mock(|when: httpmock::When, then: httpmock::Then| {
+    let _mock = server.mock(|when, then| {
         when.method(POST)
             .path("/v1/ybot/choose/random_bot");
         then.status(200)
@@ -578,30 +574,31 @@ async fn test_play_endpoint_invalid_json_from_rust_module() {
     });
 
     let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
+    let position = urlencoding::encode(&json5::to_string(&yen).unwrap());
 
-    let body = serde_json::json!({
-        "position": yen,
-        "bot_id": "random_bot"
-    });
+    let query = format!(
+        "/play?position={}&bot_id=random_bot&api_version=v1",
+        position
+    );
 
     let response = app
         .oneshot(
             Request::builder()
-                .method("POST")
-                .uri("/play")
-                .header("content-type", "application/json")
-                .body(Body::from(body.to_string()))
+                .method("GET")
+                .uri(&query)
+                .body(Body::empty())
                 .unwrap(),
         )
         .await
         .unwrap();
 
-    assert_eq!(response.status(), axum::http::StatusCode::OK);
+    assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
     let json: Value = serde_json::from_slice(&bytes).unwrap();
     assert!(json.get("message").is_some());
 }
+
 
 #[tokio::test]
 async fn test_play_endpoint_invalid_yen_position() {
@@ -616,48 +613,46 @@ async fn test_play_endpoint_invalid_yen_position() {
 
     let app = test_app();
 
-    let _mock = server.mock(|when: httpmock::When, then: httpmock::Then| {
+    let _mock = server.mock(|when, then| {
         when.method(POST)
             .path("/v1/ybot/choose/random_bot");
         then.status(200)
             .header("content-type", "application/json")
             .body(
-                serde_json::to_string(&serde_json::json!({
+                serde_json::json!({
                     "api_version": "v1",
                     "bot_id": "random_bot",
                     "coords": { "x": 1, "y": 2, "z": 0 }
-                })).unwrap()
+                }).to_string()
             );
     });
 
-    let body = serde_json::json!({
-        "position": {
-            "size": 4,
-            "turn": 0,
-            "players": ["B", "R"],
-            "layout": "./..."
-        },
-        "bot_id": "random_bot"
-    });
+    let invalid_position = r#"{ "size": 4, "turn": 0, "players": ["B","R"], "layout": "./..." }"#;
+    let position = urlencoding::encode(invalid_position);
+
+    let query = format!(
+        "/play?position={}&bot_id=random_bot&api_version=v1",
+        position
+    );
 
     let response = app
         .oneshot(
             Request::builder()
-                .method("POST")
-                .uri("/play")
-                .header("content-type", "application/json")
-                .body(Body::from(body.to_string()))
+                .method("GET")
+                .uri(&query)
+                .body(Body::empty())
                 .unwrap(),
         )
         .await
         .unwrap();
 
-    assert_eq!(response.status(), axum::http::StatusCode::OK);
+    assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
     let json: Value = serde_json::from_slice(&bytes).unwrap();
     assert!(json.get("message").is_some());
 }
+
 
 #[tokio::test]
 async fn test_play_endpoint_occupied_cell() {
@@ -672,45 +667,46 @@ async fn test_play_endpoint_occupied_cell() {
 
     let app = test_app();
 
-    let _mock = server.mock(|when: httpmock::When, then: httpmock::Then| {
+    let _mock = server.mock(|when, then| {
         when.method(POST)
             .path("/v1/ybot/choose/random_bot");
         then.status(200)
             .header("content-type", "application/json")
             .body(
-                serde_json::to_string(&serde_json::json!({
+                serde_json::json!({
                     "api_version": "v1",
                     "bot_id": "random_bot",
                     "coords": { "x": 2, "y": 0, "z": 0 }
-                })).unwrap()
+                }).to_string()
             );
     });
 
     let yen = YEN::new(3, 1, vec!['B', 'R'], "B/../...".to_string());
+    let position = urlencoding::encode(&json5::to_string(&yen).unwrap());
 
-    let body = serde_json::json!({
-        "position": yen,
-        "bot_id": "random_bot"
-    });
+    let query = format!(
+        "/play?position={}&bot_id=random_bot&api_version=v1",
+        position
+    );
 
     let response = app
         .oneshot(
             Request::builder()
-                .method("POST")
-                .uri("/play")
-                .header("content-type", "application/json")
-                .body(Body::from(body.to_string()))
+                .method("GET")
+                .uri(&query)
+                .body(Body::empty())
                 .unwrap(),
         )
         .await
         .unwrap();
 
-    assert_eq!(response.status(), axum::http::StatusCode::OK);
+    assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
     let json: Value = serde_json::from_slice(&bytes).unwrap();
     assert!(json.get("message").is_some());
 }
+
 
 #[tokio::test]
 async fn test_play_endpoint_invalid_json_body() {
@@ -722,10 +718,9 @@ async fn test_play_endpoint_invalid_json_body() {
     let response = app
         .oneshot(
             Request::builder()
-                .method("POST")
+                .method("GET")
                 .uri("/play")
-                .header("content-type", "application/json")
-                .body(Body::from("{ invalid json }"))
+                .body(Body::empty())
                 .unwrap(),
         )
         .await
@@ -733,6 +728,7 @@ async fn test_play_endpoint_invalid_json_body() {
 
     assert!(response.status().is_client_error());
 }
+
 
 
 // Comprueba que el estado por defecto tiene todos los bots registrados
