@@ -428,7 +428,8 @@ async fn test_play_endpoint_returns_next_move() {
     });
 
     let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
-    let position = urlencoding::encode(&json5::to_string(&yen).unwrap());
+    let json = json5::to_string(&yen).unwrap();
+    let position = urlencoding::encode(&json);
 
     let query = format!(
         "/play?position={}&bot_id={}&api_version=v1",
@@ -470,7 +471,7 @@ async fn test_play_endpoint_default_bot_id() {
     }
 
     let app = test_app();
-
+    
     let _mock = server.mock(|when, then| {
         when.method(POST)
             .path("/v1/ybot/choose/montecarlo_bot");
@@ -486,7 +487,8 @@ async fn test_play_endpoint_default_bot_id() {
     });
 
     let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
-    let position = urlencoding::encode(&json5::to_string(&yen).unwrap());
+    let json = json5::to_string(&yen).unwrap();
+let position = urlencoding::encode(&json);
 
     let query = format!(
         "/play?position={}&api_version=v1",
@@ -526,7 +528,8 @@ async fn test_play_endpoint_rust_module_unreachable() {
     let app = test_app();
 
     let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
-    let position = urlencoding::encode(&json5::to_string(&yen).unwrap());
+    let json = json5::to_string(&yen).unwrap();
+let position = urlencoding::encode(&json);
 
     let query = format!(
         "/play?position={}&bot_id=random_bot&api_version=v1",
@@ -574,7 +577,8 @@ async fn test_play_endpoint_invalid_json_from_rust_module() {
     });
 
     let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
-    let position = urlencoding::encode(&json5::to_string(&yen).unwrap());
+    let json = json5::to_string(&yen).unwrap();
+let position = urlencoding::encode(&json);
 
     let query = format!(
         "/play?position={}&bot_id=random_bot&api_version=v1",
@@ -682,7 +686,8 @@ async fn test_play_endpoint_occupied_cell() {
     });
 
     let yen = YEN::new(3, 1, vec!['B', 'R'], "B/../...".to_string());
-    let position = urlencoding::encode(&json5::to_string(&yen).unwrap());
+    let json = json5::to_string(&yen).unwrap();
+let position = urlencoding::encode(&json);
 
     let query = format!(
         "/play?position={}&bot_id=random_bot&api_version=v1",
