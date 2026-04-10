@@ -176,15 +176,15 @@
 
 /* Estado de carga del ranking */
 .game-dialog__ranking-loading {
-  font-size: 0.85 rem;
-  color: #6b7820;
+  font-size: 0.85rem;
+  color: #6b7280;
   text-align: center;
   padding: 8px 0;
 }
 
 /* Estado de error. */
 .game-dialog__ranking-error{
-  font-size: 0.85 rem;
+  font-size: 0.85rem;
   color: #ef4444;
   text-align: center;
   padding: 8px 0;
