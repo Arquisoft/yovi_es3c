@@ -14,6 +14,13 @@ use std::sync::Mutex;
 use std::time::Duration;
 use tokio::net::TcpListener;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::task;
+use urlencoding::encode;
+use json5;
+use serde_json::json;
+
+
+
 
 
 static TEST_MUTEX: Mutex<()> = Mutex::new(());
@@ -806,7 +813,100 @@ async fn test_play_endpoint_body_read_error_tcp_cut() {
     let _ = tokio::time::timeout(Duration::from_secs(1), server_task).await;
 }
 
+// 2) Cubre default_api_version() y default_bot_id() usando la ruta por defecto
+#[tokio::test]
+async fn test_play_uses_default_api_version_and_default_bot_id() {
+    let _lock = TEST_MUTEX.lock().unwrap_or_else(|e| e.into_inner());
+    crate::init_tracing();
 
+    // Arranca mock server que espera la llamada EXACTA que debe formarse con los defaults:
+    // {RUST_URL}/{api_version}/ybot/choose/{bot_id}
+    let server = MockServer::start();
+
+    // Setea RUST_URL antes de crear la app (crítico)
+    unsafe {
+        std::env::set_var("RUST_URL", server.base_url());
+    }
+
+    // El default_api_version() devuelve "v1" y default_bot_id() "montecarlo_bot"
+    let _mock = server.mock(|when, then| {
+        when.method(POST)
+            .path("/v1/ybot/choose/montecarlo_bot");
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(
+                serde_json::json!({
+                    "api_version": "v1",
+                    "bot_id": "montecarlo_bot",
+                    "coords": { "x": 1, "y": 1, "z": 0 }
+                }).to_string()
+            );
+    });
+
+    // Construye la app (usa create_default_state() dentro)
+    let app = crate::test_app();
+
+    // Crea un YEN válido para enviar como position (usa uno simple ya existente)
+    let yen = crate::YEN::new(3, 0, vec!['B', 'R'], "./../...".to_string());
+    let json = json5::to_string(&yen).unwrap();
+    let position = urlencoding::encode(&json);
+
+    // Llamamos SIN api_version y SIN bot_id para forzar los defaults
+    let query = format!("/play?position={}", position);
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("GET")
+                .uri(&query)
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    // Debe responder OK y devolver next_move
+    assert_eq!(response.status(), StatusCode::OK);
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: Value = serde_json::from_slice(&bytes).unwrap();
+    assert!(json.get("next_move").is_some());
+}
+
+// 3) Cubre la rama de error de json5::from_str -> Invalid position format
+#[tokio::test]
+async fn test_play_endpoint_invalid_position_format_triggers_error_branch() {
+    let _lock = TEST_MUTEX.lock().unwrap_or_else(|e| e.into_inner());
+    crate::init_tracing();
+
+    // No necesitamos mock server porque el fallo ocurre antes de contactar al módulo Rust
+    let app = crate::test_app();
+
+    // position inválido (no JSON5)
+    let bad_position = urlencoding::encode("not a json5 string");
+
+    let query = format!("/play?position={}&bot_id=random_bot&api_version=v1", bad_position);
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("GET")
+                .uri(&query)
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    // Handler devuelve OK con JSON de error (tu handler usa 200 con ErrorResponse)
+    assert_eq!(response.status(), StatusCode::OK);
+
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: Value = serde_json::from_slice(&bytes).unwrap();
+
+    // El mensaje de error se construye con "Invalid position format: ..."
+    let msg = json.get("message").and_then(|m| m.as_str()).unwrap_or_default().to_lowercase();
+    assert!(msg.contains("invalid position format") || msg.contains("invalid position"));
+}
 
 // Comprueba que el estado por defecto tiene todos los bots registrados
 #[tokio::test]
