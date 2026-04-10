@@ -12,6 +12,7 @@ export interface PlayerStats {
     totalGames: number;
     gamesWon: number;
     gamesLost: number;
+    score: number;
 }
 
 export const getGlobalRanking = async (): Promise<PlayerStats[]> => {

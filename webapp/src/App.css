@@ -242,9 +242,9 @@ form {
 .game-setup-form button[type="submit"] {
   margin-top: 0.5rem;
   padding: 1.2rem 2.8rem;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #189168, #0a4030);
   color: #fff;
-  border: none;
+  border: black;
   border-radius: 10px;
   font-size: 1.15rem;
   font-weight: bold;

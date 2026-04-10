@@ -27,6 +27,7 @@ path = "src/lib.rs"
 anyhow = "1.0"
 axum = { version = "0.8", features = ["macros"] }
 clap = { version = "4.0", features = ["derive"] }
+json5 = "0.4"
 rand = "0.9"
 rustyline = { version = "17.0", features = ["with-file-history"] }
 serde = { version = "1.0", features = ["derive"] }

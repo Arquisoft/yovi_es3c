@@ -14,6 +14,9 @@ RUN cargo build --release
 # Use a minimal image for the final stage
 FROM debian:bookworm-slim
 
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+
+
 WORKDIR /app/gamey
 
 # Copy the compiled binary from the builder stage

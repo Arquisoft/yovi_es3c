@@ -48,7 +48,7 @@ export const Dashboard: React.FC = () => {
             return;
         }
         const loadUserStats = async () => {
-            if (!user || !user.username) {
+            if (!user?.username) {
                 setError("Usuario no autenticado");
                 setLoading(false);
                 return;
@@ -85,6 +85,13 @@ export const Dashboard: React.FC = () => {
         });
     };
 
+    const renderStats = () => {
+        if (loading) return <p>Cargando estadísticas...</p>;
+        if (error)   return <p style={{ color: 'red' }}>Error: {error}</p>;
+        if (userStats) return <UserStats stats={userStats} />;
+        return <UserStats />;
+    };
+
     return (
         <div className="dashboard">
             <GameSetupForm onStart={handleStartGame} />
@@ -92,14 +99,14 @@ export const Dashboard: React.FC = () => {
                 ? Ayuda 
             </button>
             <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
-            {user && (
+                       {user && (
                 <div className="dashboard-card">
                     {loading ? (
                         <p>Cargando estadísticas...</p>
                     ) : error ? (
                         <p style={{ color: 'red' }}>Error: {error}</p>
                     ) : userStats ? (
-                        <UserStats stats={userStats} />
+                         renderStats()
                     ) : (
                         <UserStats />
                     )}

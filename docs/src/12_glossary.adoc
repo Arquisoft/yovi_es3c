@@ -31,3 +31,97 @@ See https://docs.arc42.org/section-12/[Glossary] in the arc42 documentation.
 
 ****
 endif::arc42help[]
+
+=== Architectural Concepts
+
+[options="header",cols="1,3"]
+|===
+| Term | Definition
+
+| **API (Application Programming Interface)** | A contract that defines how different software components communicate with each other. In YOVI, APIs enable interaction between the Web Application, Users Service, Game Engine, and external bots.
+
+| **Microservices** | Small, independent services responsible for specific business capabilities. In YOVI, the system is decomposed into Web Application, Users Service, and Game Engine, each deployed as a separate Docker container.
+
+| **Service-Oriented Architecture (SOA)** | An architectural style that organizes functionality as a collection of loosely coupled, autonomous services. YOVI follows this pattern to maintain clear separation between presentation, user management, and game logic.
+
+| **Separation of Concerns** | A design principle that divides the system into components, each responsible for a specific aspect of functionality. YOVI separates frontend, backend, database, and game logic to improve maintainability and testability.
+
+| **BFF (Backend for Frontend)** | A backend service designed specifically to serve the needs of a particular frontend application. The Users Service and Web Application coordination follow this pattern for the React Web Application.
+
+|===
+
+=== Design and Integration Patterns
+
+[options="header",cols="1,3"]
+|===
+| Term | Definition
+
+| **Stateless Computation** | Processing that does not retain state between requests. The Game Engine (Rust module) follows this pattern—it receives a game state in YEN notation and returns a move suggestion without maintaining session data.
+
+| **Orchestration** | Coordination of multiple services to achieve a common goal. YOVI uses Docker Compose to orchestrate Web Application, Users Service, Game Engine, and Monitoring services within the Azure VM.
+
+| **Request/Response Pattern** | A communication model where a client sends a request and waits for a response. YOVI uses this pattern for all interactions between the Web Application and backend services via JSON over HTTP.
+
+| **CI/CD (Continuous Integration/Continuous Deployment)** | An automated process where code changes are continuously tested and deployed to production. YOVI implements CI/CD workflows to ensure code quality and rapid feedback to the development team.
+
+|===
+
+=== Quality and Non-Functional Attributes
+
+[options="header",cols="1,3"]
+|===
+| Term | Definition
+
+| **Quality Goals** | Non-functional requirements that define desired system attributes. YOVI prioritizes Performance (low latency), Testability (high test coverage), Usability (intuitive interface), and Maintainability (clean, modular code).
+
+| **Quality Scenarios** | Concrete descriptions of how the system responds to stimuli with respect to quality attributes. Example: "When a user opens the page, the system must display the previously saved state in under 2 seconds" (SC-01: Performance).
+
+| **Scalability** | The system's ability to handle increased load by adding resources or optimizing algorithms. YOVI's architecture allows vertical scaling on Azure and modular design enables independent scaling of each service.
+
+| **Testability** | The ease with which a system can be tested at multiple levels. YOVI achieves testability through clear separation of concerns, enabling unit, integration, and end-to-end tests of each module independently.
+
+| **Maintainability** | The ease with which the system can be modified, debugged, and enhanced. YOVI's modular architecture, clear API contracts, and comprehensive documentation support long-term maintainability.
+
+|===
+
+=== Security and Operations
+
+[options="header",cols="1,3"]
+|===
+| Term | Definition
+
+| **Authentication** | The process of verifying that a user is who they claim to be. YOVI requires users to authenticate before accessing game features and maintains secure credential storage for registered users.
+
+| **Authorization** | The process of determining whether an authenticated user has permission to access specific resources or perform specific actions. YOVI protects game features and the bot API through authorization checks.
+
+| **API Key** | A unique identifier that grants access to protected APIs. YOVI uses API keys to control access to the `/play` endpoint and prevent unauthorized bot interactions.
+
+| **Deployment View** | A description of how software components are distributed across physical infrastructure. YOVI is deployed on Microsoft Azure using Docker containers, with MongoDB Atlas for persistence and Grafana for monitoring.
+
+| **Observability** | The ability to understand system behavior and diagnose issues through logs, metrics, and traces. YOVI uses Prometheus for metrics collection and Grafana for visualization in production.
+
+| **Technical Debt** | Work that reduces code quality or increases future maintenance costs, often incurred to meet short-term deadlines. YOVI acknowledges technical debt in Rust expertise and incomplete documentation that may require future refactoring.
+
+|===
+
+=== Domain and Technical Terms
+
+[options="header",cols="1,3"]
+|===
+| Term | Definition
+
+| **YEN Notation** | A standardized JSON-based format for encoding game states and moves in YOVI. Both the Web Application and Rust Game Engine use YEN notation to ensure consistent interpretation of board positions and valid moves across system boundaries.
+
+| **Game State** | The complete representation of a game at any point in time, including the board configuration, current player, move history, and game status (in-progress, won, drawn). Game states are exchanged in YEN notation.
+
+| **Move Validation** | The process of verifying that a proposed move is legal according to the game rules. The Rust Game Engine is responsible for move validation to ensure only valid game transitions occur.
+
+| **Win Condition Detection** | The logic that determines when a player has achieved victory. In the Y game, this occurs when a player connects all three sides of the triangle. The Rust module encapsulates this critical logic.
+
+| **Container** | A lightweight, standalone execution environment that packages an application and its dependencies. YOVI uses Docker containers to deploy the Web Application, Users Service, Game Engine, and Monitoring Stack.
+
+| **Architecture Decision Records (ADR)** | A structured document capturing important architectural decisions, including context, decision rationale, and consequences. YOVI uses ADRs to maintain transparency and traceability of design choices.
+
+| **Cross-Cutting Concepts** | Concerns that span multiple components or layers of the architecture, rather than being isolated to a single module. In YOVI, examples include security, testing strategy, and the communication protocol (YEN notation).
+
+|===

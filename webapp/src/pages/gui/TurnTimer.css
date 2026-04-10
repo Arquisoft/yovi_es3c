@@ -30,6 +30,7 @@
 .turn-timer-bot.active {
   background-color: #ffebee;
   border-color: #f44336;
+  animation: pulse-bot 1s infinite;
 }
 
 .turn-timer-bot.active .timer-display {
@@ -69,9 +70,6 @@
   }
 }
 
-.turn-timer-bot.active {
-  animation: pulse-bot 1s infinite;
-}
 
 @keyframes pulse-bot {
   0%, 100% {
