@@ -106,7 +106,7 @@ export const Dashboard: React.FC = () => {
                     ) : error ? (
                         <p style={{ color: 'red' }}>Error: {error}</p>
                     ) : userStats ? (
-                         renderStats()
+                        <UserStats stats={userStats} />
                     ) : (
                         <UserStats />
                     )}
