@@ -11,6 +11,10 @@ use gamey::init_tracing;
 use httpmock::{MockServer, Method::POST};
 use serde_json::Value;
 use std::sync::Mutex;
+use std::time::Duration;
+use tokio::net::TcpListener;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
 
 static TEST_MUTEX: Mutex<()> = Mutex::new(());
 
@@ -471,7 +475,7 @@ async fn test_play_endpoint_default_bot_id() {
     }
 
     let app = test_app();
-    
+
     let _mock = server.mock(|when, then| {
         when.method(POST)
             .path("/v1/ybot/choose/montecarlo_bot");
@@ -732,6 +736,74 @@ async fn test_play_endpoint_invalid_json_body() {
         .unwrap();
 
     assert!(response.status().is_client_error());
+}
+
+#[tokio::test]
+async fn test_play_endpoint_body_read_error_tcp_cut() {
+    let _lock = TEST_MUTEX.lock().unwrap_or_else(|e| e.into_inner());
+    crate::init_tracing();
+
+    // 1) Arranca un listener TCP en puerto efímero
+    let listener = TcpListener::bind("127.0.0.1:0").await.expect("bind");
+    let addr = listener.local_addr().expect("local_addr");
+    let base_url = format!("http://{}", addr);
+
+    // 2) Setea RUST_URL ANTES de construir la app
+    //    Esto es crítico: test_app() debe leer la env var en tiempo de creación.
+    unsafe {
+        std::env::set_var("RUST_URL", base_url.clone());
+    }
+
+    // 3) Spawn servidor que acepta UNA conexión y responde con content-length > body y cierra
+    let server_task = tokio::spawn(async move {
+        // acepta una única conexión
+        if let Ok((mut socket, _peer)) = listener.accept().await {
+            // lee request (no hace falta procesar todo)
+            let mut buf = [0u8; 8192];
+            let _ = tokio::time::timeout(Duration::from_secs(3), socket.read(&mut buf)).await;
+
+            // escribe respuesta con content-length mayor que el body y cierra
+            let response = concat!(
+                "HTTP/1.1 200 OK\r\n",
+                "Content-Type: application/json\r\n",
+                "Content-Length: 200\r\n", // declara mucho más bytes
+                "\r\n",
+                "{\"incomplete\":1}" // cuerpo corto
+            );
+            let _ = socket.write_all(response.as_bytes()).await;
+            let _ = socket.shutdown().await;
+            drop(socket);
+            // pequeña espera para que el cliente vea el cierre
+            let _ = tokio::time::sleep(Duration::from_millis(20)).await;
+        }
+    });
+
+    // 4) Construye la app DESPUÉS de setear RUST_URL (ya hecho) y tras spawn del server
+    //    (spawn ya arrancó el accept; si quieres mayor seguridad, sleep 10ms)
+    let app = test_app();
+
+    // 5) Prepara y lanza la petición al handler
+    let yen = YEN::new(4, 0, vec!['B', 'R'], "./../.../....".to_string());
+    let json = json5::to_string(&yen).unwrap();
+    let position = urlencoding::encode(&json);
+    let query = format!("/play?position={}&bot_id=random_bot&api_version=v1", position);
+
+    let response = app
+        .oneshot(Request::builder().method("GET").uri(&query).body(Body::empty()).unwrap())
+        .await
+        .unwrap();
+
+    // 6) Aserciones: debe devolver OK con message de error
+    assert_eq!(response.status(), StatusCode::OK);
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+
+    assert!(json.get("message").is_some());
+    let msg = json.get("message").unwrap().as_str().unwrap().to_lowercase();
+    assert!(msg.contains("error reading body") || msg.contains("reading body"));
+
+    // 7) Espera que el server_task termine (no crítico)
+    let _ = tokio::time::timeout(Duration::from_secs(1), server_task).await;
 }
 
 

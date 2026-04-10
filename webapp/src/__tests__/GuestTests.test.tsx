@@ -193,17 +193,17 @@ it('Login muestra error del servidor cuando response.ok es false', async () => {
 it('AuthContext carga usuario desde localStorage y permite logout', async () => {
   localStorage.setItem('user', JSON.stringify({ id: "1", username: "pablo" }));
 
-  // Import dinámico para evitar conflicto con mocks de useAuth
-  const { AuthProvider, useAuth } = await import('../context/AuthContext');
+  const realAuth = await vi.importActual<typeof import('../context/AuthContext')>(
+    '../context/AuthContext'
+  );
+  const { AuthProvider, useAuth } = realAuth;
   const { renderHook, act } = await import('@testing-library/react');
 
   const wrapper = ({ children }: any) => <AuthProvider>{children}</AuthProvider>;
   const { result } = renderHook(() => useAuth(), { wrapper });
 
-  // Carga inicial
   expect(result.current.user).toEqual({ id: "1", username: "pablo" });
 
-  // Logout
   act(() => {
     result.current.logout();
   });
@@ -216,13 +216,19 @@ it('AuthContext carga usuario desde localStorage y permite logout', async () => 
 // EXTRA: AuthContext - error fuera del provider
 // ============================================================
 it('useAuth lanza error si se usa fuera del AuthProvider', async () => {
-  const { useAuth } = await import('../context/AuthContext');
+  const realAuth = await vi.importActual<typeof import('../context/AuthContext')>(
+    '../context/AuthContext'
+  );
+  const { useAuth } = realAuth;
   const { renderHook } = await import('@testing-library/react');
 
   expect(() => renderHook(() => useAuth())).toThrow(
     /useAuth debe usarse dentro de un AuthProvider/i
   );
 });
+
+
+
 
 
 
