@@ -1,14 +1,7 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import {  Outlet } from 'react-router-dom';
 
 export const ProtectedRoute = () => {
-  const { user, isGuest } = useAuth();
 
-  // Si no hay usuario, redirigimos al login
-  if (!user && !isGuest) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Si hay usuario, permitimos el acceso a las rutas hijas
+  // Si hay usuario y si no tambien (seria invitado), permitimos el acceso a las rutas hijas
   return <Outlet />;
 };

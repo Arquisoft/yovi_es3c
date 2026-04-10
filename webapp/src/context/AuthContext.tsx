@@ -10,9 +10,7 @@ interface User {
 // 2. Definimos qué valores expondrá el contexto
 interface AuthContextType {
   user: User | null;
-  isGuest: boolean;
   login: (userData: { id: string; username: string }) => void;
-  loginAsGuest: () => void;
   logout: () => void;
   loading: boolean;
   getUser: () => User | null;
@@ -27,7 +25,6 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isGuest, setIsGuest] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -44,25 +41,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = (userData: { id: string; username: string }) => {
     setUser(userData);
-    setIsGuest(false);
     localStorage.setItem('user', JSON.stringify(userData));
   };
 
-  const loginAsGuest = () => {
-    setUser({ id: 'guest', username: 'Invitado' });
-    setIsGuest(true);
-  };
-
   const logout = () => {
-    setUser(null);
-    setIsGuest(false);
+    setUser(null); 
     localStorage.removeItem('user');
   };
 
   const getUser = (): User | null => user;
 
   return (
-    <AuthContext.Provider value={{ user, isGuest, login, loginAsGuest, logout, loading, getUser }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, getUser }}>
       {!loading && children}
     </AuthContext.Provider>
   );

@@ -48,9 +48,9 @@ function AppContent() {
           </Route>
           
           <Route path="/ranking" element={<Ranking />} />
-
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
+            
             <Route path="/game" element={<Game />} />
           </Route>
 

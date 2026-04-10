@@ -7,7 +7,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
-  const authentication = useAuth();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,17 +33,12 @@ const Login: React.FC = () => {
         setError(data.error || "Error al iniciar sesión");
         return;
       }
-      authentication.login({ id: data.id, username: data.username });
+      login({ id: data.id, username: data.username });
       navigate('/dashboard');
     } catch (err) {
       console.error("Error en login:", err);
       setError("Error de conexión con el servidor");
     }
-  };
-
-  const handleGuestLogin = () => {
-    authentication.loginAsGuest();
-    navigate('/dashboard');
   };
 
   return (
@@ -79,9 +74,6 @@ const Login: React.FC = () => {
           Iniciar Sesión
         </button>
       </form>
-      <button onClick={handleGuestLogin} className="submit-button">
-        Jugar como invitado
-      </button>
       <p>
         ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
       </p>
