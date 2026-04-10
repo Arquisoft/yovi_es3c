@@ -1,0 +1,54 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Header component > snapshot del Header 1`] = `
+<div>
+  <header
+    class="header"
+  >
+    <div
+      class="header-container"
+    >
+      <img
+        alt="YoviLogo"
+        src="/src/assets/YoviLogo300.png"
+      />
+      <nav
+        class="header-nav"
+      >
+        <a
+          class="nav-link"
+          data-discover="true"
+          href="/dashboard"
+        >
+          Jugar
+        </a>
+        <a
+          class="nav-link"
+          data-discover="true"
+          href="/ranking"
+        >
+          Ranking
+        </a>
+        <div
+          class="nav-account"
+        >
+          <a
+            class="nav-link"
+            data-discover="true"
+            href="/login"
+          >
+            Iniciar Sesión
+          </a>
+          <a
+            class="nav-link"
+            data-discover="true"
+            href="/register"
+          >
+            Registrarme
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
+</div>
+`;
