@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 import {render, screen, waitFor } from '@testing-library/react'
-import {describe, expect, test, vi} from 'vitest'
+import {beforeEach, describe, expect, test, vi} from 'vitest'
 import userEvent from '@testing-library/user-event';
 import DialogResult from '../pages/DialogResult'
 import { getGlobalRanking } from '../services/rankingService';
@@ -19,22 +19,19 @@ const defaultTestingProps = {
     onGoHome: vi.fn()
 };
 
-const mockNavigate = vi.fn()
-vi.mock('react-router-dom', async () => {
-    const actual = await vi.importActual<any>('react-router-dom')
-    return {
-        ...actual,
-        useNavigate: () => mockNavigate
-    }
-});
 vi.mock('../services/rankingService', () => ({
-    getGlobalRanking: vi.fn().mockResolvedValue([
-        { _id: '1', username: 'Jugador1', gamesWon: 100 },
-        { _id: '2', username: 'Jugador2', gamesWon: 50 },
-        { _id: '3', username: 'Jugador3', gamesWon: 15 },
-        { _id: '4', username: 'Jugador4', gamesWon: 5 },
-    ])
+    getGlobalRanking: vi.fn()
 }));
+
+beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(getGlobalRanking).mockResolvedValue([
+        { _id: '1', username: 'Jugador1', score: 1000 },
+        { _id: '2', username: 'Jugador2', score: 500 },
+        { _id: '3', username: 'Jugador3', score: 150 },
+        { _id: '4', username: 'Jugador4', score: 50 },
+    ] as any);
+});
 
 describe('DialogResult', () => {
 
@@ -139,25 +136,35 @@ describe('Ranking', () => {
         expect(screen.getByText('Cargando...')).toBeInTheDocument();
     });
 
-    test('muestra el top 3 de jugadores por victorias tras cargar', async() => {
+    test('muestra solo el top 3 tras cargar', async() => {
         render(<DialogResult {...defaultTestingProps} />);
         await waitFor(() => {
+            expect(screen.getByText('Jugador1')).toBeInTheDocument();
+            expect(screen.getByText('Jugador2')).toBeInTheDocument();
+            expect(screen.getByText('Jugador3')).toBeInTheDocument();
             expect(screen.queryByText('Jugador4')).not.toBeInTheDocument();
         });
     });
 
-    test('ordena por victorias aunque el servicio devuelva datos desordenados', async () => {
+    test('ordena por puntuación aunque el servicio devuelva datos desordenados', async () => {
         vi.mocked(getGlobalRanking).mockResolvedValueOnce([
-            {_id: '3', username: 'Jugador3', gamesWon: 15, totalGames: 15, gamesLost: 0},
-            {_id: '1', username: 'Jugador1', gamesWon: 100, totalGames: 100, gamesLost: 0},
-            {_id: '2', username: 'Jugador2', gamesWon: 50, totalGames: 50, gamesLost: 0},
-        ]);
+            {_id: '3', username: 'Jugador3', score: 15},
+            {_id: '1', username: 'Jugador1', score: 100},
+            {_id: '2', username: 'Jugador2', score: 50},
+        ] as any);
         render(<DialogResult {...defaultTestingProps} />);
         await waitFor(() => {
             const names = screen.getAllByText(/Jugador\d/).map(el => el.textContent);
             expect(names[0]).toBe('Jugador1');
             expect(names[1]).toBe('Jugador2');
             expect(names[2]).toBe('Jugador3');
+        });
+    });
+
+    test('muestra la estrella en el usuario actual del ranking', async () => {
+        render(<DialogResult {...defaultTestingProps} user={{ username: 'Jugador2' }} />);
+        await waitFor(() => {
+            expect(screen.getByText(/✪\s*Jugador2/)).toBeInTheDocument();
         });
     });
 
