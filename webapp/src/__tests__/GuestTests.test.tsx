@@ -104,3 +104,55 @@ describe('Guest Flow - Dashboard (usuario invitado)', () => {
     expect(container).toMatchSnapshot();
   });
 });
+
+// ============================================================
+// 5. Usuario autenticado sin username → error "Usuario no autenticado"
+// ============================================================
+it('muestra error si user existe pero no tiene username', async () => {
+  (useAuth as any).mockReturnValue({ user: {} }); // user sin username
+  (gameService.getUserStats as any).mockResolvedValue(null);
+
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
+
+  expect(await screen.findByText(/usuario no autenticado/i)).toBeInTheDocument();
+  expect(gameService.getUserStats).not.toHaveBeenCalled();
+});
+
+// ============================================================
+// 6. Error al cargar estadísticas → cubre catch (líneas 62–63)
+// ============================================================
+it('muestra mensaje de error si getUserStats falla', async () => {
+  (useAuth as any).mockReturnValue({ user: { username: "pablo" } });
+  (gameService.getUserStats as any).mockRejectedValue(new Error("fail"));
+
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
+
+  expect(await screen.findByText(/no se pudieron cargar las estadísticas/i)).toBeInTheDocument();
+});
+
+// ============================================================
+// 7. userStats === null pero user existe → cubre línea 92
+// ============================================================
+it('muestra UserStats vacío cuando user existe pero no hay estadísticas', async () => {
+  (useAuth as any).mockReturnValue({ user: { username: "pablo" } });
+  (gameService.getUserStats as any).mockResolvedValue(null);
+
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
+
+  expect(await screen.findByText(/estadísticas globales/i)).toBeInTheDocument();
+});
+
+// ============================================================
+// 8. loading === true → cubre línea 101
+// ============================================================
+it('muestra "Cargando estadísticas..." mientras loading es true', () => {
+  (useAuth as any).mockReturnValue({ user: { username: "pablo" } });
+
+  // No resolvemos la promesa → loading permanece true
+  (gameService.getUserStats as any).mockImplementation(() => new Promise(() => {}));
+
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
+
+  expect(screen.getByText(/cargando estadísticas/i)).toBeInTheDocument();
+});
+
