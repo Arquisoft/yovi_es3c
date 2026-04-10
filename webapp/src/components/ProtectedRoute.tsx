@@ -1,7 +1,12 @@
-import {  Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export const ProtectedRoute = () => {
+  const { user } = useAuth();
 
-  // Si hay usuario y si no tambien (seria invitado), permitimos el acceso a las rutas hijas
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
   return <Outlet />;
 };

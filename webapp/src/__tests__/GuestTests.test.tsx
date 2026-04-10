@@ -99,10 +99,21 @@ describe('Guest Flow - Dashboard (usuario invitado)', () => {
   // ============================================================
   // 4. Snapshot para subir coverage
   // ============================================================
-  it('snapshot del dashboard como invitado', () => {
-    const { container } = render(<MemoryRouter><Dashboard /></MemoryRouter>);
-    expect(container).toMatchSnapshot();
-  });
+  it('renderiza correctamente el dashboard como invitado sin usar snapshot', () => {
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
+
+  // Comprobamos que los botones de dificultad existen
+  expect(screen.getByRole('button', { name: /fácil/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /media/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /difícil/i })).toBeInTheDocument();
+
+  // Comprobamos que el botón de jugar existe
+  expect(screen.getByRole('button', { name: /jugar/i })).toBeInTheDocument();
+
+  // Comprobamos que NO aparece UserStats
+  expect(screen.queryByText(/estadísticas globales/i)).not.toBeInTheDocument();
+});
+
 });
 
 // ============================================================

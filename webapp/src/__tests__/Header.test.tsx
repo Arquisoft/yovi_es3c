@@ -71,12 +71,24 @@ describe('Header component', () => {
     expect(ranking).toHaveAttribute('href', '/ranking');
   });
 
-  it('snapshot del Header', () => {
+  it('renderiza correctamente el Header sin usar snapshot', () => {
     const { container } = render(
       <MemoryRouter>
         <Header />
       </MemoryRouter>
     );
-    expect(container).toMatchSnapshot();
+
+    // 🔥 CAMBIO 1:
+    // Comprobamos que el header existe
+    expect(container.querySelector('header')).toBeInTheDocument();
+
+    // 🔥 CAMBIO 2:
+    // Comprobamos que los enlaces principales están presentes
+    expect(screen.getByText(/jugar/i)).toBeInTheDocument();
+    expect(screen.getByText(/ranking/i)).toBeInTheDocument();
+
+    // 🔥 CAMBIO 3:
+    // Comprobamos que el botón de iniciar sesión aparece para invitados
+    expect(screen.getByText(/iniciar sesión/i)).toBeInTheDocument();
   });
 });
