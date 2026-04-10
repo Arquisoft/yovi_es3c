@@ -96,7 +96,7 @@ const DialogResult = ({
               return (
                 <div
                   key={player._id}
-                  className={`game-dialog__ranking-item game-dialog__ranking-item--&{position}`}
+                  className={`game-dialog__ranking-item game-dialog__ranking-item--${position}`}
                 >
                   <span className="game-dialog__ranking-badge">
                     {RANKING_BADGES[position] ?? `#${position}`}
@@ -105,7 +105,7 @@ const DialogResult = ({
                     {user && user.username === player.username && '✪ '}
                     {player.username}
                   </span>
-                  <span className="game-dialog__ranking-socre">{player.score}</span> 
+                  <span className="game-dialog__ranking-score">{player.score}</span> 
                 </div>
               )
             })}
