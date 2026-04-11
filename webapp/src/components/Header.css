@@ -28,11 +28,6 @@
   border-radius: 4px;
 }
 
-.help-nav-btn:hover {
-  color: #ffffff;
-  background-color: rgba(33, 150, 243, 0.1);
-}
-
 .header-container {
   margin: 0 auto;
   padding: 0 2rem;
