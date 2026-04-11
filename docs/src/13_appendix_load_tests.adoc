@@ -1,11 +1,56 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
-[[section-deployment-view]]
-== Deployment View
+[[section-load-test]]
+== Load Tests
 
 ifdef::arc42help[]
 [role="arc24help"]
 ****
 .Content
-This file describes and analyses the results of the different
-load tests carried out to test the 
+=== Overview
+This appendix describes and analyses the results of the different
+load tests carried out to test the aplication deployment.
+
+The main goals of these test are to detect problems before they might appear in production, to find possible bottle-necks, to take measurements related to the performance of the application in different scenarios and compare the resulting data between these scenarios.
+****
+endif::arc42help[]
+
+=== The Cases
+Our load tests were focused mainly on playable aspect of the application, mainly to test the capabilities of the bots the users will play against.
+
+We devised three main scenarios:
+- The user plays against the random bot on a small gameboard. 
+- The user plays against the Heuristic bot on a default sized gameboard.
+- The user plays against the Montecarlo bot on a max sized gameboard.
+
+This three scenarios were simulated using Scala files, generated using the Gatling tool, recording the three different scenarios and then simulating them with different loads.
+
+In addition, all three scenarios were tested locally using the Docker deployment tool and using the Microsoft Azure service to deploy the application and test the performance in a more realistic context.
+
+For better consistency between the tests, the load was configured to rampUp to 100 users in a span of 60 seconds.
+
+
+=== Docker Tests
+==== Context
+This first batch of tests were carried out with a locally deployed application using Docker. 
+
+The results are shown and explained bellow.
+
+===== Random Algorithm (easySimulation)
+The simulation named "easySimulation" was pretty fast, and resulted in a perfect score with no "KOs". This may obey several different factors such as the size of the gameboard being the smallest size a user can select before begining a game, and the nature of the bot itself. 
+
+The bot used in this simulation is the most simple of all, it's behaviour basically boils down to choose a random unselected square to make its move. This simpler strategy when compared to the other two tested algorithms results in the bot being able to attend all the requests without an issue.
+
+Overall, this simulation responded to a total of 5700 requests with an average of 1176 request per second. The average time of response to a request was around 4ms with a standard deviation of 3ms.
+
+
+
+
+==== Heuristic Algorithm (heuristicSimulation)
+This simulation was even faster than the last, finishing in 1m and 16 seconds, 8 seconds faster than it's predecesor.
+
+In addition, it also managed to process 7200 request without a single fail, scoring the best results so far. The average was 1299 requests per second, with an average response time of 4ms
+
+As before, the number of active users grew slowly before balancing between 31 and 32 active users for the best part of the test, and progresivelly lowering towards the end of the test.
+
+
