@@ -13,7 +13,10 @@ export function Header() {
         <img src={logo} alt="YoviLogo" />
         
         <nav className="header-nav">
-          <Link to="/dashboard" className="nav-link">Jugar</Link>
+
+          <Link to="/dashboard" className="nav-link">
+            {user && "Jugar" || "Jugar como invitado"}
+          </Link>
 
           {user && 
             <Link to="/ranking" className="nav-link">Ranking</Link>
