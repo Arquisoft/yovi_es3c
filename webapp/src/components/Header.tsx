@@ -5,21 +5,20 @@ import './Header.css';
 
 export function Header() {
 
-  const authentication = useAuth();
-  
+  const { user, logout } = useAuth();
+
   return (
     <header className="header">
       <div className="header-container">
         <img src={logo} alt="YoviLogo" />
         
         <nav className="header-nav">
-          {authentication.getUser() && 
             <Link to="/dashboard" className="nav-link">Jugar</Link>
-          }
+          
 
           <Link to="/ranking" className="nav-link">Ranking</Link>
 
-          {!authentication.getUser() && 
+          {!user && 
             (
               <div className='nav-account'>
                 <Link to="/login" className="nav-link">Iniciar Sesión</Link>
@@ -28,11 +27,11 @@ export function Header() {
             )
           }
 
-          {authentication.getUser() && 
+          {user && 
             (
               <div className='nav-account'>
-                <p className='nav-link'>{authentication.getUser()?.username}</p>
-                <Link to="/login" className="nav-link logout" onClick={authentication.logout}>Cerrar sesión</Link>
+                <p className='nav-link'>{user.username}</p>
+                <Link to="/login" className="nav-link logout" onClick={(e) => { e.preventDefault(); logout(); }}>Cerrar sesión</Link>
               </div>
             )
           }

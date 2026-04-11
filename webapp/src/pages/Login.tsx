@@ -7,7 +7,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
-  const authentication = useAuth();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +33,7 @@ const Login: React.FC = () => {
         setError(data.error || "Error al iniciar sesión");
         return;
       }
-      authentication.login({ id: data.id, username: data.username });
+      login({ id: data.id, username: data.username });
       navigate('/dashboard');
     } catch (err) {
       console.error("Error en login:", err);

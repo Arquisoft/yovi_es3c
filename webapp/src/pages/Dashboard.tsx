@@ -43,6 +43,10 @@ export const Dashboard: React.FC = () => {
      * o cuando cambia el usuario autenticado
      */
     useEffect(() => {
+         if (!user) {
+            setLoading(false);
+            return;
+        }
         const loadUserStats = async () => {
             if (!user?.username) {
                 setError("Usuario no autenticado");
@@ -95,10 +99,19 @@ export const Dashboard: React.FC = () => {
                 ? Ayuda 
             </button>
             <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
-            <div className="dashboard-card">
-                {renderStats()}
-            </div>
-
+                       {user && (
+                <div className="dashboard-card">
+                    {loading ? (
+                        <p>Cargando estadísticas...</p>
+                    ) : error ? (
+                        <p style={{ color: 'red' }}>Error: {error}</p>
+                    ) : userStats ? (
+                        renderStats()
+                    ) : (
+                        <UserStats />
+                    )}
+                </div>
+            )}
         </div>
     );
 };

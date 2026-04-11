@@ -47,11 +47,10 @@ function AppContent() {
             <Route path="/register" element={<Register />} />
           </Route>
           
-          <Route path="/ranking" element={<Ranking />} />
-
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/game" element={<Game />} />
           <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/game" element={<Game />} />
+              <Route path="/ranking" element={<Ranking />} />  
           </Route>
 
           <Route path="*" element={<Navigate to="/login" />} />

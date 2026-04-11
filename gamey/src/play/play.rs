@@ -1,11 +1,12 @@
 use axum::{
-    routing::post,
+    routing::get,
     Json, Router,
-    extract::State,
+    extract::{State, Query},
 };
 use serde::{Deserialize, Serialize};
 use reqwest::Client;
 use std::env;
+use json5;
 use crate::{
     YEN,
     GameY,
@@ -18,9 +19,15 @@ use crate::{
 
 #[derive(Deserialize)]
 pub struct PlayRequest {
-    position: YEN,
+    position: String,
     #[serde(default = "default_bot_id")]
     bot_id: String,
+     #[serde(default = "default_api_version")]
+    api_version: String,
+}
+
+fn default_api_version() -> String {
+    "v1".to_string()
 }
 
 fn default_bot_id() -> String {
@@ -34,16 +41,26 @@ pub struct PlayResponse {
 
 pub async fn play_handler(
     State(_state): State<AppState>,
-    Json(body): Json<PlayRequest>,
+    Query(body): Query<PlayRequest>,
 ) -> Result<Json<PlayResponse>, Json<ErrorResponse>> {
 
-    let api_version = "v1";
+    let api_version = &body.api_version;
 
     tracing::debug!(
         "PlayRequest recibido: bot_id={}, position={:?}",
         body.bot_id,
         body.position
     );
+
+      let yen: YEN = json5::from_str(&body.position)
+        .map_err(|e| {
+            tracing::debug!("Error parseando position: {}", e);
+            Json(ErrorResponse::error(
+                &format!("Invalid position format: {}", e),
+                Some(api_version.into()),
+                Some(body.bot_id.clone()),
+            ))
+        })?;
 
     let url = format!(
         "{}/{}/ybot/choose/{}",
@@ -58,7 +75,7 @@ pub async fn play_handler(
 
     let rust_response = client
         .post(url)
-        .json(&body.position)
+        .json(&yen)
         .send()
         .await
         .map_err(|e| {
@@ -99,7 +116,7 @@ pub async fn play_handler(
     tracing::debug!("MoveResponse parseado: {:?}", parsed);
 
     // Convertir YEN a GameY para aplicar el movimiento
-    let mut game = GameY::try_from(body.position.clone())
+    let mut game = GameY::try_from(yen.clone())
         .map_err(|e| {
             tracing::debug!("Error convirtiendo YEN a GameY: {}", e);
             Json(ErrorResponse::error(
@@ -110,7 +127,7 @@ pub async fn play_handler(
         })?;
 
     // Determinar el jugador actual a partir del turno en el YEN
-    let current_player = PlayerId::new(body.position.turn());
+    let current_player = PlayerId::new(yen.turn());
 
     // Aplicar el movimiento
     game.add_move(Movement::Placement {
@@ -138,6 +155,6 @@ pub async fn play_handler(
 
 pub fn router(state: AppState) -> Router {
     Router::new()
-        .route("/play", post(play_handler))
+        .route("/play", get(play_handler))
         .with_state(state)
 }

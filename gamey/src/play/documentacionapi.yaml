@@ -12,44 +12,30 @@ servers:
 
 paths:
   /play:
-    post:
+    get:
       summary: Solicita el siguiente movimiento dado el estado del tablero en notación YEN.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - position
-              properties:
-                position:
-                  type: object
-                  description: Estado actual del tablero en notación YEN.
-                  required:
-                    - size
-                    - turn
-                    - players
-                    - layout
-                  properties:
-                    size:
-                      type: integer
-                      description: Tamaño del tablero.
-                    turn:
-                      type: integer
-                      description: Índice del jugador al que le toca mover.
-                    players:
-                      type: array
-                      items:
-                        type: string
-                      description: Lista de jugadores (e.g. ["B", "R"]).
-                    layout:
-                      type: string
-                      description: Representación del tablero en texto.
-                bot_id:
-                  type: string
-                  description: Identificador del bot que debe elegir el movimiento. Si no se especifica, se usa "montecarlo_bot" por defecto.
-                  default: montecarlo_bot
+      parameters:
+        - name: position
+          in: query
+          required: true
+          description: Estado actual del tablero en notación YEN (formato JSON sin comillas en claves).
+          schema:
+            type: string
+            example: '{size:3,turn:0,"players":["B","R"],"layout":"./../..."}'
+        - name: bot_id
+          in: query
+          required: false
+          description: Identificador del bot que debe elegir el movimiento.
+          schema:
+            type: string
+            default: montecarlo_bot
+        - name: api_version
+          in: query
+          required: false
+          description: Versión de la API a utilizar.
+          schema:
+            type: string
+            default: v1
       responses:
         '200':
           description: Siguiente movimiento calculado correctamente.
@@ -76,6 +62,20 @@ paths:
                       layout:
                         type: string
                         description: Representación del tablero tras el movimiento.
+        '400':
+          description: Error en el formato de los parámetros o posición inválida.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  api_version:
+                    type: string
+                  bot_id:
+                    type: string
+                  message:
+                    type: string
+                    description: Descripción del error ocurrido.
         '500':
           description: Error al contactar con el módulo Rust o al procesar la respuesta.
           content:
@@ -83,6 +83,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  error:
+                  api_version:
+                    type: string
+                  bot_id:
+                    type: string
+                  message:
                     type: string
                     description: Descripción del error ocurrido.
