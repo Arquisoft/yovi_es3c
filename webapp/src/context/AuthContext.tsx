@@ -37,6 +37,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(userData);
         } else {
           // Token inválido o expirado
+          // Si estamos como invitado, da igual que hagamos logout.
           logout();
         }
       } catch (error) {
