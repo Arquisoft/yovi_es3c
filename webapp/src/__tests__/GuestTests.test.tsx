@@ -6,6 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import * as gameService from '../services/gameService';
 import '@testing-library/jest-dom';
+import { Header } from '../components/Header';
 
 // JSDOM no implementa showModal(), así que lo mockeamos
 HTMLDialogElement.prototype.showModal = vi.fn();
@@ -88,9 +89,14 @@ describe('Guest Flow - Dashboard (usuario invitado)', () => {
   // ============================================================
   it('el invitado puede abrir el diálogo de ayuda', async () => {
     const user = userEvent.setup();
-    render(<MemoryRouter><Dashboard /></MemoryRouter>);
+      render(
+        <MemoryRouter initialEntries={['/dashboard']}>
+            <Header />       
+            <Dashboard />
+        </MemoryRouter>
+    );
 
-    const helpBtn = screen.getByRole('button', { name: /ver ayuda/i });
+    const helpBtn = screen.getByRole('button', { name: /cómo jugar/i });
     await user.click(helpBtn);
 
     expect(screen.getByText(/reglas/i)).toBeInTheDocument();

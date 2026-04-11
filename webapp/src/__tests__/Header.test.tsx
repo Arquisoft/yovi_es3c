@@ -28,7 +28,7 @@ describe('Header component', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/jugar/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Jugar' })).toBeInTheDocument();
     expect(screen.getByText(/ranking/i)).toBeInTheDocument();
     expect(screen.getByText(/iniciar sesión/i)).toBeInTheDocument();
     expect(screen.queryByText(/cerrar sesión/i)).not.toBeInTheDocument();
@@ -64,7 +64,7 @@ describe('Header component', () => {
       </MemoryRouter>
     );
 
-    const jugar = screen.getByText(/jugar/i).closest('a');
+    const jugar = screen.getByRole('link', { name: 'Jugar' });
     const ranking = screen.getByText(/ranking/i).closest('a');
 
     expect(jugar).toHaveAttribute('href', '/dashboard');
@@ -78,17 +78,10 @@ describe('Header component', () => {
       </MemoryRouter>
     );
 
-    // 🔥 CAMBIO 1:
-    // Comprobamos que el header existe
+
     expect(container.querySelector('header')).toBeInTheDocument();
-
-    // 🔥 CAMBIO 2:
-    // Comprobamos que los enlaces principales están presentes
-    expect(screen.getByText(/jugar/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Jugar' })).toBeInTheDocument();
     expect(screen.getByText(/ranking/i)).toBeInTheDocument();
-
-    // 🔥 CAMBIO 3:
-    // Comprobamos que el botón de iniciar sesión aparece para invitados
     expect(screen.getByText(/iniciar sesión/i)).toBeInTheDocument();
   });
 });
