@@ -1,34 +1,52 @@
-ifndef::imagesdir[:imagesdir: ../images]
-
 [[section-solution-strategy]]
 == Solution Strategy
 
+The solution strategy for this project is built upon three main pillars: a decentralized microservices architecture, a containerized deployment pipeline, and a rigorous quality assurance process. By following these principles, we ensure that the system is scalable, easy to deploy, and maintainable.
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
+=== Key Technology Decisions
 
-.Form
+We have selected a modern tech stack that balances performance with developer productivity and code reliability.
 
+[cols="1,2" options="header"]
+|===
+| Technology | Rationale
+| **Rust & Cargo** | Powering the Game Engine. It provides low-level performance and memory safety, which is critical for real-time game calculations.
+| **Node.js & Express** | Powering the User Service. Its non-blocking I/O model is ideal for handling multiple concurrent requests for user management and scores.
+| **Vite & React** | Powering the Webapp frontend. Chosen for its fast development cycle (HMR) and efficient rendering of the user interface.
+| **MongoDB Atlas** | A cloud-based NoSQL database that offers high flexibility for our data models and eliminates the overhead of local database administration.
+| **Docker & Compose** | Used for containerization and service orchestration. It ensures that the application runs identically in development, testing, and production environments.
+| **GitHub Actions** | Our choice for CI/CD. It automates the building, testing, and pushing of Docker images to the registry on every code change.
+| **SonarCloud** | Utilized for continuous inspection of code quality. it performs static analysis to detect bugs, vulnerabilities, and code smells, while tracking code coverage.
+| **Prometheus & Grafana** | Integrated for system monitoring. These tools provide real-time visibility into the health and performance of our microservices.
+|===
 
-.Further Information
+=== Architectural Decisions
 
-See https://docs.arc42.org/section-4/[Solution Strategy] in the arc42 documentation.
+Several strategic decisions were made to streamline the architecture and reduce unnecessary complexity:
 
-****
-endif::arc42help[]
+* **Point-to-Point Communication (No API Gateway):** We explicitly decided **not** to implement an API Gateway. For the current scope of the project, a gateway would introduce additional latency and an unnecessary single point of failure. Instead, microservices communicate directly through a dedicated Docker network (`monitor-net`).
+    
+* **Container-First Strategy:** Every component of the system is containerized. This allows us to package dependencies (like the Rust environment or Node runtimes) within the image, avoiding environment-related inconsistencies. We use **GHCR (GitHub Container Registry)** to host our images.
 
+* **Internal Networking:** We utilize a bridge network in Docker (`monitor-net`) to isolate service traffic, ensuring that inter-service communication remains structured and controlled.
 
-=== Contents
+=== Quality and Development Strategy
 
-The main technologies used for the development of the project will be those already provided by the skeleton, such as, Rust and Cargo for the game engine, Node.js and Express for the User Service, and Vite and React for the Webapp implementation. The team also agreed on the use of MongoDB as a database to store user's login information and scores.
+To maintain high software quality and operational excellence, the team follows a structured development workflow:
 
-To achieve our quality goals, each member of the team is commited to ensure that every code delivered is of correct implementation, ensuring that it won't break other member's code. Every member is responsible for the entirety of the code implemented within the project, regardless of the authorship of said code.
+* **Automated Quality Gates:** We integrate **SonarCloud** within our CI/CD pipeline. This ensures that every contribution is analyzed for **code coverage** and quality standards. We aim for high test coverage to minimize regressions and ensure the reliability of the game logic and user management.
 
-=== Form
+* **GitHub-Flow Methodology:** ** **Issues & Task Tracking: All features and bugs are documented as GitHub Issues to maintain a clear roadmap.
+** **Pull Requests (PRs):** No code is merged directly into the main branch. We use PRs to facilitate **peer reviews**, ensuring that at least one other team member validates the logic and style of the changes.
 
+* **Team Coordination and Communication:**
+** **Synchronous Coordination:** The team holds weekly meetings to align on objectives, discuss architectural challenges, and track progress against deadlines.
+** **Asynchronous Communication:** We use instant messaging platforms (WhatsApp) for day-to-day, rapid coordination and GitHub's discussion tools for technical documentation and decision-making.
 
-Our main decision made was to use MongoDB as our prefered database, this is because, it is of easy use and implementation, and a standard with the rest of our peers.
+=== Constraints and Consistency
 
-Our main constraints are those imposed by the default programming languages and the skeleton already provided.
+The strategy remains compliant with the project constraints:
+
+* Adherence to the provided skeleton while enhancing it with professional-grade monitoring and quality tools.
+* Strict use of English for all technical documentation and code comments.
+* Ensuring that the final solution is easily deployable via a single `docker-compose up` command.
