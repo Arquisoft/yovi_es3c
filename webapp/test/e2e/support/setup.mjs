@@ -45,7 +45,7 @@ BeforeAll(async function () {
 
 Before(async function () {
   // Allow turning off headless mode and enabling slow motion/devtools via env vars
-  const headless = false;
+  const headless = true;
   const slowMo = process.env.PLAYWRIGHT_SLOW_MO ? parseInt(process.env.PLAYWRIGHT_SLOW_MO) : 0
   const devtools = process.env.PLAYWRIGHT_DEVTOOLS === 'true'
 
