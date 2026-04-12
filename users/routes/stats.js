@@ -10,12 +10,13 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const { validateToken } = require('../middleware/auth');
 
 /**
  * GET /getuserstats/:username
  * Obtiene las estadísticas de un usuario
  */
-router.get('/getuserstats/:username', async (req, res) => {
+router.get('/getuserstats/:username', validateToken, async (req, res) => {
     try {
         const { username } = req.params;
 
@@ -49,7 +50,7 @@ router.get('/getuserstats/:username', async (req, res) => {
  * GET /getuserscore/:username
  * Obtiene la puntuación del usuario
  */
-router.get('/getuserscore/:username', async (req, res) => {
+router.get('/getuserscore/:username', validateToken, async (req, res) => {
     try{
         const {username} = req.params;
 
@@ -82,7 +83,7 @@ router.get('/getuserscore/:username', async (req, res) => {
  *   - username: nombre del usuario
  *   - won: true si ganó, false si perdió
  */
-router.post('/updateuserstats', async (req, res) => {
+router.post('/updateuserstats', validateToken, async (req, res) => {
     try {
         const { username, won, score } = req.body;
 
@@ -136,7 +137,7 @@ router.post('/updateuserstats', async (req, res) => {
  * GET /ranking
  * Devuelve los jugadores que han jugado al menos una partida, ordenados por victorias (mayor a menor).
  */
-router.get('/ranking', async (req, res) => {
+router.get('/ranking', validateToken, async (req, res) => {
     try {
         const players = await User.find(
             {totalGames: {$gt: 0}}, // Jugadores con al menos una partida jugada.

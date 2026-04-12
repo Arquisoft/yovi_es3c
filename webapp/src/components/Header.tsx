@@ -29,11 +29,19 @@ export function Header() {
         </div>
         
         <nav className="header-nav">
-          <Link to="/dashboard" className="nav-link">Jugar</Link>
-          <Link to="/ranking" className="nav-link">Ranking</Link>
-           {isDashboard && (
+
+          <Link to="/dashboard" className="nav-link">
+            {user && "Jugar" || "Jugar como invitado"}
+          </Link>
+
+          {user && 
+            <Link to="/ranking" className="nav-link">Ranking</Link>
+          }
+
+          {isDashboard && (
             <button className="help-nav-btn" onClick={() => setHelpOpen(true)}>Cómo jugar</button>
           )}
+
           {!user && 
             (
               <div className='nav-account'>

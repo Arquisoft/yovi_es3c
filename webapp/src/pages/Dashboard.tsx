@@ -4,7 +4,7 @@ import { GameSetupForm } from "../components/GameSetupForm";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { getUserStats } from "../services/gameService";
-import "../pages-styles/Dashboard.css";
+import "./Dashboard.css";
 
 interface UserStatsData {
     username: string;

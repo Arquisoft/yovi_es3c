@@ -1,5 +1,6 @@
 import React, { useMemo, createContext, useState, useContext, useEffect } from 'react';
 import type { ReactNode } from 'react';
+import * as userService from '../services/userService';
 
 // 1. Definimos la interfaz para el usuario
 interface User {
@@ -10,7 +11,7 @@ interface User {
 // 2. Definimos qué valores expondrá el contexto
 interface AuthContextType {
   user: User | null;
-  login: (userData: { id: string; username: string }) => void;
+  login: (userData: { id: string; username: string; token: string }) => void;
   logout: () => void;
   loading: boolean;
   getUser: () => User | null;
@@ -28,25 +29,36 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
+    // Validar token al montar el componente
+    const validateAuth = async () => {
       try {
-        setUser(JSON.parse(savedUser));
+        const userData = await userService.validateToken();
+        if (userData) {
+          setUser(userData);
+        } else {
+          // Token inválido o expirado
+          // Si estamos como invitado, da igual que hagamos logout.
+          logout();
+        }
       } catch (error) {
-        console.error("Error parseando el usuario del localStorage", error);
+        console.error("Error validando token:", error);
+        logout();
+      } finally {
+        setLoading(false);
       }
-    }
-    setLoading(false);
+    };
+
+    validateAuth();
   }, []);
 
-  const login = (userData: { id: string; username: string }) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+  const login = (userData: { id: string; username: string; token: string }) => {
+    setUser({ id: userData.id, username: userData.username });
+    localStorage.setItem('token', userData.token);
   };
 
   const logout = () => {
-    setUser(null); 
-    localStorage.removeItem('user');
+    setUser(null);
+    localStorage.removeItem('token');
   };
 
   const getUser = (): User | null => user;

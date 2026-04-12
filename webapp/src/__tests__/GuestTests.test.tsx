@@ -207,8 +207,19 @@ it('Login muestra error del servidor cuando response.ok es false', async () => {
 // ============================================================
 // EXTRA: AuthContext - carga inicial y logout
 // ============================================================
-it('AuthContext carga usuario desde localStorage y permite logout', async () => {
-  localStorage.setItem('user', JSON.stringify({ id: "1", username: "pablo" }));
+it('AuthContext carga usuario desde token JWT válido y permite logout', async () => {
+  // Mock userService.validateToken para devolver un usuario cuando hay token
+  const userServiceModule = await vi.importActual<typeof import('../services/userService')>(
+    '../services/userService'
+  );
+  
+  vi.spyOn(userServiceModule, 'validateToken').mockResolvedValue({
+    id: "1",
+    username: "pablo"
+  });
+
+  // Guardar token en localStorage (simular sesión activa)
+  localStorage.setItem('token', 'jwt-token-123');
 
   const realAuth = await vi.importActual<typeof import('../context/AuthContext')>(
     '../context/AuthContext'
@@ -219,6 +230,9 @@ it('AuthContext carga usuario desde localStorage y permite logout', async () => 
   const wrapper = ({ children }: any) => <AuthProvider>{children}</AuthProvider>;
   const { result } = renderHook(() => useAuth(), { wrapper });
 
+  // Esperar a que valide el token
+  await new Promise(resolve => setTimeout(resolve, 0));
+
   expect(result.current.user).toEqual({ id: "1", username: "pablo" });
 
   act(() => {
@@ -226,7 +240,7 @@ it('AuthContext carga usuario desde localStorage y permite logout', async () => 
   });
 
   expect(result.current.user).toBeNull();
-  expect(localStorage.getItem('user')).toBeNull();
+  expect(localStorage.getItem('token')).toBeNull();
 });
 
 // ============================================================

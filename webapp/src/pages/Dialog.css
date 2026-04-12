@@ -184,10 +184,13 @@
 
 /* Estado de error. */
 .game-dialog__ranking-error{
-  font-size: 0.85rem;
+  font-size: 1rem;
+  font-weight: 600;
   color: #ef4444;
   text-align: center;
-  padding: 8px 0;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  padding: 12px 0;
 }
 
 .game-dialog__ranking-name{

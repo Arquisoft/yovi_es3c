@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSearchParams } from 'react-router-dom';
+import * as userService from '../services/userService';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const authentication = useAuth();
+  const [searchParams] = useSearchParams();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,32 +21,25 @@ const Login: React.FC = () => {
       return;
     }
 
-    const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
-
     try {
-      const response = await fetch(`${API_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || "Error al iniciar sesión");
-        return;
-      }
-      login({ id: data.id, username: data.username });
+      const data = await userService.login(username, password);
+      authentication.login({ id: data.id, username: data.username, token: data.token });
       navigate('/dashboard');
     } catch (err) {
       console.error("Error en login:", err);
-      setError("Error de conexión con el servidor");
+      setError(err instanceof Error ? err.message : "Error de conexión con el servidor");
     }
   };
 
   return (
     <div className="login-container">
       <h2>Iniciar Sesión</h2>
+
+      {searchParams.get('session') === 'expired' && 
+        <div className='login-session-expired'>
+          <p>Tu sesión ha expirado. Por favor, inicia sesión de nuevo.</p>
+        </div>
+      }
 
       <form className="shared-form" onSubmit={handleSubmit}>
         <div className="form-group">
