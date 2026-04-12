@@ -54,3 +54,79 @@ In addition, it also managed to process 7200 request without a single fail, scor
 As before, the number of active users grew slowly before balancing between 31 and 32 active users for the best part of the test, and progresivelly lowering towards the end of the test.
 
 
+
+==== Montecarlo Algorithm (montecarloSimulation)
+The Montecarlo bot is the most advanced of the three chosen algorithms. Before making a move, the bot evaluates each possible move by simulating multiple random plays for that position, finally choosing the move with the highest succeed rate across all simulations. Our bot is configured to run 100 simulations per move, meaning that it takes a considerable amount of time to make it's move when compared to the other two algorithms.
+
+This complexity can be clearly seen in the result of the test, this simulation took 7 min and 15 sec to complete with no failed requests.
+
+However, this simulation is also the first to show a clear bottle neck, showing a very unneven distribution of response times. In a total of 15800 requests, 65% (about 10320 requests) took more than 1200 ms to be processed,   11% (1708 requests) took between 800 ms and 1200 ms and finally 24% (3772 requests) took less than 800 ms.
+
+In total, this simulation recieved an average of 0.229 requests/second, and top and average of 14 ms to send a response.
+
+
+We must also take in account the fact that this game was played with the biggest gameboard available (16x16x16), meaning that by default, the match takes a longer time to end, and considering the bottle neck created by the request, is safe to assume that most of them took even longer due to the time spent waiting for the bot to make a move. 
+
+
+
+=== Azure Tests
+==== Context
+This next batch of tests were executed using the Microsoft Azure service to deploy the application.
+
+The goal of this second batch is to compare the results of a local deployment, which usually have better performance, with the results of a more realistic scenario and analysing the differences between them.
+
+===== Random Algorithm (easySimulation)
+
+The random algorithm once again managed to process 5700 requests, albeit in slightly longer time of 1 min and 26 seconds compared to the 1 min and 24 seconds of the local deployment. 
+
+Another interesting aspect about this execution is the fact that it took longer to reach a stable range of active users, managing 48-49 simultaneous users for aproximately a third of the execution, before steadly lowering until the end.
+
+
+===== Heuristic Algorithm (heuristic Simulation)
+
+The heuristic simulation was faster than the random algorithm once again, but still marginally slower than the first run with the local deployment, with 1m 18sec of total run time.
+
+The average request/second was 1266, also lower than the original 1299 requests/second, the average response time was 71 ms, much more than the 2 ms calculated for the first test.
+
+For this instance, the values in the Response Time Distribution were more spread out than in the in the Docker Deployment tests, and the Response Time Percentiles over Time were also much higher.
+
+Still, the algorithm managed to process all requests under 800 ms, with no failures or timeouts, and with no bottle neck.
+
+
+
+===== Montecarlo Algorithm (montecarloSimulation)
+This tests took by far the longest time to complete, with 15 min and 37 seconds. The already present bottle neck detected in the local deployment was aggravated even more, with 86% (13584 request) waiting for more than 1200 ms for a response, with only 4% (603 requests) recieving a response with a wait time between 800ms and 1200ms, 10%(1613 requests) got a response in less than 800ms of wait time.
+
+Interestingly, as a result of this bottle neck in both the Docker and Azure deployments, the number of active users during most of the test was the total 100 users configured. Furthermore, this algorithm shows a faster and steeper increase in the number of users before reaching its peak compared to the previous two. The same is true for the decline in active users at the end of the simulation, showing a much steeper drop than other runs.
+
+The average request/sec for this algorithm was 0.107 request/sec, with an average 75ms of wait time for responses. 
+
+The Response Time Distribution also shows that, while most of the responses range from 73ms to 75ms of wait time, at least 15% of all requests took longer than 76 ms, and 1% of all responses took 97 ms to be sent. 
+
+
+The Response Time Percentiles over Time also shows a very interesting behaviour when compared to the other two algorithms in both deployments, the main difference is that, while both the random and the heuristic bot show a more or less steady flow of responses troughtout the execution of the tests, for both instances of the montecarlo algorithm, the responses seem to all be somewhat condensed in the first minute of the execution. If we compare to the results in the Number of requests per second, both tables sync.
+
+We don't really know exactly what is happening here, our main theory is that as requests start to pile up, the bot overflows and no new requests are sent, this would explain the suddent drop in both requests and responses, but not the lack of KO's as the simulations would still try to send requests to the bot service.
+
+
+Overall, the results of this tests show that the computational demands of the Montecarlo algorithm are far too expensive and that, without modifications, the bot in its current state would be unfit for a real production enviroment.
+
+
+
+=== Conclusions
+
+The main issue detected during this tests is how the Montecarlo Algorithm creates a bottle neck when server with numerous requests, making it unstable and maybe even faulty. 
+
+Efforts to try and optimize the algorithm could drastically improve it's performance. Another possible solution would be to lower the number of simulations runned by the bot per move from 100 to a lower value, so that it would be less computationally expensive to run in high load situations as seen during the tests.
+
+Other noteworthy differences between the simulations are the difference in times between each other and between the Docker and the Azure deployments.
+
+In both deployments, the heuristic algorithm was the fastest of the bunch, managing a big number of requests without a bottle neck or failures. It was also quite surprising how it was generally faster than the simpler random algorithm.
+
+All Azure tests took longer to finish than their Docker counterparts, albeit most by very small margins of merely seconds, with a great difference of almost 8 minutes of difference for the Montecarlo Algorithm.
+
+
+
+
+
+
