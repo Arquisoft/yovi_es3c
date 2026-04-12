@@ -75,6 +75,18 @@ form {
     color: red;
 }
 
+.login-register-text {
+  color: #1f2937;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.login-register-text a {
+  color: #1d4ed8;
+  text-decoration: underline;
+  margin-left: 0.4rem;
+}
+
 /* Dashboard styles - Pantalla intermedia */
 .dashboard {
   max-width: 750px;
