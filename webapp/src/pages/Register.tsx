@@ -68,7 +68,7 @@ const Register: React.FC = () => {
         {error && <p data-testid="error-message" style={{color:'red'}}>{error}</p>}
         <button type="submit" className='submit-button'>Registrarse</button>
       </form>
-      <p>
+      <p className="login-register-text">
         ¿Ya tienes cuenta? <Link to="/login">Inicia sesión aquí</Link>
       </p>
     </div>
