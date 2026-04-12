@@ -70,7 +70,7 @@ const Login: React.FC = () => {
           Iniciar Sesión
         </button>
       </form>
-      <p>
+      <p className="login-register-text">
         ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
       </p>
     </div>
