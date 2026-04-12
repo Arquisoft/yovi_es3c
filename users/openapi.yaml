@@ -1,8 +1,15 @@
 openapi: 3.0.0
 info:
-  title: User Service API
+  title: User Service & Gamey Bot API
   version: 1.0.0
-  description: API for managing users with MongoDB
+  description: API for managing users with MongoDB and bot movement selection for YEN (YOVI).
+
+servers:
+  - url: http://localhost:4000
+    description: Development server
+  - url: http://20.199.40.219
+    description: Production server
+
 paths:
   /createuser:
     post:
@@ -44,3 +51,83 @@ paths:
           description: Validation error (missing fields or password mismatch)
         '409':
           description: Conflict (Username already exists)
+
+  /play:
+    get:
+      summary: Requests the next move given the current board state in YEN notation.
+      parameters:
+        - name: position
+          in: query
+          required: true
+          description: Current board state in YEN notation (JSON format without quotes on keys).
+          schema:
+            type: string
+            example: '{size:3,turn:0,"players":["B","R"],"layout":"./../..."}'
+        - name: bot_id
+          in: query
+          required: false
+          description: Identifier of the bot that should choose the move.
+          schema:
+            type: string
+            default: montecarlo_bot
+        - name: api_version
+          in: query
+          required: false
+          description: API version to use.
+          schema:
+            type: string
+            default: v1
+      responses:
+        '200':
+          description: Next move calculated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  next_move:
+                    type: object
+                    description: Board state after the move, in YEN notation.
+                    properties:
+                      size:
+                        type: integer
+                        description: Board size.
+                      turn:
+                        type: integer
+                        description: Index of the player whose turn it is.
+                      players:
+                        type: array
+                        items:
+                          type: string
+                        description: List of players (e.g. ["B", "R"]).
+                      layout:
+                        type: string
+                        description: Board representation after the move.
+        '400':
+          description: Error in parameter format or invalid position.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  api_version:
+                    type: string
+                  bot_id:
+                    type: string
+                  message:
+                    type: string
+                    description: Description of the error.
+        '500':
+          description: Error contacting the Rust module or processing the response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  api_version:
+                    type: string
+                  bot_id:
+                    type: string
+                  message:
+                    type: string
+                    description: Description of the error.

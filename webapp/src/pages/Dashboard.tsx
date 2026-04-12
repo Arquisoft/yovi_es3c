@@ -5,7 +5,6 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { getUserStats } from "../services/gameService";
 import "./Dashboard.css";
-import HelpDialog from './HelpDialog'
 
 interface UserStatsData {
     username: string;
@@ -35,9 +34,7 @@ export const Dashboard: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // Para abrir el dialogo de ayuda.
-    const [helpOpen, setHelpOpen] = useState(false);
-
+   
     /**
      * Cargar estadísticas del usuario cuando el componente monta
      * o cuando cambia el usuario autenticado
@@ -95,21 +92,9 @@ export const Dashboard: React.FC = () => {
     return (
         <div className="dashboard">
             <GameSetupForm onStart={handleStartGame} />
-            <button className="help-btn" onClick={() => setHelpOpen(true)} aria-label="Ver ayuda y reglas del juego"> 
-                ? Ayuda 
-            </button>
-            <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
-                       {user && (
+            {user && (
                 <div className="dashboard-card">
-                    {loading ? (
-                        <p>Cargando estadísticas...</p>
-                    ) : error ? (
-                        <p style={{ color: 'red' }}>Error: {error}</p>
-                    ) : userStats ? (
-                        renderStats()
-                    ) : (
-                        <UserStats />
-                    )}
+                    {renderStats()}
                 </div>
             )}
         </div>
