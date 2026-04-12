@@ -29,7 +29,6 @@ describe('Header component', () => {
     );
 
     expect(screen.getByText(/jugar/i)).toBeInTheDocument();
-    expect(screen.getByText(/ranking/i)).toBeInTheDocument();
     expect(screen.getByText(/iniciar sesión/i)).toBeInTheDocument();
     expect(screen.queryByText(/cerrar sesión/i)).not.toBeInTheDocument();
   });
@@ -65,10 +64,8 @@ describe('Header component', () => {
     );
 
     const jugar = screen.getByText(/jugar/i).closest('a');
-    const ranking = screen.getByText(/ranking/i).closest('a');
 
     expect(jugar).toHaveAttribute('href', '/dashboard');
-    expect(ranking).toHaveAttribute('href', '/ranking');
   });
 
   it('renderiza correctamente el Header sin usar snapshot', () => {
@@ -82,12 +79,9 @@ describe('Header component', () => {
     // Comprobamos que el header existe
     expect(container.querySelector('header')).toBeInTheDocument();
 
-    // 🔥 CAMBIO 2:
     // Comprobamos que los enlaces principales están presentes
     expect(screen.getByText(/jugar/i)).toBeInTheDocument();
-    expect(screen.getByText(/ranking/i)).toBeInTheDocument();
 
-    // 🔥 CAMBIO 3:
     // Comprobamos que el botón de iniciar sesión aparece para invitados
     expect(screen.getByText(/iniciar sesión/i)).toBeInTheDocument();
   });

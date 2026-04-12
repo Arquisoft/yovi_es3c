@@ -5,6 +5,8 @@
  * Funciones para actualizar y obtener estadísticas del usuario
  */
 
+import { httpClient } from '../utils/httpClient';
+
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 
 
@@ -15,8 +17,7 @@ const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
  */
 export const getUserStats = async (username: string) => {
     try {
-        const response = await fetch(`${API_URL}/getuserstats/${username}`);
-
+        const response = await httpClient(`${API_URL}/getuserstats/${username}`);
 
         if (!response.ok) {
             throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -33,7 +34,7 @@ export const getUserStats = async (username: string) => {
 export const getUserScore = async (username: string) => {
     try{
 
-        const response = await fetch(`${API_URL}/getuserscore/${username}`);
+        const response = await httpClient(`${API_URL}/getuserscore/${username}`);
 
         if(!response.ok)
             throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -55,11 +56,8 @@ export const getUserScore = async (username: string) => {
  */
 export const updateUserStats = async (username: string, won: boolean, score: number) => {
     try {
-        const response = await fetch(`${API_URL}/updateuserstats`, {
+        const response = await httpClient(`${API_URL}/updateuserstats`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify({ username, won, score })
         });
 

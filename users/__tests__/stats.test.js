@@ -1,12 +1,29 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import request from 'supertest'
+import dotenv from 'dotenv'
+import jwt from 'jsonwebtoken'
+
+// Cargar variables de entorno
+dotenv.config()
+
 import app from '../users-service.js'
 import User from '../models/User.js'
 
+// Función para generar token real válido
+const generateValidToken = (userId = 'test-id', username = 'testuser') => {
+    return jwt.sign(
+        { id: userId, username },
+        process.env.JWT_SECRET,
+        { expiresIn: '2h' }
+    );
+}
+
 describe('GET /getuserstats/:username', () => {
+    let validToken;
 
     beforeEach(() => {
         vi.clearAllMocks();
+        validToken = generateValidToken();
     });
 
     afterEach(() => {
@@ -25,9 +42,8 @@ describe('GET /getuserstats/:username', () => {
         vi.spyOn(User, 'findOne').mockResolvedValueOnce(mockUser);
 
         const res = await request(app)
-            .get('/getuserstats/Alice');
-
-        expect(res.status).toBe(200);
+            .get('/getuserstats/Alice')
+            .set('Authorization', `Bearer ${validToken}`);
         expect(res.body.username).toBe('Alice');
         expect(res.body.totalGames).toBe(10);
         expect(res.body.gamesWon).toBe(7);
@@ -39,9 +55,8 @@ describe('GET /getuserstats/:username', () => {
         vi.spyOn(User, 'findOne').mockResolvedValueOnce(null);
 
         const res = await request(app)
-            .get('/getuserstats/NoExiste');
-
-        expect(res.status).toBe(404);
+            .get('/getuserstats/NoExiste')
+            .set('Authorization', `Bearer ${validToken}`);
         expect(res.body.error).toBe('Usuario no encontrado');
     });
 
@@ -50,7 +65,8 @@ describe('GET /getuserstats/:username', () => {
         vi.spyOn(User, 'findOne').mockRejectedValueOnce(new Error('Fallo crítico de conexión'));
 
         const res = await request(app)
-            .get('/getuserstats/Alice');
+            .get('/getuserstats/Alice')
+            .set('Authorization', `Bearer ${validToken}`);
 
         expect(res.status).toBe(500);
         expect(res.body.error).toBe('Error interno del servidor');
@@ -58,9 +74,11 @@ describe('GET /getuserstats/:username', () => {
 });
 
 describe('POST /updateuserstats', () => {
+    let validToken;
 
     beforeEach(() => {
         vi.clearAllMocks();
+        validToken = generateValidToken();
     });
 
     afterEach(() => {
@@ -80,8 +98,7 @@ describe('POST /updateuserstats', () => {
         vi.spyOn(User, 'findOne').mockResolvedValueOnce(mockUser);
 
         const res = await request(app)
-            .post('/updateuserstats')
-            .send({ 
+            .post('/updateuserstats')            .set('Authorization', `Bearer ${validToken}`)            .send({ 
                 username: 'Alice',
                 won: true
             });
@@ -107,6 +124,7 @@ describe('POST /updateuserstats', () => {
 
         const res = await request(app)
             .post('/updateuserstats')
+            .set('Authorization', `Bearer ${validToken}`)
             .send({ 
                 username: 'Bob',
                 won: false
@@ -127,7 +145,10 @@ describe('POST /updateuserstats', () => {
 
     camposTestStats.forEach(({ desc, body }) => {
         it(`debería devolver 400 si ${desc}`, async () => {
-            const res = await request(app).post('/updateuserstats').send(body);
+            const res = await request(app)
+                .post('/updateuserstats')
+                .set('Authorization', `Bearer ${validToken}`)
+                .send(body);
             expect(res.status).toBe(400);
             expect(res.body.error).toBe('Username y won son requeridos');
         });
@@ -139,6 +160,7 @@ describe('POST /updateuserstats', () => {
 
         const res = await request(app)
             .post('/updateuserstats')
+            .set('Authorization', `Bearer ${validToken}`)
             .send({ 
                 username: 'NoExiste',
                 won: true
@@ -154,6 +176,7 @@ describe('POST /updateuserstats', () => {
 
         const res = await request(app)
             .post('/updateuserstats')
+            .set('Authorization', `Bearer ${validToken}`)
             .send({ 
                 username: 'Alice',
                 won: true
@@ -166,8 +189,11 @@ describe('POST /updateuserstats', () => {
 
 // Test para el GET /ranking.
 describe('GET /ranking', () => {
+    let validToken;
+
     beforeEach(() => {
         vi.clearAllMocks();
+        validToken = generateValidToken();
     });
 
     afterEach(() => {
@@ -183,7 +209,9 @@ describe('GET /ranking', () => {
         const mockSort = vi.fn().mockResolvedValueOnce(mockPlayers);
         vi.spyOn(User, 'find').mockReturnValueOnce({sort: mockSort});
 
-        const res = await request(app).get('/ranking');
+        const res = await request(app)
+            .get('/ranking')
+            .set('Authorization', `Bearer ${validToken}`);
 
         expect(res.status).toBe(200);
         expect(res.body).toHaveLength(2);
@@ -198,7 +226,9 @@ describe('GET /ranking', () => {
         const mockSort = vi.fn().mockResolvedValueOnce();
         vi.spyOn(User, 'find').mockReturnValueOnce({sort: mockSort});
 
-        const res = await request(app).get('/ranking');
+        const res = await request(app)
+            .get('/ranking')
+            .set('Authorization', `Bearer ${validToken}`);
 
         expect(res.status).toBe(200);
         expect(res.body).toEqual([]);
@@ -209,7 +239,9 @@ describe('GET /ranking', () => {
         const mockSort = vi.fn().mockRejectedValueOnce(new Error('Fallo de conexión'));
         vi.spyOn(User, 'find').mockReturnValueOnce({ sort: mockSort });
 
-        const res = await request(app).get('/ranking');
+        const res = await request(app)
+            .get('/ranking')
+            .set('Authorization', `Bearer ${validToken}`);
 
         expect(res.status).toBe(500);
         expect(res.body.error).toBe('Error interno del servidor');

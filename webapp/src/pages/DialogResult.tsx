@@ -38,6 +38,12 @@ const DialogResult = ({
   const[rankingError, setRankingError] = useState<string>('');
 
   useEffect(() => {
+    if (!loggedIn) {
+      setRankingLoading(false);
+      setRankingError('Inicia sesión para ver el ranking');
+      return;
+    }
+
     getGlobalRanking()
           .then((players) => {
             const sorted = [...players].sort((a,b) => b.score - a.score);
@@ -45,7 +51,7 @@ const DialogResult = ({
           })
           .catch(() => setRankingError('Error al cargar el ranking.'))
           .finally(() => setRankingLoading(false));
-  }, []);
+  }, [loggedIn]);
   
   return (
     <>

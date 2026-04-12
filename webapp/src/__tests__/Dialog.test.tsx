@@ -124,20 +124,30 @@ describe('DialogResult', () => {
 });
 
 describe('Ranking', () => {
-    test('muestra el título del ranking', async() => {
-        render(<DialogResult {...defaultTestingProps} />);
-        expect(screen.getByText('Ranking')).toBeInTheDocument();
+    test('no muestra el ranking si loggedIn es false', async() => {
+        render(<DialogResult {...defaultTestingProps} loggedIn={false} />);
+        await waitFor(() => {
+            expect(screen.getByText('Inicia sesión para ver el ranking')).toBeInTheDocument();
+        });
+        expect(vi.mocked(getGlobalRanking)).not.toHaveBeenCalled();
+    });
+
+    test('muestra el título del ranking si loggedIn es true', async() => {
+        render(<DialogResult {...defaultTestingProps} loggedIn={true} />);
+        await waitFor(() => {
+            expect(screen.getByText('Ranking')).toBeInTheDocument();
+        });
     });
 
     test('muestra "Cargando..." mientras se obtienen los datos', () => {
         // getGlobalRanking nunca resuelve en este test.
         vi.mocked(getGlobalRanking).mockReturnValueOnce(new Promise(() => {}));
-        render(<DialogResult {...defaultTestingProps} />);
+        render(<DialogResult {...defaultTestingProps} loggedIn={true} />);
         expect(screen.getByText('Cargando...')).toBeInTheDocument();
     });
 
     test('muestra solo el top 3 tras cargar', async() => {
-        render(<DialogResult {...defaultTestingProps} />);
+        render(<DialogResult {...defaultTestingProps} loggedIn={true} />);
         await waitFor(() => {
             expect(screen.getByText('Jugador1')).toBeInTheDocument();
             expect(screen.getByText('Jugador2')).toBeInTheDocument();
@@ -152,7 +162,7 @@ describe('Ranking', () => {
             {_id: '1', username: 'Jugador1', score: 100},
             {_id: '2', username: 'Jugador2', score: 50},
         ] as any);
-        render(<DialogResult {...defaultTestingProps} />);
+        render(<DialogResult {...defaultTestingProps} loggedIn={true} />);
         await waitFor(() => {
             const names = screen.getAllByText(/Jugador\d/).map(el => el.textContent);
             expect(names[0]).toBe('Jugador1');
@@ -162,14 +172,14 @@ describe('Ranking', () => {
     });
 
     test('muestra la estrella en el usuario actual del ranking', async () => {
-        render(<DialogResult {...defaultTestingProps} user={{ username: 'Jugador2' }} />);
+        render(<DialogResult {...defaultTestingProps} loggedIn={true} user={{ username: 'Jugador2' }} />);
         await waitFor(() => {
             expect(screen.getByText(/✪\s*Jugador2/)).toBeInTheDocument();
         });
     });
 
     test('muestra los emojis de medalla correctos', async () => {
-        render(<DialogResult {...defaultTestingProps} />);
+        render(<DialogResult {...defaultTestingProps} loggedIn={true} />);
         await waitFor(() => {
             expect(screen.getByText('🥇')).toBeInTheDocument();
             expect(screen.getByText('🥈')).toBeInTheDocument();
@@ -179,14 +189,14 @@ describe('Ranking', () => {
 
     test('muestra mensaje de error si el servicio falla.', async() => {
         vi.mocked(getGlobalRanking).mockRejectedValueOnce(new Error('Network error'));
-        render(<DialogResult {...defaultTestingProps} />);
+        render(<DialogResult {...defaultTestingProps} loggedIn={true} />);
         await waitFor(() => {
             expect(screen.getByText('Error al cargar el ranking.')).toBeInTheDocument();
         });
     });
 
     test('no muestra "Cargando..." tras resolver', async () => {
-        render(<DialogResult {...defaultTestingProps} />);
+        render(<DialogResult {...defaultTestingProps} loggedIn={true} />);
         await waitFor(() => {
             expect(screen.queryByText('Cargando...')).not.toBeInTheDocument();
         });
