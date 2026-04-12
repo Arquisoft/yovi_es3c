@@ -62,7 +62,7 @@ When('selecciona la dificultad {string}, el bot {string} y el tamaño {string}',
     await page.click(`button:has-text("${bot}")`);
     const input = await page.$('input[type="range"]');
     if (input) await input.fill(tamano);
-    await page.click('button:has-text("Jugar")');
+    await page.click('.submit-game-btn');
     await page.waitForSelector('.game-board');
 });
 
@@ -87,7 +87,7 @@ Given('el usuario ha terminado una partida', async function () {
     await page.click('button:has-text("Aleatorio")');
     const input = await page.$('input[type="range"]');
     if (input) await input.fill('8');
-    await page.click('button:has-text("Jugar")');
+    await page.click('.submit-game-btn');
     await page.waitForSelector('.game-board');
     await playUntilEnd(page, 'montecarlo_bot', DIALOG_SELECTOR);
     await page.waitForSelector(DIALOG_SELECTOR, { timeout: 10000 });

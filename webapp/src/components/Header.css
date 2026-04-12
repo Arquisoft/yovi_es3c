@@ -13,6 +13,7 @@
   display: flex;
   align-items: center;
   height: 100%;
+  gap: 10vw;
 }
 
 .help-nav-btn {
@@ -58,10 +59,10 @@
   display: flex;
   gap: 10px;
   align-items: center;
-  margin-left: auto;
+  margin-left: 4vw;
 }
 
-.nav-link {
+.nav-link, p {
   color: white;
   text-decoration: none;
   font-size: 1.5em;
