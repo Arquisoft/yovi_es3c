@@ -6,73 +6,73 @@ ifndef::imagesdir[:imagesdir: ../images]
 ifdef::arc42help[]
 [role="arc24help"]
 ****
-.Content
 === Overview
-This appendix describes and analyses the results of the different
-load tests carried out to test the aplication deployment.
+This appendix describes and analyses the results of the different load tests carried out to test the aplication deployment. 
 
-The main goals of these test are to detect problems before they might appear in production, to find possible bottle necks, to take measurements related to the performance of the application in different scenarios and compare the resulting data between these scenarios.
+The main goals of these test are to detect problems before they might appear in production, to find possible bottle necks, to take measurements related to the performance of the application in different scenarios and compare the resulting data between these scenarios. 
 ****
 endif::arc42help[]
 
 === The Cases
-Our load tests were focused mainly on playable aspect of the application, mainly to test the capabilities of the bots the users will play against.
+Our load tests were focused mainly on playable aspect of the application, mainly to test the capabilities of the bots the users will play against. 
 
-We devised three main scenarios:
-* ** The user plays against the random bot on a small gameboard. 
-* ** The user plays against the Heuristic bot on a default sized gameboard.
-* ** The user plays against the Montecarlo bot on a max sized gameboard.
+We devised three main scenarios: 
 
-This three scenarios were simulated using Scala files, generated using the Gatling tool, recording the three different scenarios and then simulating them with different loads.
+* The user plays against the random bot on a small gameboard. 
+* The user plays against the Heuristic bot on a default sized gameboard. 
+* The user plays against the Montecarlo bot on a max sized gameboard. 
 
-In addition, all three scenarios were tested locally using the Docker deployment tool and using the Microsoft Azure service to deploy the application and test the performance in a more realistic context.
+This three scenarios were simulated using Scala files, generated using the Gatling tool, recording the three different scenarios and then simulating them with different loads. 
 
-For better consistency between the tests, the load was configured to rampUp to 100 users in a span of 60 seconds.
+In addition, all three scenarios were tested locally using the Docker deployment tool and using the Microsoft Azure service to deploy the application and test the performance in a more realistic context. 
+
+For better consistency between the tests, the load was configured to rampUp to 100 users in a span of 60 seconds. 
 
 image::gatlingConfig.png[Gatling simulations configuration]
 
 === Docker Tests
 ==== Context
 This first batch of tests were carried out with a locally deployed application using Docker. 
-
 The results are shown and explained bellow.
 
 ===== Random Algorithm (easySimulation)
-The simulation named "easySimulation" was pretty fast, and resulted in a perfect score with no "KOs". This may obey several different factors such as the size of the gameboard being the smallest size a user can select before begining a game, and the nature of the bot itself. 
+The simulation named "easySimulation" was pretty fast, and resulted in a perfect score with no "KOs". 
+This may obey several different factors such as the size of the gameboard being the smallest size a user can select before begining a game, and the nature of the bot itself. 
 
 image::EasyDocker1.jpg[Results of the Random Bot in a Docker Deployment]
 
-The bot used in this simulation is the most simple of all, it's behaviour basically boils down to choose a random unselected square to make its move. This simpler strategy when compared to the other two tested algorithms results in the bot being able to attend all the requests without an issue.
+The bot used in this simulation is the most simple of all, it's behaviour basically boils down to choose a random unselected square to make its move. 
+This simpler strategy when compared to the other two tested algorithms results in the bot being able to attend all the requests without an issue. 
 
 image::EasyDockerUsers.jpg[Evolution of the number of users during the simulation]
 
-Overall, this simulation responded to a total of 5700 requests in an average of 8ms per request.
+Overall, this simulation responded to a total of 5700 requests in an average of 8ms per request. 
 
 image::EasyDockerRequests.jpg[]
 image::EasyDockerResponses.jpg[]
 
 ==== Heuristic Algorithm (heuristicSimulation)
-This simulation was even faster than the last, finishing in 1m and 16 seconds, 8 seconds faster than it's predecesor.
+This simulation was even faster than the last, finishing in 1m and 16 seconds, 8 seconds faster than it's predecesor. 
 
 image::heuDocker1.jpg[Results of the Heuristic Bot in a Docker Deployment]
 
-In addition, it also managed to process 7200 request without a single fail, scoring the best results so far. The average response time was 4ms for all 7200 requests.
-
-As before, the number of active users grew slowly before balancing between 31 and 32 active users for the best part of the test, and progresivelly lowering towards the end of the test.
+In addition, it also managed to process 7200 request without a single fail, scoring the best results so far. 
+The average response time was 4ms for all 7200 requests. 
+As before, the number of active users grew slowly before balancing between 31 and 32 active users for the best part of the test, and progresivelly lowering towards the end of the test. 
 
 image::heuDockerUsers.jpg[Evolution of the number of users during the simulation]
 
 ==== Montecarlo Algorithm (montecarloSimulation)
-The Montecarlo bot is the most advanced of the three chosen algorithms. Before making a move, the bot evaluates each possible move by simulating multiple random plays for that position, finally choosing the move with the highest succeed rate across all simulations. Our bot is configured to run 100 simulations per move, meaning that it takes a considerable amount of time to make it's move when compared to the other two algorithms.
-
-This complexity can be clearly seen in the result of the test, this simulation took 7 min and 15 sec to complete with no failed requests.
+The Montecarlo bot is the most advanced of the three chosen algorithms. 
+Before making a move, the bot evaluates each possible move by simulating multiple random plays for that position, finally choosing the move with the highest succeed rate across all simulations. 
+Our bot is configured to run 100 simulations per move, meaning that it takes a considerable amount of time to make it's move when compared to the other two algorithms. 
+This complexity can be clearly seen in the result of the test, this simulation took 7 min and 15 sec to complete with no failed requests. 
 
 image::monDocker1.jpg[Results of the Montecarlo simulation in a Docker deployment]
 
-However, this simulation is also the first to show a clear bottle neck, showing a very unneven distribution of response times. In a total of 15800 requests, 65% (about 10320 requests) took more than 1200 ms to be processed,   11% (1708 requests) took between 800 ms and 1200 ms and finally 24% (3772 requests) took less than 800 ms.
-
-The average response time was 2295 ms for al 15800 requests.
-
+However, this simulation is also the first to show a clear bottle neck, showing a very unneven distribution of response times. 
+In a total of 15800 requests, 65% (about 10320 requests) took more than 1200 ms to be processed, 11% (1708 requests) took between 800 ms and 1200 ms and finally 24% (3772 requests) took less than 800 ms. 
+The average response time was 2295 ms for al 15800 requests. 
 We must also take in account the fact that this game was played with the biggest gameboard available (16x16x16), meaning that by default, the match takes a longer time to end, and considering the bottle neck created by the request, is safe to assume that most of them took even longer due to the time spent waiting for the bot to make a move. 
 
 image::monDockerRequests.jpg[]
@@ -81,77 +81,71 @@ image::monDockerResponses.jpg[]
 
 === Azure Tests
 ==== Context
-This next batch of tests were executed using the Microsoft Azure service to deploy the application.
-
-The goal of this second batch is to compare the results of a local deployment, which usually have better performance, with the results of a more realistic scenario and analysing the differences between them.
+This next batch of tests were executed using the Microsoft Azure service to deploy the application. 
+The goal of this second batch is to compare the results of a local deployment, which usually have better performance, with the results of a more realistic scenario and analysing the differences between them. 
 
 ===== Random Algorithm (easySimulation)
-
 The random algorithm once again managed to process 5700 requests, albeit in slightly longer time of 1 min and 26 seconds compared to the 1 min and 24 seconds of the local deployment. 
 
 image::EasyAzure.jpg[Results of the Random simulation in an Azure deployment]
 
-Another interesting aspect about this execution is the fact that it took longer to reach a stable range of active users, managing 48 or 49 simultaneous users for aproximately a third of the execution, before steadly lowering until the end.
+Another interesting aspect about this execution is the fact that it took longer to reach a stable range of active users, managing 48 or 49 simultaneous users for aproximately a third of the execution, before steadly lowering until the end. 
 
 image::EasyAzureUsers.jpg[Evolution in the number of users for the Azure Deployment]
 
-The average response time was 39ms for all 5700 requests.
+The average response time was 39ms for all 5700 requests. 
 
 image::EasyAzureRequests.jpg[]
 image::EasyAzureResponses.jpg[]
 
 ===== Heuristic Algorithm (heuristic Simulation)
-
-The heuristic simulation was faster than the random algorithm once again, but still marginally slower than the first run with the local deployment, with 1m 18sec of total run time.
+The heuristic simulation was faster than the random algorithm once again, but still marginally slower than the first run with the local deployment, with 1m 18sec of total run time. 
 
 image::heuAzure.jpg[]
 
-The average response time was 36 ms for 7200 requests. It also had a higher number of active users during the simulation.
+The average response time was 36 ms for 7200 requests. 
+It also had a higher number of active users during the simulation. 
+
 image::heuAzureUsers.jpg[]
 
-Still, the algorithm managed to process all requests under 800 ms, with no failures or timeouts, and with no bottle neck.
+Still, the algorithm managed to process all requests under 800 ms, with no failures or timeouts, and with no bottle neck. 
 
 image::heuAzureRequests.jpg[]
 image::heuAzureResponses.jpg[]
 
 
 ===== Montecarlo Algorithm (montecarloSimulation)
-This tests took by far the longest time to complete, with 15 min and 37 seconds. The already present bottle neck detected in the local deployment was aggravated even more, with 86% (13584 request) waiting for more than 1200 ms for a response, with only 4% (603 requests) recieving a response with a wait time between 800ms and 1200ms, 10%(1613 requests) got a response in less than 800ms of wait time.
+This tests took by far the longest time to complete, with 15 min and 37 seconds. 
+The already present bottle neck detected in the local deployment was aggravated even more, with 86% (13584 request) waiting for more than 1200 ms for a response, with only 4% (603 requests) recieving a response with a wait time between 800ms and 1200ms, 10%(1613 requests) got a response in less than 800ms of wait time. 
 
 image::monAzure.jpg[]
 
-Interestingly, as a result of this bottle neck in both the Docker and Azure deployments, the number of active users during most of the test was the total 100 users configured. Furthermore, this algorithm shows a faster and steeper increase in the number of users before reaching its peak compared to the previous two. The same is true for the decline in active users at the end of the simulation, showing a much steeper drop than other runs.
+Interestingly, as a result of this bottle neck in both the Docker and Azure deployments, the number of active users during most of the test was the total 100 users configured. 
+Furthermore, this algorithm shows a faster and steeper increase in the number of users before reaching its peak compared to the previous two. 
+The same is true for the decline in active users at the end of the simulation, showing a much steeper drop than other runs. 
 
 image::monAzureUsers.jpg[]
 
-In total, the average response time was 5424 ms for all 15800 requests.
+In total, the average response time was 5424 ms for all 15800 requests. 
 
 image::monAzureRequests.jpg[]
 image::monAzureResponses.jpg[]
 
-If we compare the results of both the Docker Simulation with the present Azure Simulation we can find certain key differences that show the effect of a the load in the Azure deployment.
-
-First, the Active Users in the Azure deployment increase and decrease more rapidly, meaning an stepper increase and decrease when compared to the previous results.
-
-Looking now at the requests and responses, the results also shown that for the same load, the time increase in the Azure deployment was also bigger, specially on the last two minutes of execution. The overall run was also a bit more erratic, so to speak, we can find lots of sudden peaks that, albeit also present in the Docker deployment, they weren't as many nor as high. Overall, the first execution in Docker yielded more homogeneus results than the ones we see with the Azure deployment.
+If we compare the results of both the Docker Simulation with the present Azure Simulation we can find certain key differences that show the effect of a the load in the Azure deployment. 
+First, the Active Users in the Azure deployment increase and decrease more rapidly, meaning an stepper increase and decrease when compared to the previous results. 
+Looking now at the requests and responses, the results also shown that for the same load, the time increase in the Azure deployment was also bigger, specially on the last two minutes of execution. 
+The overall run was also a bit more erratic, so to speak, we can find lots of sudden peaks that, albeit also present in the Docker deployment, they weren't as many nor as high. 
+Overall, the first execution in Docker yielded more homogeneus results than the ones we see with the Azure deployment. 
 
 image::monAzureRequests.jpg[Results of deployment with Azure]
 image::monDockerRequests.jpg[Results of deployment with Docker]
 
-Another interesting aspect of both these simulations is that, unlike the random bot and the heuristic bot, which both worked within a range of active users lower to the total number of users simulated, both the montecarlo executions worked with all simulated users being active for the better part of the simulation, clearly showing the effects of the bottle neck created by the algorithm.
+Another interesting aspect of both these simulations is that, unlike the random bot and the heuristic bot, which both worked within a range of active users lower to the total number of users simulated, both the montecarlo executions worked with all simulated users being active for the better part of the simulation, clearly showing the effects of the bottle neck created by the algorithm. 
 
 === Conclusions
-
-The main issue detected during this tests is how the Montecarlo Algorithm creates a bottle neck when server with numerous requests, efforts to try and optimize the algorithm could drastically improve it's performance. Another possible solution would be to lower the number of simulations runned by the bot per move from 100 to a lower value, so that it would be less computationally expensive to run in high load situations as seen during the tests.
-
-Other noteworthy differences between the simulations are the difference in times between each other and between the Docker and the Azure deployments.
-
-In both deployments, the heuristic algorithm was the fastest of the bunch, managing a big number of requests without a bottle neck or failures. It was also quite surprising how it was generally faster than the simpler random algorithm.
-
+The main issue detected during this tests is how the Montecarlo Algorithm creates a bottle neck when server with numerous requests, efforts to try and optimize the algorithm could drastically improve it's performance. 
+Another possible solution would be to lower the number of simulations runned by the bot per move from 100 to a lower value, so that it would be less computationally expensive to run in high load situations as seen during the tests. 
+Other noteworthy differences between the simulations are the difference in times between each other and between the Docker and the Azure deployments. 
+In both deployments, the heuristic algorithm was the fastest of the bunch, managing a big number of requests without a bottle neck or failures. 
+It was also quite surprising how it was generally faster than the simpler random algorithm. 
 All Azure tests took longer to finish than their Docker counterparts, albeit most by very small margins of merely seconds, with a great difference of almost 8 minutes of difference for the Montecarlo Algorithm.
-
-
-
-
-
-
