@@ -5,23 +5,23 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 ifdef::arc42help[]
 [role="arc24help"]
-
+****
 .Content
 === Overview
 This appendix describes and analyses the results of the different
 load tests carried out to test the aplication deployment.
 
-The main goals of these test are to detect problems before they might appear in production, to find possible bottle-necks, to take measurements related to the performance of the application in different scenarios and compare the resulting data between these scenarios.
-
+The main goals of these test are to detect problems before they might appear in production, to find possible bottle necks, to take measurements related to the performance of the application in different scenarios and compare the resulting data between these scenarios.
+****
 endif::arc42help[]
 
 === The Cases
 Our load tests were focused mainly on playable aspect of the application, mainly to test the capabilities of the bots the users will play against.
 
 We devised three main scenarios:
-- The user plays against the random bot on a small gameboard. 
-- The user plays against the Heuristic bot on a default sized gameboard.
-- The user plays against the Montecarlo bot on a max sized gameboard.
+* ** The user plays against the random bot on a small gameboard. 
+* ** The user plays against the Heuristic bot on a default sized gameboard.
+* ** The user plays against the Montecarlo bot on a max sized gameboard.
 
 This three scenarios were simulated using Scala files, generated using the Gatling tool, recording the three different scenarios and then simulating them with different loads.
 
@@ -29,7 +29,7 @@ In addition, all three scenarios were tested locally using the Docker deployment
 
 For better consistency between the tests, the load was configured to rampUp to 100 users in a span of 60 seconds.
 
-image::gatling_config.png[Gatling simulations configuration]
+image::gatlingConfig.png[Gatling simulations configuration]
 
 === Docker Tests
 ==== Context
@@ -91,7 +91,7 @@ The random algorithm once again managed to process 5700 requests, albeit in slig
 
 image::EasyAzure.jpg[Results of the Random simulation in an Azure deployment]
 
-Another interesting aspect about this execution is the fact that it took longer to reach a stable range of active users, managing 48-49 simultaneous users for aproximately a third of the execution, before steadly lowering until the end.
+Another interesting aspect about this execution is the fact that it took longer to reach a stable range of active users, managing 48 or 49 simultaneous users for aproximately a third of the execution, before steadly lowering until the end.
 
 image::EasyAzureUsers.jpg[Evolution in the number of users for the Azure Deployment]
 
