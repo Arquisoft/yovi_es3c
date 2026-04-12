@@ -76,7 +76,7 @@ The average response time was 2295 ms for al 15800 requests.
 We must also take in account the fact that this game was played with the biggest gameboard available (16x16x16), meaning that by default, the match takes a longer time to end, and considering the bottle neck created by the request, is safe to assume that most of them took even longer due to the time spent waiting for the bot to make a move. 
 
 image::monDockerRequests.jpg[]
-image::monDockerResponses-jpg[]
+image::monDockerResponses.jpg[]
 
 
 === Azure Tests
