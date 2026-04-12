@@ -1,6 +1,6 @@
 import React from "react";
 import StatCard from "./StatCard";
-import '../pages-styles/Dashboard.css';
+import '../pages/Dashboard.css';
 
 interface UserStatsProps {
     stats?: {

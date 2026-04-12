@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../pages-styles/Ranking.css';
+import './Ranking.css';
 import { getGlobalRanking } from '../services/rankingService';
 import type { PlayerStats } from '../services/rankingService';
 import { useAuth } from '../context/AuthContext';

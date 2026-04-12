@@ -15,11 +15,6 @@ form {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .form-group {
@@ -61,9 +56,19 @@ form {
   background-color: #0056b3;
 }
 
-.shared-form {
+.shared-form, .login-session-expired {
   max-width: 350px;
-  margin: 0 auto;
+  margin: 1.5rem auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.login-session-expired {
+  background-color: #ff4444;
+  color: white;
 }
 
 .login-error {

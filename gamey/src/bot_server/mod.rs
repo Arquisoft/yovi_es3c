@@ -47,7 +47,7 @@ pub fn create_router(state: AppState) -> axum::Router {
             "/{api_version}/ybot/check",
             axum::routing::post(validate::validate_game),
         )
-        .route("/play", axum::routing::post(crate::play::play::play_handler))             
+        .route("/play", axum::routing::get(crate::play::play::play_handler))             
         .with_state(state)
 }
 

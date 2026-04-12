@@ -100,12 +100,6 @@ function Game() {
           score: finalScore
         }}
 
-        ranking={[
-          { position: 1, name: 'Alice', score: '120' },
-          { position: 2, name: 'Bob',   score: '98'  },
-          { position: 3, name: 'Carol', score: '75'  }
-        ]}
-
         onPlayAgain={() => {
           window.location.reload();
         }}

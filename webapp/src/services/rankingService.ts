@@ -4,6 +4,8 @@
  * Servicio para obtener el ranking global de jugadores.
  */
 
+import { httpClient } from '../utils/httpClient';
+
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 
 export interface PlayerStats {
@@ -17,7 +19,7 @@ export interface PlayerStats {
 
 export const getGlobalRanking = async (): Promise<PlayerStats[]> => {
     try {
-        const response = await fetch(`${API_URL}/ranking`);
+        const response = await httpClient(`${API_URL}/ranking`);
 
         if (!response.ok){
             throw new Error(`Error ${response.status}: ${response.statusText}`);
