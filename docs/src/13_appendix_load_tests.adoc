@@ -5,14 +5,14 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 ifdef::arc42help[]
 [role="arc24help"]
-****
+
 .Content
 === Overview
 This appendix describes and analyses the results of the different
 load tests carried out to test the aplication deployment.
 
 The main goals of these test are to detect problems before they might appear in production, to find possible bottle-necks, to take measurements related to the performance of the application in different scenarios and compare the resulting data between these scenarios.
-****
+
 endif::arc42help[]
 
 === The Cases
