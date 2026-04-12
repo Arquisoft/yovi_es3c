@@ -3,7 +3,6 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-load-tests]]
 == Load Tests
 
-
 ifdef::arc42help[]
 [role="arc42help"]
 ****
