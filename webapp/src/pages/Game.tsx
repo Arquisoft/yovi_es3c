@@ -83,8 +83,6 @@ function Game() {
       }
     }
 
-    console.log(userScore);
-
     if(userScore && userScore.score < finalScore)
       newRecord = true;
 
