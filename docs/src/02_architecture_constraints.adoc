@@ -8,17 +8,17 @@ ifdef::arc42help[]
 [role="arc42help"]
 ****
 .Contents
-Any requirement that constraints software architects in their freedom of design and implementation decisions or decision about the development process. These constraints sometimes go beyond individual systems and are valid for whole organizations and companies.
+Any requirement that constrains software architects in their freedom of design and implementation decisions, or in their decisions about the development process. These constraints sometimes go beyond individual systems and are valid for whole organizations and companies.
 
 .Motivation
-Architects should know exactly where they are free in their design decisions and where they must adhere to constraints.
-Constraints must always be dealt with; they may be negotiable, though.
+Architects should know exactly where they are free to make design decisions and where they must adhere to constraints.
+Constraints must always be addressed; they may be negotiable, though.
 
 .Form
 Simple tables of constraints with explanations.
 If needed you can subdivide them into
 technical constraints, organizational and political constraints and
-conventions (e.g. programming or versioning guidelines, documentation or naming conventions)
+conventions (e.g. programming or versioning guidelines, documentation or naming conventions).
 
 
 .Further Information
@@ -33,10 +33,10 @@ endif::arc42help[]
 [cols="1,3,4", options="header"]
 |===
 | | Constraint | Background/Motivation
-| TC1 | Frontend: React + TypeScript | Requirement defined by the project supervisor to ensure a scalable, component-based UI with the benefits of static typing for fewer runtime errors.
-| TC2 | Game engine: Rust | The core engine for 'Game Y' must be implemented in Rust and accessible via API.
-| TC3 | User service: NodeJs + Express | Backend logic for user management and game history accessed via API.
-| TC4 | Docker | All microservices must be containerized for consistent deployment.
+| TC1 | Frontend: React + TypeScript | The user interface is implemented as a React single-page application with TypeScript for safer component development.
+| TC2 | Game engine: Rust | The core engine for the Y game is implemented in Rust and exposed through an HTTP API and CLI entry point.
+| TC3 | User service: Node.js + Express | User registration, login, token validation, and player statistics are handled by a Node.js and Express service.
+| TC4 | Docker | All microservices must be containerized for consistent deployment. 
 |===
 
 ---
@@ -46,8 +46,8 @@ endif::arc42help[]
 [cols="1,3,4", options="header"]
 |===
 | | Constraint | Background/Motivation
-| OC1 | Team Composition | The project is developed by a team of 5 members within the academic timeframe.
-| OC2 | Deadlines | All project deliverables must be submitted on time according to the academic calendar.
+| OC1 | Team Composition | The project is developed by a team of five members within the academic timeframe.
+| OC2 | Deadlines | All project deliverables must be submitted according to the academic calendar.
 |===
 
 ---
@@ -57,9 +57,9 @@ endif::arc42help[]
 [cols="1,3,4", options="header"]
 |===
 | | Constraint | Background/Motivation
-| C1 | Documentation Template: arc42 | Following the arc42 structure to ensure a professional and standardized architecture description.
-| C2 | Documentation Language: English | International standard chosen for the documentation.
-| C3 | Development Workflow: Pull Requests | All code changes must be reviewed through Pull Requests to ensure quality and team synchronization.
+| C1 | Documentation Template: arc42 | The documentation follows the arc42 structure to keep the architecture description consistent and standardized.
+| C2 | Documentation Language: English | English is used throughout the documentation as the shared project language.
+| C3 | Development Workflow: Pull Requests | All code changes must be reviewed through pull requests to support quality and team synchronization.
 | C4 | Collective Code Ownership | All team members are responsible for the entire codebase, regardless of who authored a specific part.
-| C5 | Meeting Documentation | All meetings (lab or extraordinary) must be documented in the repository's Wiki to maintain a record of decisions.
+| C5 | Meeting Documentation | All meetings, whether regular or extraordinary, must be documented in the repository wiki to preserve decisions.
 |===
