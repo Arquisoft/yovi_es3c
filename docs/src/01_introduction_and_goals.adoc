@@ -3,9 +3,9 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-introduction-and-goals]]
 == Introduction and Goals
 
-The **Yovi Project** is a software development initiative carried out within the **Software Architecture** course (3rd year) of the Software Computer Engineering degree at the **University of Oviedo**. The primary objective is to develop a web-based gaming solution for the company **Micrati** within a single academic semester (4 months). 
+The **Yovi Project** is a software development initiative carried out within the **Software Architecture** course in the third year of the Software Computer Engineering degree at the **University of Oviedo**. The goal is to deliver a web-based version of the **Y** game for **Micrati** within a single academic semester, approximately four months long.
 
-The game, named **YOVI**, is based on the classic board game **Y**. It features a triangular board where two players compete to connect all three sides of the triangle. The first player to successfully establish this connection wins the match.
+The game, named **YOVI**, is based on the classic board game **Y**. It is played on a triangular board, and two players compete to connect all three sides of the triangle. The first player to complete that connection wins the match.
 
 The development team consists of the following members:
 
@@ -25,15 +25,16 @@ endif::arc42help[]
 
 === Requirements Overview
 
-* **System Architecture**: The application is divided into two independent sub-systems:
-** **Web Application**: Built with **TypeScript**, providing the user interface to play different Y game variants and an external API for bots.
-** **Logic Module**: Built with **Rust**, responsible for win-condition checking and move suggestions via a web service interface.
-** **Communication**: Data exchange between modules is handled through JSON messages using the **YEN notation**.
-* **Core Functionality**: Implementation of the classic Y game (Human vs. CPU) with variable board sizes.
+* **System Architecture**: The application is divided into three independent components:
+** **Web Application**: Built with **TypeScript**, providing the user interface for playing Y, managing accounts, and viewing rankings.
+** **Users Service**: Built with **Node.js** and **Express**, responsible for user registration, login, token validation, and player statistics.
+** **Logic Module**: Built with **Rust**, responsible for move validation, win-condition checking, and bot move selection through an HTTP API.
+* **Communication**: Components exchange data through JSON-based HTTP APIs. Board states are represented using the **YEN notation**.
+* **Core Functionality**: Implementation of the Y game with variable board sizes, playable in the web application and in CLI mode.
 * **Deployment**: The system must be fully deployed and publicly accessible via the web.
 * **AI & Strategies**: The computer opponent must support multiple AI strategies and difficulty levels selectable by the user.
-* **User Management**: Support for user registration and persistent match history (statistics, games played, win/loss ratio).
-* **Bot Interaction**: A documented API allowing bots to manage user data and play matches using the `play` method.
+* **User Management**: Support for user registration, authentication, and persistent player statistics such as games played, wins, losses, and score.
+* **Bot Interaction**: A documented API allowing external bots to request the next move through the `play` endpoint.
 
 
 
