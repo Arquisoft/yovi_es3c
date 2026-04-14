@@ -71,7 +71,6 @@ All game information is encoded using YEN notation, which provides a standardize
 These architectural principles provide a solid foundation for the YOVI platform, ensuring that the system remains flexible, scalable, and easily evolves as new game variants or features are introduced.
 
 
-=== Development concepts
 
 === Development Concepts
 
