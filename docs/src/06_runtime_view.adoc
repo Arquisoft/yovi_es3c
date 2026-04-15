@@ -11,7 +11,7 @@ Two primary use cases are architecturally significant because they show the coor
 
 This scenario shows how a registered user interacts with the application to play a match. The sequence includes authentication, game setup, game logic processing, and persistent storage of results.
 
-image::User_use_case.drawio.svg[User Interaction Sequence]
+image::06_User_use_case_diagram.png[User Interaction Sequence]
 
 In practice, the system supports three core user interactions: account registration and authentication, playing matches against an AI opponent, and reviewing personal game history and statistics.
 
