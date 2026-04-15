@@ -3,27 +3,27 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-runtime-view]]
 == Runtime View
 
-The runtime view describes the dynamic behavior and interactions of the YOVI system's building blocks. Interaction with YOVI is centered around game turns, external API access, rust computing, and data persistence.
+The runtime view describes the dynamic behavior and interactions of the YOVI system's building blocks. Interaction with YOVI is centered on game turns, external API access, Rust-based game logic, and data persistence.
 
-I have identified two primary use cases where the runtime view is architecturally significant to demonstrate the coordination between the TypeScript Web App and the Rust Module: human user interaction and automated bot interaction.
+Two primary use cases are architecturally significant because they show the coordination between the TypeScript web application, the users service, and the Rust game engine: human user interaction and automated bot interaction.
 
 === Human Player Game (Web UI)
 
-This scenario shows how a valid user interacts with the application to play a match. The sequence includes authentication, game logic processing, and persistent storage of results.
+This scenario shows how a registered user interacts with the application to play a match. The sequence includes authentication, game setup, game logic processing, and persistent storage of results.
 
 image::User_use_case.drawio.svg[User Interaction Sequence]
 
-In essence the system supports three core user interactions: account registration and authentication, playing matches against an AI opponent (bot), and reviewing personal game history and statistics.
+In practice, the system supports three core user interactions: account registration and authentication, playing matches against an AI opponent, and reviewing personal game history and statistics.
 
 
 === Bot Interaction (External API)
 
-The second use case focuses on how an external app or bot interacts with the system via the API "play" method, which is a core requirement for interoperability.
+The second use case focuses on how an external bot interacts with the system through the public `/play` endpoint, which is a core requirement for interoperability.
 
 image::Bot_use_case.drawio.svg[User Interaction Sequence]
 
-1. [cite_start]**API Request:** The bot sends a JSON message to the `/play` endpoint containing a board position in **YEN notation**.
-2. **Authorization:** The Web App validates if the API key is valid.
-3. **Stateless Computation:** The Web App forwards the YEN data to the Rust Module.
-4. **Logic Return:** The Rust Module suggests the next movement based on the requested strategy and say it to the WebApp.
-5. **API Response:** The Web App returns the calculated movement directly to the bot in YEN format.
+1. **API Request:** The bot sends a GET request to the `/play` endpoint with the current board position encoded in **YEN notation**.
+2. **Request Parsing:** The GameY service parses the request parameters and validates the provided board state.
+3. **Move Computation:** The Rust game engine forwards the request to the selected bot strategy and computes the next move.
+4. **Game Update:** The updated board state is applied to the internal game model and converted back to YEN.
+5. **API Response:** The GameY service returns the resulting board state to the bot in YEN format.
