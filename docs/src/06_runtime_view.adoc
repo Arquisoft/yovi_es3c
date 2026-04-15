@@ -20,7 +20,7 @@ In practice, the system supports three core user interactions: account registrat
 
 The second use case focuses on how an external bot interacts with the system through the public `/play` endpoint, which is a core requirement for interoperability.
 
-image::Bot_use_case.drawio.svg[User Interaction Sequence]
+image::06_Bot_use_case_diagram.png[Bot Interaction Sequence]
 
 1. **API Request:** The bot sends a GET request to the `/play` endpoint with the current board position encoded in **YEN notation**.
 2. **Request Parsing:** The GameY service parses the request parameters and validates the provided board state.
