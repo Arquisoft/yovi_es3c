@@ -2,88 +2,25 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-context-and-scope]]
 == Context and Scope
-
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-Context and scope - as the name suggests - delimits your system (i.e. your scope) from all its communication partners
-(neighboring systems and users, i.e. the context of your system). It thereby specifies the external interfaces.
-
-If necessary, differentiate the business context (domain specific inputs and outputs) from the technical context (channels, protocols, hardware).
-
-.Motivation
-The domain interfaces and technical interfaces to communication partners are among your system's most critical aspects. Make sure that you completely understand them.
-
-.Form
-Various options:
-
-* Context diagrams
-* Lists of communication partners and their interfaces.
-
-
-.Further Information
-
-See https://docs.arc42.org/section-3/[Context and Scope] in the arc42 documentation.
-
-****
-endif::arc42help[]
-
 === Business Context
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-Specification of *all* communication partners (users, IT-systems, ...) with explanations of domain specific inputs and outputs or interfaces.
-Optionally you can add domain specific formats or communication protocols.
-
-.Motivation
-All stakeholders should understand which data are exchanged with the environment of the system.
-
-.Form
-All kinds of diagrams that show the system as a black box and specify the domain interfaces to communication partners.
-
-Alternatively (or additionally) you can use a table.
-The title of the table is the name of your system, the three columns contain the name of the communication partner, the inputs, and the outputs.
-
-****
-endif::arc42help[]
 
 image::03_Businessdrawio.png["Business Context Diagram",width=600]
 
-* YOVI is a web platform that allows human users and bots to play the game Y.
-* Human users interact with the system through the YOVI WebApp via a browser, configuring their game in `/dashboard` and accessing the game through the `/game` route.
-* External bots interact directly with the system via the public `GET /play` endpoint.
-* The YOVI WebApp communicates with the User Service for authentication (login and sign up) and with Game Y to request the next move during a game.
-* Game Y (Gamey) is implemented in Rust and is responsible for validating game states and calculating the next move using YEN notation.
+* YOVI is a web platform that allows human users and bots to play the Y game.
+* Human users interact with the system through the YOVI WebApp in a browser, using routes such as `/login`, `/register`, `/dashboard`, `/game`, and `/ranking`.
+* External bots interact with the game engine through the public `GET /play` endpoint exposed by GameY.
+* The YOVI WebApp communicates with the User Service for authentication, token validation, and user statistics, and with GameY to request the next move during a game.
+* GameY is implemented in Rust and is responsible for validating game states, checking win conditions, and selecting the next move using YEN notation.
 * MongoDB is used by the User Service to store persistent user data.
 
 
 === Technical Context
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-Technical interfaces (channels and transmission media) linking your system to its environment. In addition a mapping of domain specific input/output to the channels, i.e. an explanation which I/O uses which channel.
-
-.Motivation
-Many stakeholders make architectural decision based on the technical interfaces between the system and its context. Especially infrastructure or hardware designers decide these technical interfaces.
-
-.Form
-E.g. UML deployment diagram describing channels to neighboring systems,
-together with a mapping table showing the relationships between channels and input/output.
-
-****
-endif::arc42help[]
-
 image::03_TechnicalContextdrawio.png["Technical Context Diagram",width=600]
 
-* YOVI Web Application: the module responsible for user and bot interaction. It acts as the system's main interface, coordinating requests to internal services. It is implemented in TypeScript.
-* User service: internal service responsible for user management.
-* Game Y: a specialized service that implements all the logic of the game Y. It handles validating game states, checking for a winner, and suggesting the next move. It exposes a basic web service that receives and returns data in JSON format using YEN notation.
-* MongoDB: database used by the User Service and internal services to store persistent information.
+* YOVI Web Application: the main user interface of the system. It is implemented as a React application with TypeScript and communicates with the backend services over HTTP.
+* User Service: internal service responsible for registration, login, token validation, and player statistics. It exposes a REST API and persists data in MongoDB.
+* GameY: a Rust service that implements the game logic for Y. It validates game states, checks for a winner, and suggests the next move. It exposes HTTP endpoints that exchange JSON data encoded with YEN notation.
+* MongoDB: database used by the User Service to store persistent user information.
 
 
