@@ -16,15 +16,15 @@ The following sections describe each of these categories in detail.
 
 === Domain Concepts
 
-The domain of the YOVI platform is centered around the representation and management of games based on the Y game family. To support both human players and automated agents, the system defines several core concepts that structure how matches are created, played, validated, and interpreted.
+The YOVI platform domain is centered on representing and processing matches of the game of Y. To support both human players and automated agents, the system defines core concepts that structure how matches are created, played, validated, and interpreted.
 
-* **User**: Represents a human player interacting with the Web application. A user can start new games, make moves, and access game-related information. 
+* **User**: Represents a human player interacting with the web application. A user can register, log in, play matches, and view personal statistics and ranking information.
 
-* **Game**: A game models an active or completed match of a Y‑based game. It includes the current board state, the sequence of moves, and the rules that determine valid actions. The Web application manages game creation, updates, and persistence, while delegating rule validation to the Rust module.
+* **Game State**: A game models an active or completed match of Y. It includes board size, turn, players, and board layout. The board state is represented in YEN and processed by the Rust engine for validation and move computation.
 
-* **YEN Notation**: The platform uses the YEN notation to encode game states and moves in JSON format. This notation provides a standardized way to represent a match, ensuring that both the Web application and the Rust module interpret the game consistently. 
+* **YEN Notation**: The platform uses YEN notation to encode game states in JSON-like format. This provides a shared contract between frontend integrations and the Rust game logic.
 
-* **Bot Interaction Entities**: The Web application exposes an external API that allows bots to participate in games. Bots receive the current game state and respond with their chosen move.
+* **Bot Interaction**: External bots interact with the public `/play` endpoint exposed by GameY. They submit a board position and receive an updated position containing the selected move.
 
 * **Rule Evaluation and Move Suggestion (Rust Module)**: The Rust subsystem encapsulates the logic for determining whether a game has been won and for suggesting the next optimal move. 
 
@@ -32,41 +32,51 @@ Together, these domain concepts define the core structure of the YOVI ecosystem.
 
 === User Experience (UX)
 
-The user experience design for the YOVI Web application is still in progress.
+The user experience of the YOVI web application is focused on a simple gameplay flow:
+
+* Public access to registration and login routes.
+* Clear navigation to dashboard, game, and ranking views.
+* Immediate visual feedback during match setup and gameplay.
+* Access to user performance indicators through statistics and ranking pages.
 
 === Safety and security concepts
 
-Although the system is still under development, several security considerations have already been identified to ensure that both the web application and the Rust module operate in a controlled and reliable environment.
+Several security mechanisms are already implemented to keep the platform controlled and reliable.
 
-* **Restricted Access to Game Features**
-Only authenticated users will be able to start or participate in games. This prevents unauthorized access to the platform and reduces the risk of misuse of the public API.
+* **JWT-based Authentication and Authorization**
+The users service issues JWTs on successful login and validates them in protected endpoints using middleware.
 
-* **Protection of User Credentials**
-User passwords will be stored using secure methods to prevent the exposure of credentials in the event of a breach.
+* **Credential Protection**
+User passwords are hashed with bcrypt before being stored.
 
-* **Error Handling Without Confidential Information**
-Error messages returned by the web application or the Rust service will prevent the exposure of internal data. This reduces the risk of information leaks that could be exploited by attackers.
+* **Input Validation and Sanitization**
+User-related inputs are sanitized in the users service, and invalid requests are rejected with explicit HTTP status codes.
+
+* **Controlled Error Responses**
+Service responses return concise error messages and avoid exposing internal implementation details.
 
 These measures lay the foundation for a secure environment in which both human players and automated agents can safely interact with the YOVI platform.
 
 === Architecture and Design Patterns
 
-The YOVI platform architecture is based on a modular design that separates responsibilities between the web application and the Rust service.
+The YOVI platform architecture follows modular service separation across frontend, user management, and game logic.
 
 * **Architecture**
 
-- The web application, implemented in TypeScript, manages users, game sessions, and the external API for bots.
+- The web application, implemented in TypeScript with React, handles user interaction and client-side orchestration.
 
-- The Rust module acts as a specialized service responsible for validating game states and suggesting moves.
+- The users service, implemented in Node.js and Express, handles authentication and player statistics persistence.
+
+- The Rust GameY service acts as a specialized component for rule validation and move computation.
 
 This separation allows each subsystem to evolve independently, maintaining a clear contract through JSON-based communication.
 
 * **API-Based Design**
 
-Both human players and bots interact with the system through well-defined APIs.
+Human users and bots interact through explicit HTTP endpoints (`/login`, `/createuser`, stats endpoints, and `/play`).
 
 * **Communication via JSON (YEN notation)**
-All game information is encoded using YEN notation, which provides a standardized and technology-independent representation of game states.
+Game-state exchange uses YEN notation to provide a standardized, technology-independent representation.
 
 These architectural principles provide a solid foundation for the YOVI platform, ensuring that the system remains flexible, scalable, and easily evolves as new game variants or features are introduced.
 
@@ -76,63 +86,9 @@ These architectural principles provide a solid foundation for the YOVI platform,
 
 The development process of the YOVI platform follows a set of practices intended to ensure code quality and smooth collaboration among team members.
 
-* **Testing Strategy**  
-  The project includes automated tests at different levels.
+* **Testing Strategy**
+The project includes automated tests at different levels: unit and service tests in Node.js, component and E2E tests in the web application, and Rust tests for the game engine.
 
-* **Continuous Integration and Continuous Deployment (CI/CD)**  
-  The codebase is maintained under a continuous integration workflow. Team members commit changes frequently, allowing automated pipelines to run tests and detect issues early.
-
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Content
-This section describes overall, principal regulations and solution ideas that are relevant in multiple parts (= cross-cutting) of your system.
-Such concepts are often related to multiple building blocks.
-They can include many different topics, such as
-
-* models, especially domain models
-* architecture or design patterns
-* rules for using specific technology
-* principal, often technical decisions of an overarching (= cross-cutting) nature
-* implementation rules
-
-
-.Motivation
-Concepts form the basis for _conceptual integrity_ (consistency, homogeneity) of the architecture. 
-Thus, they are an important contribution to achieve inner qualities of your system.
-
-Some of these concepts cannot be assigned to individual building blocks, e.g. security or safety. 
-
-
-.Form
-The form can be varied:
-
-* concept papers with any kind of structure
-* cross-cutting model excerpts or scenarios using notations of the architecture views
-* sample implementations, especially for technical concepts
-* reference to typical usage of standard frameworks (e.g. using Hibernate for object/relational mapping)
-
-.Structure
-A potential (but not mandatory) structure for this section could be:
-
-* Domain concepts
-* User Experience concepts (UX)
-* Safety and security concepts
-* Architecture and design patterns
-* "Under-the-hood"
-* development concepts
-* operational concepts
-
-Note: it might be difficult to assign individual concepts to one specific topic
-on this list.
-
-image::08-concepts-EN.drawio.png["Possible topics for crosscutting concepts"]
-
-
-.Further Information
-
-See https://docs.arc42.org/section-8/[Concepts] in the arc42 documentation.
-****
-endif::arc42help[]
+* **Continuous Integration and Delivery**
+GitHub Actions workflows run builds, tests, coverage analysis, and SonarCloud quality checks. On release, container images are published and deployment is automated via SSH and Docker Compose.
 
