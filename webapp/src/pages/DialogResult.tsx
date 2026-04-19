@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react';
 import { getGlobalRanking } from '../services/rankingService';
 import type { PlayerStats } from '../services/rankingService';
 
-interface DialogResultProps {
+export interface DialogResultProps {
     loggedIn: boolean;
     won: boolean;
     newRecord: boolean;
