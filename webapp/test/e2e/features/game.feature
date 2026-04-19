@@ -13,6 +13,13 @@ Feature: Game
     And realiza movimientos hasta perder la partida
     Then debería ver el mensaje "¡Has perdido!" en el resumen
 
+  Scenario: El usuario colapsa el resumen de la partida
+    Given el usuario ha terminado una partida
+    When pulsa sobre el boton del desplegable
+    Then el resumen colapsa
+    When pulsa sobre el boton del desplegable
+    Then el resumen se expande
+
   Scenario: El usuario juega de nuevo tras una partida
     Given el usuario ha terminado una partida
     When pulsa jugar de nuevo

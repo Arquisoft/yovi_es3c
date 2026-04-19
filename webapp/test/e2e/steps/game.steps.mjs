@@ -102,7 +102,6 @@ Then('debería ver el mensaje {string} en el resumen', async function (mensaje) 
 });
 
 
-
 When('pulsa jugar de nuevo', async function () {
     await this.page.click('button:has-text("Jugar de nuevo")');
 });
@@ -119,4 +118,18 @@ Then('debería volver a empezar una nueva partida', async function () {
 
 Then('debería volver a la pantalla de configuración', async function () {
     await this.page.waitForSelector('.game-setup-form');
+});
+
+When('pulsa sobre el boton del desplegable', async function() {
+    await this.page.click('button:has-text("Resultados de la partida")');
+});
+
+Then('el resumen colapsa', async function(){
+    const visible = await this.page.isVisible('.collapsible-dialog__content');
+    assert.strictEqual(visible, false, 'El resumen deberia estar colapsado');
+});
+
+Then('el resumen se expande', async function(){
+    const visible = await this.page.isVisible('.collapsible-dialog__content');
+    assert.strictEqual(visible, true, 'El resumen deberia ser visible');
 });
