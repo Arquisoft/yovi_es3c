@@ -1,19 +1,67 @@
 openapi: 3.0.0
 info:
-  title: User Service & Gamey Bot API
+  title: Yovi es3c API
   version: 1.0.0
-  description: API for managing users with MongoDB and bot movement selection for YEN (YOVI).
+  description: API for managing users and bot movement selection for YEN (YOVI).
 
 servers:
+  - url: http://localhost:3000
+    description: Development - User Service
   - url: http://localhost:4000
-    description: Development server
-  - url: http://20.199.40.219
-    description: Production server
+    description: Development - Gamey Bot API
+  - url: http://20.199.40.219:3000
+    description: Production - User Service
+  - url: http://20.199.40.219:4000
+    description: Production - Gamey Bot API
 
 paths:
+  /login:
+    post:
+      tags:
+        - User Service
+      summary: Authenticate a user
+      description: Authenticates a user with username and password. Returns JWT token and user data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: "testuser"
+                password:
+                  type: string
+                  example: "mysecurepass"
+      responses:
+        '200':
+          description: User authenticated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token for authentication
+                  username:
+                    type: string
+                  userId:
+                    type: string
+        '401':
+          description: Unauthorized (invalid credentials)
+        '400':
+          description: Bad request (missing fields)
+
   /createuser:
     post:
-      summary: Creates a new user
+      tags:
+        - User Service
+      summary: Create a new user
       description: Stores a new user in MongoDB Atlas.
       requestBody:
         required: true
@@ -45,16 +93,202 @@ paths:
                 properties:
                   message:
                     type: string
+                  token:
+                    type: string
+                    description: JWT token for authentication
                   username:
+                    type: string
+                  userId:
                     type: string
         '400':
           description: Validation error (missing fields or password mismatch)
         '409':
           description: Conflict (Username already exists)
 
+  /validate:
+    get:
+      tags:
+        - User Service
+      summary: Validate JWT token
+      description: Validates a JWT token and returns user information if valid. Requires authentication.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Token is valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  userId:
+                    type: string
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized (invalid or missing token)
+        '403':
+          description: Forbidden (expired token)
+
+  /getuserstats/{username}:
+    get:
+      tags:
+        - User Service
+      summary: Get user statistics
+      description: Retrieves statistics of a user including total games, wins, losses, and score. Requires authentication.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: Username of the player
+          schema:
+            type: string
+            example: "testuser"
+      responses:
+        '200':
+          description: User statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  totalGames:
+                    type: integer
+                  wins:
+                    type: integer
+                  losses:
+                    type: integer
+                  score:
+                    type: number
+        '401':
+          description: Unauthorized (invalid or missing token)
+        '404':
+          description: User not found
+
+  /getuserscore/{username}:
+    get:
+      tags:
+        - User Service
+      summary: Get maximum user score
+      description: Retrieves the maximum score of a user. Requires authentication.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: Username of the player
+          schema:
+            type: string
+            example: "testuser"
+      responses:
+        '200':
+          description: User maximum score retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  maxScore:
+                    type: number
+        '401':
+          description: Unauthorized (invalid or missing token)
+        '404':
+          description: User not found
+
+  /updateuserstats:
+    post:
+      tags:
+        - User Service
+      summary: Update user statistics
+      description: Updates user statistics after a game (username, result, score). Requires authentication.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - result
+                - score
+              properties:
+                username:
+                  type: string
+                  example: "testuser"
+                result:
+                  type: string
+                  enum: ["win", "loss"]
+                  description: Game result
+                score:
+                  type: number
+                  example: 150
+      responses:
+        '200':
+          description: User statistics updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  stats:
+                    type: object
+        '400':
+          description: Bad request (missing or invalid fields)
+        '401':
+          description: Unauthorized (invalid or missing token)
+        '404':
+          description: User not found
+
+  /ranking:
+    get:
+      tags:
+        - User Service
+      summary: Get player ranking
+      description: Returns the ranking of players ordered by wins (descending). Only includes players with at least one game. Requires authentication.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Player ranking retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    wins:
+                      type: integer
+                    losses:
+                      type: integer
+                    totalGames:
+                      type: integer
+                    score:
+                      type: number
+        '401':
+          description: Unauthorized (invalid or missing token)
+
   /play:
     get:
-      summary: Requests the next move given the current board state in YEN notation.
+      tags:
+        - Gamey Bot API
+      summary: Request the next move from a bot
+      description: Requests the next move given the current board state in YEN notation.
       parameters:
         - name: position
           in: query
@@ -70,6 +304,12 @@ paths:
           schema:
             type: string
             default: montecarlo_bot
+            enum:
+              - random_bot
+              - heuristic_bot
+              - defensive_bot
+              - montecarlo_bot
+              - shortest_path_bot
         - name: api_version
           in: query
           required: false
@@ -131,3 +371,197 @@ paths:
                   message:
                     type: string
                     description: Description of the error.
+
+  /{api_version}/ybot/choose/{bot_id}:
+    post:
+      tags:
+        - Gamey Bot API
+      summary: Request a move from a specific bot
+      description: Returns the coordinates of the move chosen by a specific bot for a given game position (YEN format).
+      parameters:
+        - name: api_version
+          in: path
+          required: true
+          description: API version (e.g., v1)
+          schema:
+            type: string
+            example: v1
+        - name: bot_id
+          in: path
+          required: true
+          description: Identifier of the bot that should choose the move
+          schema:
+            type: string
+            enum:
+              - random_bot
+              - heuristic_bot
+              - defensive_bot
+              - montecarlo_bot
+              - shortest_path_bot
+            example: montecarlo_bot
+      requestBody:
+        required: true
+        description: Current board state in YEN notation
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - size
+                - turn
+                - players
+                - layout
+              properties:
+                size:
+                  type: integer
+                  description: Board size (side of the triangle)
+                  example: 3
+                turn:
+                  type: integer
+                  description: Index of the player whose turn it is (0 or 1)
+                  example: 0
+                players:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of characters representing each player
+                  example: ["B", "R"]
+                layout:
+                  type: string
+                  description: Compact board representation. Rows separated by /, with player symbols or . for empty cells
+                  example: "B/BR/.R."
+      responses:
+        '200':
+          description: Move coordinates calculated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  api_version:
+                    type: string
+                    example: v1
+                  bot_id:
+                    type: string
+                    example: montecarlo_bot
+                  coords:
+                    type: object
+                    description: Barycentric coordinates of the chosen move
+                    properties:
+                      x:
+                        type: integer
+                        example: 1
+                      y:
+                        type: integer
+                        example: 2
+                      z:
+                        type: integer
+                        example: 0
+        '400':
+          description: Invalid request or bot error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  api_version:
+                    type: string
+                  bot_id:
+                    type: string
+                  message:
+                    type: string
+                    description: Error details (invalid YEN format, bot not found, no valid moves, etc.)
+
+  /{api_version}/ybot/check:
+    post:
+      tags:
+        - Gamey Bot API
+      summary: Validate and check game status
+      description: Validates a game state and returns its current status (ongoing or finished). If finished, returns the winner index.
+      parameters:
+        - name: api_version
+          in: path
+          required: true
+          description: API version (e.g., v1)
+          schema:
+            type: string
+            example: v1
+      requestBody:
+        required: true
+        description: Current board state in YEN notation
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - size
+                - turn
+                - players
+                - layout
+              properties:
+                size:
+                  type: integer
+                  description: Board size (side of the triangle)
+                  example: 3
+                turn:
+                  type: integer
+                  description: Index of the player whose turn it is (0 or 1)
+                  example: 0
+                players:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of characters representing each player
+                  example: ["B", "R"]
+                layout:
+                  type: string
+                  description: Compact board representation. Rows separated by /, with player symbols or . for empty cells
+                  example: "B/BR/.R."
+      responses:
+        '200':
+          description: Game status determined successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  api_version:
+                    type: string
+                    example: v1
+                  status:
+                    type: string
+                    enum:
+                      - ongoing
+                      - finished
+                    description: Current game status
+                  winner:
+                    type: integer
+                    nullable: true
+                    description: Index of the winning player (null if game is ongoing)
+                    example: null
+        '400':
+          description: Invalid request or game validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  api_version:
+                    type: string
+                  message:
+                    type: string
+                    description: Error details (invalid YEN format, invalid API version, etc.)
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from /login or /createuser endpoints
+
+tags:
+  - name: User Service
+    description: Endpoints for user management, authentication, and statistics
+  - name: Gamey Bot API
+    description: Endpoints for game bot movement selection and game logic
