@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateUserStats } from '../services/gameService';
 import { getUserScore } from '../services/gameService';
-import { BOTS, getTimeLimitForBot } from '../config/botsConfig';
+import { BOTS, getTimeLimitForBot, getDifficultyForBot } from '../config/botsConfig';
 import './Game.css';
 import CollapsibleDialog from './CollapsibleDialog';
 import {useNavigate} from 'react-router-dom';
@@ -17,11 +17,18 @@ function Game() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
-  const { size, botId } = location.state || { size: 12, botId: "heuristic_bot" };
+  const { size, botId, difficulty } = location.state || { size: 12, botId: "heuristic_bot", difficulty: undefined };
+  const selectedDifficulty = difficulty ?? getDifficultyForBot(botId);
+  const INITIAL_SCORE_BY_DIFFICULTY: Record<string, number> = {
+    facil: 4000,
+    media: 6000,
+    dificil: 10000,
+  };
+  const initialScore = INITIAL_SCORE_BY_DIFFICULTY[selectedDifficulty] ?? 6000;
   // useRef es un hook que sirve para mantener referencia a un componente y poder llamar a sus métodos.
   const gameBoardRef = useRef<GameBoardHandle>(null);
 
-  const [playerScore, setPlayerScore] = useState(10000);
+  const [playerScore, setPlayerScore] = useState(initialScore);
   const [gameOver, setGameOver] = useState(false);
   const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
   const [moveCount, setMoveCount] = useState(0);
