@@ -27,7 +27,6 @@ function Game() {
   const [moveCount, setMoveCount] = useState(0);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [turnTimeLimit] = useState(getTimeLimitForBot(botId));
-  //const dialogRef = useRef<HTMLDialogElement>(null);
 
   // Devuelve el tiempo de la partida en un formato mm:ss
   const timeFormat = (ms: number): string => {
@@ -106,17 +105,7 @@ function Game() {
         }}
         />
     );
-    /** 
-     * 
-    if(!dialogRef.current){
-      return;
-    }
-
-    dialogRef.current.hasAttribute("open") 
-      ? dialogRef.current.close() 
-      : dialogRef.current.showModal();
-     * 
-    */
+   
   }
 
   const displayBotName = BOTS[botId] || botId;
@@ -132,7 +121,6 @@ function Game() {
   return (
     <div className="game-container">
 
-      {/* <dialog ref={dialogRef} className="game-dialog-overlay">{dialogContent}</dialog> */}
       {dialogContent}
       <div className="game-content">
 

@@ -9,14 +9,14 @@ const CollapsibleDialog = (props: DialogResultProps) => {
   return (
   <div className={`collapsible-dialog-wrapper ${isCollapsed ? 'collapsible-dialog-wrapper--collapsed' : ''}`}>
     <div className="collapsible-dialog">
-      <div className="collapsible-dialog__bar" onClick={() => setIsCollapsed(v => !v)}>
+      <button className="collapsible-dialog__bar" onClick={() => setIsCollapsed(v => !v)} aria-expanded={!isCollapsed}>
         <span className="collapsible-dialog__bar-label">
           {'Resultados de la partida'}
         </span>
         <span className="collapsible-dialog__bar-chevron">
           {isCollapsed ? '▲' : '▼'}
         </span>
-      </div>
+      </button>
 
       {!isCollapsed && (
         <div className="collapsible-dialog__content">
