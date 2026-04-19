@@ -1,0 +1,68 @@
+.collapsible-dialog-wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  background: rgba(36, 99, 235, 0.18);
+  backdrop-filter: blur(4px);
+}
+
+.collapsible-dialog-wrapper--collapsed {
+  inset: auto;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: none;
+  backdrop-filter: none;
+}
+
+.collapsible-dialog {
+  width: 92vw;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 8px 48px rgba(35, 41, 70, 0.22);
+  overflow: hidden;
+}
+
+.collapsible-dialog-wrapper--collapsed .collapsible-dialog {
+  border-radius: 16px 16px 0 0;
+  width: 92vw;
+  max-width: 480px;
+}
+
+.collapsible-dialog__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  cursor: pointer;
+  border-bottom: 2px solid #e0e7ff;
+  user-select: none;
+}
+
+.collapsible-dialog__bar:hover {
+  background: #f5f3ff;
+}
+
+.collapsible-dialog__bar-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #232946;
+}
+
+.collapsible-dialog__bar-score {
+  color: #4f46e5;
+}
+
+.collapsible-dialog__bar-chevron {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.collapsible-dialog__content {
+  max-height: 85vh;
+  overflow-y: auto;
+}
