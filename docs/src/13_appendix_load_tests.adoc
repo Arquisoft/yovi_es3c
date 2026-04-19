@@ -3,19 +3,6 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-load-tests]]
 == Load Tests
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-
-.Form
-
-
-.Further Information
-
-****
-endif::arc42help[]
-
 === The Cases
 Our load tests were focused on the playable aspect of the application, mainly to test the capabilities of the bots the users will play against. 
 

@@ -15,37 +15,40 @@ image::05_diagram1.svg[User Interaction Sequence]
 
 Motivation::
 
-The Yovi system is web application that lets users play 'The game of Y'. The architecture of the project has been designed following a clear separation between presentation, application logic, game logic and data persistence. With this clear separation we improve maintanability, scalability and testability of the system.
+The Yovi system is a web application that lets users play the game of Y. The project architecture follows a clear separation between presentation, application logic, game logic, persistence, and observability. This separation improves maintainability, scalability, and testability.
 
 
 Contained Building Blocks::
 [cols="1,2" options="header"]
 |===
 | **Name** | **Responsibility**
-| Web Frontend | Implemented using React and TypeScript, provides a responsive and easy user interface that allows players to play the game, save your score and perform moves in real time.
-| Backend | Using Node.js and Express, managing user requests and game sessions, validates actions and coordinates communication between the frontend, the game logic server and the database.
-| Game server | Implemented in Rust, encapsulates the core logic of the 'Game of Y', including validation, game state management and win condition detection.
-| Database | MongoDB was chosen as the persistence layer as it provides flexibility and scalability for managing structured data.
+| Web Frontend | Implemented with React and TypeScript. It provides the user interface for login, registration, the dashboard, the game view, and the ranking page.
+| Users Service | Implemented with Node.js and Express. It manages user registration, login, token validation, and player statistics, and persists data in MongoDB.
+| Game Engine | Implemented in Rust. It contains the core logic of the game of Y, including move validation, game state management, win-condition detection, and bot move selection.
+| MongoDB | Persistence layer used to store user accounts and player statistics.
+| Monitoring Stack | Prometheus and Grafana provide metrics collection and visualization for the deployed services.
 |===
 
 === Level 2 - Container View
 
-This level illustrates the structural decomposition of the system into its three primary services, as established in the project architecture.
+This level illustrates the structural decomposition of the system into the main runtime services and support containers used in the project.
 
 ==== White Box 
 
 image::05_diagram2.svg[System behaviour]
 
 Motivation:: 
-The system uses a modular architecture for separating the user interface and services with the game logic service.
+The system uses a modular architecture to separate the user interface, the user service, the game engine, and the monitoring infrastructure.
 
 Contained Building Blocks::
 [cols="1,2" options="header"]
 |===
 | **Name** | **Responsibility**
-| WebApp | Delivers the graphical user interface and communicates with backend services to handle user actions and requests. Located in `/webapp` directory. 
-| Users Service | Manages user registration and stores user information. Located in `/users` directory.
-| Game Engine | Implements the core mechanics of the Game of Y, handling move validation and AI strategies, leveraging Rust for high performance. Located in `/gamey`.
-| MongoDB | Database used to store the user data and game information and history.
+| WebApp | Delivers the graphical user interface and communicates with the backend services to handle user actions and requests. Located in the /webapp directory.
+| Users Service | Manages user registration, login, token validation, and player statistics. Located in the /users directory.
+| Game Engine | Implements the core mechanics of the game of Y, handling move validation and bot move selection. Located in the /gamey directory.
+| MongoDB | Database used to store user data and player statistics.
+| Prometheus | Collects metrics from the running services.
+| Grafana | Visualizes service metrics and dashboards.
 |===
 
