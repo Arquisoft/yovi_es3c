@@ -1,5 +1,10 @@
 # Yovi_es3c - Game Y at UniOvi
 
+<p align="center">
+  <a href="#yovi_es3c---game-y-at-uniovi">README</a> |
+  <a href="#license">License</a>
+</p>
+
 <div align="center">
   <img src="webapp/src/assets/YoviLogo300.png" alt="Yovi Logo" width="300">
 </div>
@@ -210,3 +215,10 @@ Each component has its own set of scripts defined in its `package.json`. Here ar
 - `cargo run`: Runs the gamey application.
 - `cargo run -- --mode server --port 4000`: Runs the gamey bot server at the port 4000 
 - `cargo doc`: Generates documentation for the GameY engine application
+
+## License
+
+This repository is licensed under the GNU General Public License v3.0 or later.
+The `gamey/` subproject keeps its original MIT license because it comes from the professor's fork of the initial project.
+
+You can read the full text in the root [LICENSE](LICENSE) file.

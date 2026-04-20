@@ -9,7 +9,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "author": "",
-  "license": "ISC",
+  "license": "GPL-3.0-or-later",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.3.1",

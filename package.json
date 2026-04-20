@@ -1,4 +1,5 @@
 {
+  "license": "GPL-3.0-or-later",
   "devDependencies": {
     "@types/react": "^19.2.14"
   },
