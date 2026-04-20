@@ -113,7 +113,11 @@ When('pulsa volver al inicio', async function () {
 Then('debería volver a empezar una nueva partida', async function () {
     await this.page.waitForSelector('.game-board');
     const texto = await this.page.textContent('.player-info');
-    assert.ok(texto.includes('10000'), 'No se reinició la puntuación a 10000');
+    // La puntuación máxima varía según la dificultad: fácil=4000, media=6000, difícil=10000
+    const scoreMatch = texto.match(/(\d+)/);
+    assert.ok(scoreMatch, 'No se encontró la puntuación');
+    const score = parseInt(scoreMatch[1]);
+    assert.ok([4000, 6000, 10000].includes(score), `La puntuación ${score} no coincide con ninguna dificultad`);
 });
 
 Then('debería volver a la pantalla de configuración', async function () {
