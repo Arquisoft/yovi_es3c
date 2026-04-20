@@ -16,23 +16,6 @@
   gap: 10vw;
 }
 
-.help-nav-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: white;
-  text-decoration: none;
-  font-size: 1.5em;
-  font-weight: 500;
-  transition: color 0.3s ease;
-  padding: 8px 12px;
-  border-radius: 4px;
-}
-
-.help-nav-btn:hover {
-  color: #ffffff;
-  background-color: rgba(33, 150, 243, 0.1);
-}
 
 .header-container {
   margin: 0 auto;
@@ -71,6 +54,14 @@
   padding: 8px 12px;
   border-radius: 4px;
 }
+
+button.nav-link {
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
 
 .nav-link:hover {
   color: #ffffff;

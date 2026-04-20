@@ -31,7 +31,7 @@ export function Header() {
           }
 
           {isDashboard && (
-            <button className="help-nav-btn" onClick={() => setHelpOpen(true)}>Cómo jugar</button>
+            <button className="nav-link" onClick={() => setHelpOpen(true)}>Cómo jugar</button>
           )}
 
           {!user && 
