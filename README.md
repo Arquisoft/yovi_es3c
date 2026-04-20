@@ -218,7 +218,12 @@ Each component has its own set of scripts defined in its `package.json`. Here ar
 
 ## License
 
-This repository is licensed under the GNU General Public License v3.0 or later.
-The `gamey/` subproject keeps its original MIT license because it comes from the professor's fork of the initial project.
+This project uses two licenses:
 
-You can read the full text in the root [LICENSE](LICENSE) file.
+- Main repository: GNU GPL v3.0 or later.
+- gamey subproject: MIT (inherited from the original upstream fork).
+
+Full license texts:
+
+- GPLv3: [LICENSE](LICENSE)
+- MIT (gamey): [gamey/LICENSE](gamey/LICENSE)
