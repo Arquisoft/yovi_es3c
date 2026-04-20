@@ -55,22 +55,11 @@
   border-radius: 4px;
 }
 
-.help-nav-btn {
+button.nav-link {
   background: none;
   border: none;
+  font-family: inherit;
   cursor: pointer;
-  color: white;
-  text-decoration: none;
-  font-size: 1.5em;
-  font-weight: bold;
-  transition: color 0.3s ease;
-  padding: 8px 12px;
-  border-radius: 4px;
-}
-
-.help-nav-btn:hover {
-  color: #ffffff;
-  background-color: rgba(33, 150, 243, 0.1);
 }
 
 
