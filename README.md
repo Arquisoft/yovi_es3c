@@ -17,6 +17,8 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
+[![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](LICENSE)
+[![License: MIT (gamey)](https://img.shields.io/badge/License-gamey%20MIT-yellow.svg)](gamey/LICENSE)
 
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)
