@@ -79,30 +79,28 @@ paths:
             default: v1
       responses:
         '200':
-          description: Next move calculated successfully.
+          description: Next move coordinates calculated successfully.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  next_move:
+                  coords:
                     type: object
-                    description: Board state after the move, in YEN notation.
+                    description: The coordinates where the bot chooses to place its piece.
                     properties:
-                      size:
+                      x:
                         type: integer
-                        description: Board size.
-                      turn:
+                        description: X coordinate (distance from side A).
+                        example: 1
+                      y:
                         type: integer
-                        description: Index of the player whose turn it is.
-                      players:
-                        type: array
-                        items:
-                          type: string
-                        description: List of players (e.g. ["B", "R"]).
-                      layout:
-                        type: string
-                        description: Board representation after the move.
+                        description: Y coordinate (distance from side B).
+                        example: 1
+                      z:
+                        type: integer
+                        description: Z coordinate (distance from side C).
+                        example: 0
         '400':
           description: Error in parameter format or invalid position.
           content:
