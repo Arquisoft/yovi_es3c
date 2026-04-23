@@ -12,6 +12,8 @@ env:
   IMAGE_TAG: ${{ github.event.release.tag_name }}
   MONGO_URL: ${{ secrets.MONGO_URL }}
   JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  GRAFANA_ADMIN_USER: ${{ secrets.GRAFANA_ADMIN_USER }}
+  GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
 
 jobs:
   test-node:
@@ -165,5 +167,7 @@ jobs:
             wget https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ github.event.repository.name }}/master/docker-compose.yml -O docker-compose.yml
             echo "MONGO_URL=${{ secrets.MONGO_URL }}" > .env
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+            echo "GRAFANA_ADMIN_USER=${{ secrets.GRAFANA_ADMIN_USER }}" >> .env
+            echo "GRAFANA_ADMIN_PASSWORD=${{ secrets.GRAFANA_ADMIN_PASSWORD }}" >> .env
             docker compose down
             docker compose up -d --pull always

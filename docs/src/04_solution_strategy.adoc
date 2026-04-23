@@ -1,23 +1,23 @@
 [[section-solution-strategy]]
 == Solution Strategy
 
-The solution strategy for this project is built upon three main pillars: a decentralized microservices architecture, a containerized deployment pipeline, and a rigorous quality assurance process. By following these principles, we ensure that the system is scalable, easy to deploy, and maintainable.
+The solution strategy for this project is based on three main pillars: a small service-oriented architecture, containerized deployment, and automated quality assurance. These decisions keep the system simple to deploy, easy to evolve, and consistent across development and test environments.
 
 === Key Technology Decisions
 
-We have selected a modern tech stack that balances performance with developer productivity and code reliability.
+The selected technology stack balances performance, developer productivity, and code reliability.
 
 [cols="1,2" options="header"]
 |===
 | Technology | Rationale
-| **Rust & Cargo** | Powering the Game Engine. It provides low-level performance and memory safety, which is critical for real-time game calculations.
+| **Rust & Cargo** | Power the GameY engine. Rust provides performance and memory safety for the game logic and bot selection API.
 | **Node.js & Express** | Powering the User Service. Its non-blocking I/O model is ideal for handling multiple concurrent requests for user management and scores.
-| **Vite & React** | Powering the Webapp frontend. Chosen for its fast development cycle (HMR) and efficient rendering of the user interface.
+| **Vite & React** | Power the web application. Vite provides a fast development experience and React structures the UI as reusable components.
 | **MongoDB Atlas** | A cloud-based NoSQL database that offers high flexibility for our data models and eliminates the overhead of local database administration.
-| **Docker & Compose** | Used for containerization and service orchestration. It ensures that the application runs identically in development, testing, and production environments.
-| **GitHub Actions** | Our choice for CI/CD. It automates the building, testing, and pushing of Docker images to the registry on every code change.
-| **SonarCloud** | Utilized for continuous inspection of code quality. it performs static analysis to detect bugs, vulnerabilities, and code smells, while tracking code coverage.
-| **Prometheus & Grafana** | Integrated for system monitoring. These tools provide real-time visibility into the health and performance of our microservices.
+| **Docker & Docker Compose** | Package and orchestrate the services so they can be started with a single command.
+| **GitHub Actions** | Automates build and test workflows for the repository.
+| **SonarCloud** | Provides static analysis and code-quality tracking, including coverage reporting.
+| **Prometheus & Grafana** | Provide metrics collection and visualization for the deployed services.
 |===
 
 === Architectural Decisions

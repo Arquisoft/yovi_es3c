@@ -3,42 +3,9 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-design-decisions]]
 == Architecture Decisions
 
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-Important, expensive, large scale or risky architecture decisions including rationales.
-With "decisions" we mean selecting one alternative based on given criteria.
-
-Please use your judgement to decide whether an architectural decision should be documented
-here in this central section or whether you better document it locally
-(e.g. within the white box template of one building block).
-
-Avoid redundancy. 
-Refer to section 4, where you already captured the most important decisions of your architecture.
-
-.Motivation
-Stakeholders of your system should be able to comprehend and retrace your decisions.
-
-.Form
-Various options:
-
-* ADR (https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions[Documenting Architecture Decisions]) for every important decision
-* List or table, ordered by importance and consequences or:
-* more detailed in form of separate sections per decision
-
-.Further Information
-
-See https://docs.arc42.org/section-9/[Architecture Decisions] in the arc42 documentation.
-There you will find links and examples about ADR.
-
-****
-endif::arc42help[]
-
 The architectural decisions documented in this section complement the solution strategy described in Section 4. While the solution strategy outlines the main technologies and constraints inherited from the project skeleton, this section focuses on the reasoning behind the most relevant structural and organizational choices made during the early stages of the project.
 
-Since the system is still in an initial development phase, the decisions captured here may evolve as the project grows. Their purpose is to provide clarity, traceability, and a shared understanding of the architectural direction.
+Since the system is still in an early development phase, the decisions captured here may evolve as the project grows. Their purpose is to provide clarity, traceability, and a shared understanding of the architectural direction.
 
 === Use of technologies provided with the project skeleton
 
@@ -50,20 +17,17 @@ Adopt the technologies already provided by the skeleton as the baseline for all 
 
 ==== Rationale
 
-Ensures consistency with the course requirements.
-
-Reduces setup time and avoids unnecessary re‑evaluation of the technology stack.
-
-Allows the team to focus on architectural design rather than tool selection.
+* Ensures consistency with the course requirements.
+* Reduces setup time and avoids unnecessary re-evaluation of the technology stack.
+* Allows the team to focus on architectural design rather than tool selection.
 
 ==== Consequences
 
-Limits the freedom to choose alternative frameworks or languages.
+* Limits the freedom to choose alternative frameworks or languages.
+* Requires the team to adapt to the constraints imposed by the skeleton.
 
-Requires the team to adapt to the constraints imposed by the skeleton.
 
-
-=== Adoption of MongoDB as the project's database.
+=== Adoption of MongoDB as the project's database
 
 ==== Context  
 The project requires persistent storage for user login information and game scores.
@@ -73,17 +37,14 @@ Use MongoDB as the primary database for the system.
 
 ==== Rationale
 
-Easy to use and integrate with Node.js.
-
-Widely used among peers, facilitating knowledge sharing.
-
-Flexible schema suitable for early‑stage academic projects.
+* Easy to use and integrate with Node.js.
+* Widely used among peers, facilitating knowledge sharing.
+* Flexible schema suitable for early-stage academic projects.
 
 ==== Consequences
 
-Requires maintaining a separate database service in the deployment environment.
-
-May require schema validation mechanisms if the project grows in complexity.
+* Requires maintaining a separate database service in the deployment environment.
+* May require stronger schema-validation mechanisms if the project grows in complexity.
 
 === Service-oriented separation of responsibilities
 
@@ -95,15 +56,12 @@ Maintain a clear separation of concerns by treating each component as an indepen
 
 ==== Rationale
 
-Improves modularity and maintainability.
-
-Allows each component to evolve independently.
-
-Aligns with the educational goal of exposing students to distributed architectures.
+* Improves modularity and maintainability.
+* Allows each component to evolve independently.
+* Aligns with the educational goal of exposing students to distributed architectures.
 
 ==== Consequences
 
-Introduces the need for well‑defined communication interfaces.
-
-Increases operational complexity compared to a monolithic approach.
+* Introduces the need for well-defined communication interfaces.
+* Increases operational complexity compared to a monolithic approach.
 

@@ -13,11 +13,11 @@ image::10_diagram1.svg[Quality Requirements]
 |===
 |Scenario ID |Scenario Name |Source |Stimulus |Environment |Artifact |Response |Priority
 
-| SC-01 | Performance | User | Open or refresh the page | Normal operation | Frontend, Backend, Rust | The system analyzes the action and summarizes the page to its previous state in the shortest possible time. | Medium
+| SC-01 | Performance | User | Opens or refreshes the page | Normal operation | WebApp, Users Service, GameY | The system responds quickly, rendering the requested view and loading required data without noticeable delay for normal usage. | High
 
 | SC-02 | Security | User, cheater | Tries to hack the game to claim a victory without playing | Normal Operation | Backend | The server checks teh client's data and denies the request. | High
 
-| SC-03 | Usability | User | New user enters the game for the first time | Normal operation | Frontend | The system shows clear instructions, intuitive controls and visual feedback so the user can understand how to play without external help. | Medium
+| SC-03 | Usability | New user | Uses the application for the first time | Normal operation | WebApp | The interface provides clear navigation, readable labels, and immediate visual feedback so users can register, start a game, and understand results without external help. | Medium
 
-| SC-04 | Maintainability | developer | Request to fix a bug | Maintenance phase | Backend, Frontend, Rust | The system design allows the developer to locate the problem and apply the fix with minimal impact on other components. | Medium
+| SC-04 | Maintainability | Developer | A bug fix or feature change is requested | Maintenance phase | WebApp, Users Service, GameY | The modular structure and test suite allow developers to isolate the affected component, implement the change, and validate it with limited impact on other services. | High
 |===

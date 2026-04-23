@@ -3,27 +3,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-deployment-view]]
 == Deployment View
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Content
-The deployment view describes:
- 1. technical infrastructure used to execute your system, with infrastructure elements like geographical locations, environments, computers, processors, channels and net topologies as well as other infrastructure elements and
-2. mapping of (software) building blocks to that infrastructure elements.
-
-.Motivation
-Software does not run without hardware. This underlying infrastructure can and will influence a system and/or some cross-cutting concepts.
-****
-endif::arc42help[]
-
 === Infrastructure Level 1: Production Environment
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Describe distribution of a system to multiple locations, environments, computers, processors, physical connections, justifications, and mapping of software artifacts.
-****
-endif::arc42help[]
 
 image::07_deployment.png[Infrastructure Level 1 Overview]
 
@@ -48,18 +28,11 @@ Mapping of Building Blocks to Infrastructure::
 
 ---
 
-=== Infrastructure Level 2: Azure VM & Docker Network
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Here you can include the internal structure of infrastructure elements from level 1.
-****
-endif::arc42help[]
+=== Infrastructure Level 2: Application Host & Docker Network
 
 ==== Application Host (Ubuntu Linux on Azure)
 
-Inside the **Azure Virtual Machine**, all services are orchestrated via Docker Compose within a shared bridge network called `monitor-net`. This allows internal communication and metrics scraping using container names as DNS.
+Inside the application host, all services are orchestrated via Docker Compose within a shared bridge network called `monitor-net`. This allows internal communication and metrics scraping using container names as DNS.
 
 **Execution Environments & Artifacts:**
 
@@ -72,9 +45,9 @@ Inside the **Azure Virtual Machine**, all services are orchestrated via Docker C
 ==== Client Side (User Environment)
 
 The user's browser acts as the primary execution environment for the React application. 
-1. **Bootstrap:** The browser requests the static bundle from the Azure VM (Port 80).
+1. **Bootstrap:** The browser requests the static bundle from the Azure VM (port `80`).
 2. **Execution:** Once downloaded, the logic runs on the client's device.
-3. **Communication:** The client makes direct asynchronous REST calls to the `Users` (Port 3000) and `GameY` (Port 4000) containers hosted in Azure.
+3. **Communication:** The client makes asynchronous REST calls to the `Users Service` (port `3000`) and `GameY` (port `4000`).
 
 ==== Persistence (MongoDB Atlas)
 

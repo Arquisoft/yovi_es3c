@@ -62,7 +62,7 @@ When('selecciona la dificultad {string}, el bot {string} y el tamaño {string}',
     await page.click(`button:has-text("${bot}")`);
     const input = await page.$('input[type="range"]');
     if (input) await input.fill(tamano);
-    await page.click('button:has-text("Jugar")');
+    await page.click('.submit-game-btn');
     await page.waitForSelector('.game-board');
 });
 
@@ -87,7 +87,7 @@ Given('el usuario ha terminado una partida', async function () {
     await page.click('button:has-text("Aleatorio")');
     const input = await page.$('input[type="range"]');
     if (input) await input.fill('8');
-    await page.click('button:has-text("Jugar")');
+    await page.click('.submit-game-btn');
     await page.waitForSelector('.game-board');
     await playUntilEnd(page, 'montecarlo_bot', DIALOG_SELECTOR);
     await page.waitForSelector(DIALOG_SELECTOR, { timeout: 10000 });
@@ -102,7 +102,6 @@ Then('debería ver el mensaje {string} en el resumen', async function (mensaje) 
 });
 
 
-
 When('pulsa jugar de nuevo', async function () {
     await this.page.click('button:has-text("Jugar de nuevo")');
 });
@@ -114,9 +113,27 @@ When('pulsa volver al inicio', async function () {
 Then('debería volver a empezar una nueva partida', async function () {
     await this.page.waitForSelector('.game-board');
     const texto = await this.page.textContent('.player-info');
-    assert.ok(texto.includes('10000'), 'No se reinició la puntuación a 10000');
+    // La puntuación máxima varía según la dificultad: fácil=4000, media=6000, difícil=10000
+    const scoreMatch = texto.match(/(\d+)/);
+    assert.ok(scoreMatch, 'No se encontró la puntuación');
+    const score = parseInt(scoreMatch[1]);
+    assert.ok([4000, 6000, 10000].includes(score), `La puntuación ${score} no coincide con ninguna dificultad`);
 });
 
 Then('debería volver a la pantalla de configuración', async function () {
     await this.page.waitForSelector('.game-setup-form');
+});
+
+When('pulsa sobre el boton del desplegable', async function() {
+    await this.page.click('button:has-text("Resultados de la partida")');
+});
+
+Then('el resumen colapsa', async function(){
+    const visible = await this.page.isVisible('.collapsible-dialog__content');
+    assert.strictEqual(visible, false, 'El resumen deberia estar colapsado');
+});
+
+Then('el resumen se expande', async function(){
+    const visible = await this.page.isVisible('.collapsible-dialog__content');
+    assert.strictEqual(visible, true, 'El resumen deberia ser visible');
 });

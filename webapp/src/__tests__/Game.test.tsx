@@ -10,13 +10,17 @@ import * as userService from '../services/userService'
 
 // Mock de useNavigate
 const mockNavigate = vi.fn()
+const mockLocationState: { size: number; botId: string; difficulty?: string } = {
+    size: 11,
+    botId: 'random_bot',
+}
 
 vi.mock('react-router-dom', async() => {
     const actual = await vi.importActual('react-router-dom')
     return {
         ...actual,
         useLocation: () => ({
-            state: { size: 11, botId: 'random_bot'},
+            state: mockLocationState,
         }),
         useNavigate: () => mockNavigate,
     }
@@ -42,6 +46,11 @@ vi.mock('../config/botsConfig', () => ({
         shortest_path_bot: 'Dijkstra',
     },
     getTimeLimitForBot: vi.fn(() => 30),
+    getDifficultyForBot: vi.fn((botId: string) => {
+        if (botId === 'random_bot') return 'facil'
+        if (botId === 'heuristic_bot' || botId === 'defensive_bot') return 'media'
+        return 'dificil'
+    }),
 }))
 
 vi.mock('../pages/gui/GameBoard', () => ({
@@ -64,6 +73,9 @@ vi.mock('../pages/DialogResult', () => ({
 
 describe('Game Component', () => {
     beforeEach(() => {
+        mockLocationState.size = 11
+        mockLocationState.botId = 'random_bot'
+        delete mockLocationState.difficulty
         localStorage.setItem('user', JSON.stringify({username:'test1'}))
         localStorage.setItem('token', 'dummy-token')
         HTMLDialogElement.prototype.showModal = vi.fn()
@@ -140,7 +152,7 @@ describe('Game Component', () => {
             expect(gameService.updateUserStats).toHaveBeenCalledWith(
                 'test1',
                 true,
-                10000
+                4000
             )
         })
     })
@@ -173,9 +185,27 @@ describe('Game Component', () => {
         expect(screen.getByText('Invitado')).toBeInTheDocument()
     })
 
-    test('muestra la puntuación inicial de 10000', async () => {
+    test('muestra la puntuación inicial de 4000 para dificultad fácil', async () => {
+        await renderComponent()
+        expect(screen.getByText(/Puntuación: 4000/)).toBeInTheDocument()
+    })
+
+    test('usa 6000 cuando llega dificultad media', async () => {
+        mockLocationState.difficulty = 'media'
+        await renderComponent()
+        expect(screen.getByText(/Puntuación: 6000/)).toBeInTheDocument()
+    })
+
+    test('usa 10000 cuando llega dificultad difícil', async () => {
+        mockLocationState.difficulty = 'dificil'
         await renderComponent()
         expect(screen.getByText(/Puntuación: 10000/)).toBeInTheDocument()
+    })
+
+    test('usa dificultad del bot si no llega dificultad', async () => {
+        mockLocationState.botId = 'heuristic_bot'
+        await renderComponent()
+        expect(screen.getByText(/Puntuación: 6000/)).toBeInTheDocument()
     })
 
     test('muestra el contador de movimientos inicial en 0', async () => {

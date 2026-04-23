@@ -18,14 +18,6 @@ export function Header() {
       <div className="header-container">
         <div className="header-left">
           <img src={logo} alt="YoviLogo" />
-          
-          {user && 
-            (
-              <div className='nav-account'>
-                <p className='nav-link'>{user.username}</p>
-              </div>
-            )
-          }
         </div>
         
         <nav className="header-nav">
@@ -39,7 +31,7 @@ export function Header() {
           }
 
           {isDashboard && (
-            <button className="help-nav-btn" onClick={() => setHelpOpen(true)}>Cómo jugar</button>
+            <button className="nav-link" onClick={() => setHelpOpen(true)}>Cómo jugar</button>
           )}
 
           {!user && 
@@ -54,6 +46,7 @@ export function Header() {
           {user && 
             (
               <div className='nav-account'>
+                <p>{user.username}</p>
                 <Link to="/login" className="nav-link logout" onClick={(e) => { e.preventDefault(); logout(); }}>Cerrar sesión</Link>
               </div>
             )
