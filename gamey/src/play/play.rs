@@ -4,15 +4,11 @@ use axum::{
     extract::{State, Query},
 };
 use serde::{Deserialize, Serialize};
-use reqwest::Client;
-use std::env;
 use json5;
 use crate::{
     YEN,
     GameY,
-    Movement,
-    PlayerId,
-    MoveResponse,
+    Coordinates,
     ErrorResponse,
     state::AppState,
 };
@@ -36,11 +32,11 @@ fn default_bot_id() -> String {
 
 #[derive(Serialize)]
 pub struct PlayResponse {
-    next_move: YEN,
+    coords: Coordinates,
 }
 
 pub async fn play_handler(
-    State(_state): State<AppState>,
+    State(state): State<AppState>,
     Query(body): Query<PlayRequest>,
 ) -> Result<Json<PlayResponse>, Json<ErrorResponse>> {
 
@@ -52,7 +48,7 @@ pub async fn play_handler(
         body.position
     );
 
-      let yen: YEN = json5::from_str(&body.position)
+    let yen: YEN = json5::from_str(&body.position)
         .map_err(|e| {
             tracing::debug!("Error parseando position: {}", e);
             Json(ErrorResponse::error(
@@ -62,61 +58,8 @@ pub async fn play_handler(
             ))
         })?;
 
-    let url = format!(
-        "{}/{}/ybot/choose/{}",
-        env::var("RUST_URL").unwrap_or("http://localhost:4000".into()),
-        api_version,
-        body.bot_id
-    );
-
-    tracing::debug!("URL llamada al módulo Rust: {}", url);
-
-    let client = Client::new();
-
-    let rust_response = client
-        .post(url)
-        .json(&yen)
-        .send()
-        .await
-        .map_err(|e| {
-            tracing::debug!("Error al contactar con el módulo Rust: {}", e);
-            Json(ErrorResponse::error(
-                &format!("Error contacting Rust module: {}", e),
-                Some(api_version.into()),
-                Some(body.bot_id.clone()),
-            ))
-        })?;
-
-    tracing::debug!("Respuesta HTTP del módulo Rust: {:?}", rust_response);
-
-    let text = rust_response
-        .text()
-        .await
-        .map_err(|e| {
-            tracing::debug!("Error leyendo body: {}", e);
-            Json(ErrorResponse::error(
-                &format!("Error reading body: {}", e),
-                Some(api_version.into()),
-                Some(body.bot_id.clone()),
-            ))
-        })?;
-
-    tracing::debug!("Body crudo recibido: '{}'", text);
-
-    let parsed: MoveResponse = serde_json::from_str(&text)
-        .map_err(|e| {
-            tracing::debug!("Error parseando MoveResponse: {} | body fue: '{}'", e, text);
-            Json(ErrorResponse::error(
-                &format!("Invalid response from Rust module: {}", e),
-                Some(api_version.into()),
-                Some(body.bot_id.clone()),
-            ))
-        })?;
-
-    tracing::debug!("MoveResponse parseado: {:?}", parsed);
-
-    // Convertir YEN a GameY para aplicar el movimiento
-    let mut game = GameY::try_from(yen.clone())
+    // Convertir YEN a GameY
+    let game = GameY::try_from(yen.clone())
         .map_err(|e| {
             tracing::debug!("Error convirtiendo YEN a GameY: {}", e);
             Json(ErrorResponse::error(
@@ -126,30 +69,38 @@ pub async fn play_handler(
             ))
         })?;
 
-    // Determinar el jugador actual a partir del turno en el YEN
-    let current_player = PlayerId::new(yen.turn());
+    // Obtener el bot del registry
+    let bot = match state.bots().find(&body.bot_id) {
+        Some(bot) => bot,
+        None => {
+            let available_bots = state.bots().names().join(", ");
+            return Err(Json(ErrorResponse::error(
+                &format!(
+                    "Bot not found: {}, available bots: [{}]",
+                    body.bot_id, available_bots
+                ),
+                Some(api_version.into()),
+                Some(body.bot_id.clone()),
+            )));
+        }
+    };
 
-    // Aplicar el movimiento
-    game.add_move(Movement::Placement {
-        player: current_player,
-        coords: parsed.coords,
-    })
-    .map_err(|e| {
-        tracing::debug!("Error aplicando movimiento: {}", e);
-        Json(ErrorResponse::error(
-            &format!("Error applying move: {}", e),
-            Some(api_version.into()),
-            Some(body.bot_id.clone()),
-        ))
-    })?;
+    // Obtener las coordenadas del movimiento del bot
+    let coords = match bot.choose_move(&game) {
+        Some(coords) => coords,
+        None => {
+            return Err(Json(ErrorResponse::error(
+                "No valid moves available for the bot",
+                Some(api_version.into()),
+                Some(body.bot_id.clone()),
+            )));
+        }
+    };
 
-    // Convertir el GameY actualizado de vuelta a YEN
-    let next_yen: YEN = (&game).into();
-
-    tracing::debug!("YEN resultante: {:?}", next_yen);
+    tracing::debug!("Coordenadas seleccionadas por el bot: {:?}", coords);
 
     Ok(Json(PlayResponse {
-        next_move: next_yen,
+        coords,
     }))
 }
 
