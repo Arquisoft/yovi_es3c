@@ -71,7 +71,8 @@ form {
   color: white;
 }
 
-.login-error {
+.login-error,
+.register-error {
   margin: 0.25rem 0 0;
   padding: 0.55rem 0.75rem;
   border-radius: 6px;
