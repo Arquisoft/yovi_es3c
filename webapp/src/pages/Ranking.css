@@ -40,6 +40,23 @@
     display: inline-block;
 }
 
+.ranking-status {
+  margin: 3rem 1.5rem;
+  padding: 0.9rem 1.25rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #1f2937;
+  font-weight: 600;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.16);
+  text-align: center;
+}
+
+.ranking-status.error {
+  background: rgba(254, 242, 242, 0.95);
+  color: #b91c1c;
+  border: 1px solid rgba(185, 28, 28, 0.18);
+}
+
 .ranking-table-wrapper {
   background: #fff;
   border-radius: 24px;
