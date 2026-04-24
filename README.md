@@ -1,5 +1,10 @@
 # Yovi_es3c - Game Y at UniOvi
 
+<p align="center">
+  <a href="#yovi_es3c---game-y-at-uniovi">README</a> |
+  <a href="#license">License</a>
+</p>
+
 <div align="center">
   <img src="webapp/src/assets/YoviLogo300.png" alt="Yovi Logo" width="300">
 </div>
@@ -13,11 +18,13 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3c&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3c)
 
-
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)
 ![Node.js](https://img.shields.io/badge/Node.js-18+-green)
 ![Rust](https://img.shields.io/badge/Rust-1.70+-orange)
 ![Docker](https://img.shields.io/badge/Docker-Compose-blue)
+
+[![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](LICENSE)
+[![License: MIT (gamey)](https://img.shields.io/badge/License-gamey%20MIT-yellow.svg)](gamey/LICENSE)
 
 
 This project has been developed as part of the Software Architecture course (2026) at the University of Oviedo.  
@@ -210,3 +217,15 @@ Each component has its own set of scripts defined in its `package.json`. Here ar
 - `cargo run`: Runs the gamey application.
 - `cargo run -- --mode server --port 4000`: Runs the gamey bot server at the port 4000 
 - `cargo doc`: Generates documentation for the GameY engine application
+
+## License
+
+This project uses two licenses:
+
+- Main repository: GNU GPL v3.0 or later.
+- gamey subproject: MIT (inherited from the original upstream fork).
+
+Full license texts:
+
+- GPLv3: [LICENSE](LICENSE)
+- MIT (gamey): [gamey/LICENSE](gamey/LICENSE)
