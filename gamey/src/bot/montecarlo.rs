@@ -10,7 +10,7 @@ use rand::prelude::IndexedRandom;
 ///
 /// Each move is evaluated by running this many random games from the position
 /// after that move. More simulations lead to better move quality but slower evaluation.
-const DEFAULT_SIMULATIONS: u32 = 100;
+const DEFAULT_SIMULATIONS: u32 = 80;
 
 /// A bot that chooses moves using Monte Carlo simulations.
 ///
