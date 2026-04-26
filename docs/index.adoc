@@ -100,3 +100,7 @@ include::src/12_glossary.adoc[]
 <<<<
 // 13. Appendix - Load Tests
 include::src/13_appendix_load_tests.adoc[]
+
+<<<<
+// 14. Appendix - Monitoring
+include::src/14_appendix_monitoring.adoc[]
