@@ -1,0 +1,40 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-monitoring]]
+== Monitoring
+
+App monitoring is the process in which developers, through the use of certain software and tools, analise
+the performance of the application to ensure it runs as smoothly as possible.
+
+In our case we focused our monitoring tasks mainly in the user service, because of this, and in order to obtain
+the best results we can, we need a steady flux of users for a period of time to test the capabilities of the service.
+In order to accomplish this, a new simulation was recorded using the Gatling tool. This simulation focused on testing areas 
+of the app that send requests to the user service like logins, logouts and queries. This simulation was later configured to 
+provide the app with a maximum of 2 constant users for 5 minutes.
+
+.The simulation configuration
+image::metricssimulationconfig.png[Gatling simulation configuration]
+
+For the monitoring part of the test, we used Prometheus and Grafana, to check metrics like the requests per second or latency of the app.
+
+In this case, a Docker local deployment was used.
+
+=== The results
+
+In our Grafana dashboard we created the following visualizations:
+
+* Requests per second
+* Avg. latency per method
+* Requests by status code
+
+The results are shown in the graphs below:
+
+.The number of requests per second
+image::requestpersecond.png[Request per second]
+
+.The average latency per method
+image::avglatency.png[Average Latency per method]
+
+.The requests by status code
+image::requestsbystatuscode.png[Requests by status code]
+
