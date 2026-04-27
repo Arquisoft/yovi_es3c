@@ -47,9 +47,30 @@
     flex-direction: column;
     gap: 16px;
     box-shadow: 0 4px 24px rgba(79, 70, 229, 0.16);
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: calc(90vh - 100px);
     max-width: 100%;
     box-sizing: border-box;
+}
+
+.help-dialog-inner .help-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.help-dialog-inner .help-content::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 10px;
+}
+
+.help-dialog-inner .help-content::-webkit-scrollbar-thumb {
+    background: #06b6d4;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+.help-dialog-inner .help-content::-webkit-scrollbar-thumb:hover {
+    background: #0891b2;
 }
 
 .help-dialog-inner .help-content h2 {
@@ -175,6 +196,7 @@
     .help-dialog-inner .help-content {
         padding: 22px 16px;
         border-radius: 18px;
+        max-height: calc(90vh - 80px);
     }
 
     .help-dialog-inner .help-content h2 {
