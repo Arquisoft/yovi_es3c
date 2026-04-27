@@ -26,33 +26,90 @@ describe ('HelpContent', () => {
     })
 
     describe('Apartados de contenido', () => {
-        test('muestra el apartado Objetivo', () => {
+        test('muestra el apartado Objetivo del Juego', () => {
             render(<HelpContent />)
-            expect(screen.getByText('Objetivo')).toBeInTheDocument()
+            expect(screen.getByText('Objetivo del Juego')).toBeInTheDocument()
         })
 
-        test('muestra el apartado Reglas.', () => {
+        test('muestra el apartado El Tablero', () => {
             render(<HelpContent />)
-            expect(screen.getByText('Reglas')).toBeInTheDocument()
+            expect(screen.getByText('El Tablero')).toBeInTheDocument()
+        })
+
+        test('muestra el apartado Reglas del Juego', () => {
+            render(<HelpContent />)
+            expect(screen.getByText('Reglas del Juego')).toBeInTheDocument()
+        })
+
+        test('muestra el apartado Cómo Ganar o Perder', () => {
+            render(<HelpContent />)
+            expect(screen.getByText('Cómo Ganar o Perder')).toBeInTheDocument()
         })
     })
 
     describe('Reglas del juego', () => {
-        test('muestra la regla de los turnos.', () =>{
+        test('muestra exactamente 6 reglas', () =>{
             render(<HelpContent />)
-            expect(screen.getByText('Los jugadores se turnan colocando una ficha por turno.')).toBeInTheDocument()
+            expect(screen.getAllByRole('listitem')).toHaveLength(6)
         })
-        test('muestra la regla de casillas vacías.', () =>{
+
+        test('muestra la regla de los turnos', () =>{
             render(<HelpContent />)
-            expect(screen.getByText('Sólo puedes colocar fichas en casillas vacías.')).toBeInTheDocument()
+            expect(screen.getByText(/Los jugadores alternan turnos/)).toBeInTheDocument()
         })
-        test('muestra la regla de la victoria', () =>{
+
+        test('muestra la regla de colocación', () =>{
             render(<HelpContent />)
-            expect(screen.getByText('El primero en conectar sus dos lados gana la partida.')).toBeInTheDocument()
+            expect(screen.getByText(/En tu turno, haz clic en una casilla vacía/)).toBeInTheDocument()
         })
-        test('muestra exactamente 3 reglas', () =>{
+
+        test('muestra la regla de una ficha por turno', () =>{
             render(<HelpContent />)
-            expect(screen.getAllByRole('listitem')).toHaveLength(3)
+            expect(screen.getByText(/Solo puedes colocar una ficha por turno/)).toBeInTheDocument()
+        })
+
+        test('muestra la regla de casillas ocupadas', () =>{
+            render(<HelpContent />)
+            expect(screen.getByText(/No puedes colocar fichas donde ya hay fichas/)).toBeInTheDocument()
+        })
+
+        test('muestra la regla del tiempo limitado por turno', () =>{
+            render(<HelpContent />)
+            expect(screen.getByText(/Tienes un tiempo limitado para colocar tu ficha en cada ronda/)).toBeInTheDocument()
+        })
+
+        test('muestra la regla de fichas adyacentes', () =>{
+            render(<HelpContent />)
+            expect(screen.getByText(/Tus fichas deben estar conectadas entre sí/)).toBeInTheDocument()
+        })
+    })
+
+    describe('Objetivo y condiciones de victoria', () => {
+        test('menciona conectar los tres lados del tablero', () => {
+            render(<HelpContent />)
+            expect(screen.getByText(/toque los tres lados del tablero triangular/)).toBeInTheDocument()
+        })
+
+        test('muestra la condición de victoria', () => {
+            render(<HelpContent />)
+            expect(screen.getByText(/si consigues formar una línea continua de fichas azules/)).toBeInTheDocument()
+        })
+
+        test('muestra la condición de derrota', () => {
+            render(<HelpContent />)
+            expect(screen.getByText(/si el bot completa su línea ganadora primero/)).toBeInTheDocument()
+        })
+    }) 
+
+    describe('Información del tablero', () => {
+        test('describe el tablero como triangular', () => {
+            render(<HelpContent />)
+            expect(screen.getByText(/El tablero es triangular/)).toBeInTheDocument()
+        })
+
+        test('menciona las casillas hexagonales', () => {
+            render(<HelpContent />)
+            expect(screen.getByText(/dividido en casillas hexagonales/)).toBeInTheDocument()
         })
     })
 })
@@ -81,21 +138,24 @@ describe('HelpDialog', () => {
             expect(screen.getByText('¿Cómo jugar?')).toBeInTheDocument()
         })
 
-        test('muestra el apartado Objetivo', () => {
+        test('muestra el apartado Objetivo del Juego', () => {
             render(<HelpDialog open={true} onClose={vi.fn()} />)
-            expect(screen.getByText('Objetivo')).toBeInTheDocument()
+            expect(screen.getByText('Objetivo del Juego')).toBeInTheDocument()
         })
 
-        test('muestra el apartado Reglas', () => {
+        test('muestra el apartado El Tablero', () => {
             render(<HelpDialog open={true} onClose={vi.fn()} />)
-            expect(screen.getByText('Reglas')).toBeInTheDocument()
+            expect(screen.getByText('El Tablero')).toBeInTheDocument()
         })
 
-        test('muestra las tres reglas del juego', () => {
+        test('muestra el apartado Reglas del Juego', () => {
             render(<HelpDialog open={true} onClose={vi.fn()} />)
-            expect(screen.getByText('Los jugadores se turnan colocando una ficha por turno.')).toBeInTheDocument()
-            expect(screen.getByText('Sólo puedes colocar fichas en casillas vacías.')).toBeInTheDocument()
-            expect(screen.getByText('El primero en conectar sus dos lados gana la partida.')).toBeInTheDocument()
+            expect(screen.getByText('Reglas del Juego')).toBeInTheDocument()
+        })
+
+        test('muestra el apartado Cómo Ganar o Perder', () => {
+            render(<HelpDialog open={true} onClose={vi.fn()} />)
+            expect(screen.getByText('Cómo Ganar o Perder')).toBeInTheDocument()
         })
 
         test('muestra el botón de cierre', () => {
