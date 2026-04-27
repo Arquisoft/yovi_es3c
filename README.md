@@ -25,8 +25,11 @@
 This project has been developed as part of the Software Architecture course (2026) at the University of Oviedo.  
 It is an academic project that provides basic functionality and serves as a foundation for the ASW labs.
 
-## GitHub Pages
+## Project Documentation
 https://arquisoft.github.io/yovi_es3c/
+
+## Deployment Server
+http://20.199.40.219
 
 ## API Documentation
 http://20.199.40.219/api-docs/
