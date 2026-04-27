@@ -6,7 +6,7 @@
     width: 100%;
     margin: 0;
     padding: 0;
-    overflow-x: hidden;
+    overflow-x: auto;
     display: flex;
     justify-content: center;
     border-radius: 24px;
@@ -40,17 +40,36 @@
     display: inline-block;
 }
 
+.ranking-status {
+  margin: 3rem 1.5rem;
+  padding: 0.9rem 1.25rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #1f2937;
+  font-weight: 600;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.16);
+  text-align: center;
+}
+
+.ranking-status.error {
+  background: rgba(254, 242, 242, 0.95);
+  color: #b91c1c;
+  border: 1px solid rgba(185, 28, 28, 0.18);
+}
+
 .ranking-table-wrapper {
   background: #fff;
   border-radius: 24px;
   box-shadow: 0 4px 24px rgba(79, 70, 229, 0.18);
   width: 100%;
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   padding-bottom: 8px;
 }
 
 .ranking-table {
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
 }
 
@@ -139,4 +158,38 @@
 .ranking-table tr:hover td {
   background-color: #f0f4ff;
   transition: background-color 0.15s;
+}
+
+@media (max-width: 768px) {
+  .ranking-container {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .ranking-container h1 {
+    font-size: 1.25rem;
+    letter-spacing: 0.06em;
+    padding: 8px 18px;
+  }
+
+  .ranking-status {
+    margin: 2rem 0.75rem;
+    padding: 0.8rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .ranking-table th,
+  .ranking-table td {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.92rem;
+  }
+
+  .th-content {
+    gap: 4px;
+  }
+
+  .sort-button {
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+  }
 }

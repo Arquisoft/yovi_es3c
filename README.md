@@ -1,10 +1,5 @@
 # Yovi_es3c - Game Y at UniOvi
 
-<p align="center">
-  <a href="#yovi_es3c---game-y-at-uniovi">README</a> |
-  <a href="#license">License</a>
-</p>
-
 <div align="center">
   <img src="webapp/src/assets/YoviLogo300.png" alt="Yovi Logo" width="300">
 </div>
